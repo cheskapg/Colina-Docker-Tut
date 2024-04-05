@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  web:
+    depends_on:
+      - api
+    image: colina-web
+    build: ./client
+    volumes:
+      - ./client:/app
+      - /app/node_modules # <-- try adding this!
+      - /app/.next
+    ports:
+      - 3001:3001
+
+    develop:
+      watch:
+        - path: ./client/package.json
+          action: rebuild
+        - path: ./client/next.config.js
+          action: rebuild
+        - path: ./client/package-lock.json
+          action: rebuild
+        - path: ./client
+          target: /app
+          action: sync+restart
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - SESSION_PASSWORD=c7c55dd6d529a39b5e8d214c3169bb7f7
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+
+    networks:
+      - default
+    # command: npm run dev
+    tty: true
+
+  api:
+    depends_on:
+      - db
+      # db:
+      #   condition: service_healthy
+    build: ./api
+    image: api
+    volumes:
+      - ./api:/app
+      - /app/node_modules #
+    ports:
+      - 3000:3000
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=ColinaHealth_db
+    networks:
+      - default
+
+    develop:
+      watch:
+        - path: ./api/package.json
+          action: rebuild
+        - path: ./api/package-lock.json
+          action: rebuild
+        - path: ./api
+          target: /app
+          action: sync+restart
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    container_name: postgres
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      PGUSER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ColinaHealth_db
+
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
