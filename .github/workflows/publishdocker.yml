@@ -33,6 +33,7 @@ jobs:
         else
           docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest ./${{ matrix.image }}
           docker push ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
+        fi
 
     - name: Metadata tags for Docker images
       uses: docker/metadata-action@v3
