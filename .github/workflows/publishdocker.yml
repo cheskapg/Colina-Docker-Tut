@@ -37,17 +37,17 @@ jobs:
     - name: Metadata tags for API image
       uses: docker/metadata-action@v3
       with:
-        images: /api:latest
+        images: cheskapg/colina-docker:api-latest
         tags: latest, v1.0
 
     - name: Metadata tags for frontend web image
       uses: docker/metadata-action@v3
       with:
-        images: /colina-web:latest
+        images: cheskapg/colina-docker:colina-web-latest
         tags: latest, v1.0
 
     - name: Metadata tags for PostgreSQL image
       uses: docker/metadata-action@v3
       with:
-        images: /postgres:latest
+        images: cheskapg/colina-docker:postgres-latest
         tags: latest, v1.0
