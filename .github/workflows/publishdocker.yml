@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 jobs:
   push_to_registry:
@@ -28,7 +27,7 @@ jobs:
 
     - name: Build and push web image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-web:latest ./colina-web
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-web:latest ./web
         docker push ${{ secrets.DOCKERHUB_USER }}/colina-web:latest
 
     - name: Build and push PostgreSQL image
