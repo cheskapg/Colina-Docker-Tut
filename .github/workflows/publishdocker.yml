@@ -27,7 +27,7 @@ jobs:
 
     - name: Build and push web image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-web:latest ./web
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-web:latest ./client
         docker push ${{ secrets.DOCKERHUB_USER }}/colina-web:latest
 
     - name: Build and push PostgreSQL image
