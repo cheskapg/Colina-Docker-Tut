@@ -1,0 +1,73 @@
+---
+name: Publish Docker
+
+on: [push]
+  branches:['master']
+
+
+jobs:
+  push_to_registry:
+    name: Push docker image to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+              # run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+        
+      # Build and push API image
+      - name: Build and push API image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest ./api
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
+
+      # Build and push frontend web image
+      - name: Build and push web image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-web:latest ./colina-web
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-web:latest
+
+      # Build and push PostgreSQL image
+      - name: Build and push PostgreSQL image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/postgres:latest ./postgres
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/postgres:latest
+
+
+      # Metadata tags for API image
+      - name: Metadata tags for API image
+        uses: docker/metadata-action@v3
+        with:
+          images: /api:latest
+          tags: latest, v1.0
+
+      # Metadata tags for frontend web image
+      - name: Metadata tags for frontend web image
+        uses: docker/metadata-action@v3
+        with:
+          images: /colina-web:latest
+          tags: latest, v1.0
+
+      # Metadata tags for PostgreSQL image
+      - name: Metadata tags for PostgreSQL image
+        uses: docker/metadata-action@v3
+        with:
+          images: /postgres:latest
+          tags: latest, v1.0
+
+
+    # - name: Build Docker image
+    #   run: docker build -t mydockerhubusername/mydockerimage .
+
+    # - name: Push Docker image
+    #   run: docker push mydockerhubusername/mydockerimage
+
+    # - name: Push Docker image with metadata
+    #   uses: docker/build-push-action@ad44
