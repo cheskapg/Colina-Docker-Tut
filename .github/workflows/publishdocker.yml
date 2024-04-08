@@ -32,9 +32,9 @@ jobs:
 
     - name: Build and push PostgreSQL image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USER }}/postgres:latest ./postgres
+        docker pull postgres:15-alpine
+        docker tag postgres:15-alpine ${{ secrets.DOCKERHUB_USER }}/postgres:latest
         docker push ${{ secrets.DOCKERHUB_USER }}/postgres:latest
-
     - name: Metadata tags for API image
       uses: docker/metadata-action@v3
       with:
