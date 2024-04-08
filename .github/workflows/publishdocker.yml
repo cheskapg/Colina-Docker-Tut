@@ -22,18 +22,18 @@ jobs:
         
     - name: Build and push API image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-api:latest ./api
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/api:latest ./api
         docker push ${{ secrets.DOCKERHUB_USER }}/api:latest
 
     - name: Build and push web image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-web:docker ./client
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/client:docker ./client
         docker push ${{ secrets.DOCKERHUB_USER }}/client:latest
 
     - name: Build and push PostgreSQL image
       run: |
         docker pull postgres:15-alpine
-        docker tag postgres:15-alpine ${{ secrets.DOCKERHUB_USER }}/colina-postgres:latest
+        docker tag postgres:15-alpine ${{ secrets.DOCKERHUB_USER }}/postgres:latest
         docker push ${{ secrets.DOCKERHUB_USER }}/postgres:latest
 
     - name: Metadata tags for API image
