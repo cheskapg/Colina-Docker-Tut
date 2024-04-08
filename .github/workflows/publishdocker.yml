@@ -21,18 +21,18 @@ jobs:
         
     - name: Build and push API image
       run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest ./api
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/api:latest ./api
+        docker push ${{ secrets.DOCKERHUB_USER }}/api:latest
 
     - name: Build and push web image
       run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-web:latest ./colina-web
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-web:latest
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/frontend-web:latest ./colina-web
+        docker push ${{ secrets.DOCKERHUB_USER }}/frontend-web:latest
 
     - name: Build and push PostgreSQL image
       run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/postgres:latest ./postgres
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/postgres:latest
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/postgres:latest ./postgres
+        docker push ${{ secrets.DOCKERHUB_USER }}/postgres:latest
 
     - name: Metadata tags for API image
       uses: docker/metadata-action@v3
