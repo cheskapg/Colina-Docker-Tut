@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        image: [api, web, postgres]
+        image: [api, client, postgres]
 
     steps:
     - name: Checkout repo
