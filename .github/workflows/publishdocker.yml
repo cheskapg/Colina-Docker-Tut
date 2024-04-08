@@ -10,10 +10,6 @@ jobs:
     name: Push docker image to Docker Hub
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        image: [api, client, postgres]
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
@@ -23,28 +19,41 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USER }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Build and push Docker image
+        
+    - name: Build and push API image
       run: |
-        if [ "${{ matrix.image }}" = "postgres" ]; then
-          docker pull postgres:15-alpine
-          docker tag postgres:15-alpine ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
-          docker push ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
-        else
-          docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest ./${{ matrix.image }}
-          docker push ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
-        fi
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-api:latest ./api
+        docker push ${{ secrets.DOCKERHUB_USER }}/api:latest
 
-    - name: Metadata tags for Docker images
+    - name: Build and push web image
+      run: |
+        docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-web:docker ./client
+        docker push ${{ secrets.DOCKERHUB_USER }}/client:latest
+
+    - name: Build and push PostgreSQL image
+      run: |
+        docker pull postgres:15-alpine
+        docker tag postgres:15-alpine ${{ secrets.DOCKERHUB_USER }}/colina-postgres:latest
+        docker push ${{ secrets.DOCKERHUB_USER }}/postgres:latest
+
+    - name: Metadata tags for API image
       uses: docker/metadata-action@v3
       with:
-        images: ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
+        images: cheskapg/colina-api:api-latest
         tags: latest, v1.0
 
+    - name: Metadata tags for frontend web image
+      uses: docker/metadata-action@v3
+      with:
+        images: cheskapg/colina-web:colina-web-latest
+        tags: latest, v1.0
 
-        
+    - name: Metadata tags for PostgreSQL image
+      uses: docker/metadata-action@v3
+      with:
+        images: cheskapg/colina-postgres:postgres-latest
+        tags: latest, v1.0
 
-#individual repos for each image add $ to each variable
 # name: Publish Docker
 
 # on:
@@ -57,6 +66,10 @@ jobs:
 #     name: Push docker image to Docker Hub
 #     runs-on: ubuntu-latest
 
+#     strategy:
+#       matrix:
+#         image: [api, client, postgres]
+
 #     steps:
 #     - name: Checkout repo
 #       uses: actions/checkout@v4
@@ -64,39 +77,27 @@ jobs:
 #     - name: Login to Docker Hub
 #       uses: docker/login-action@v3
 #       with:
-        # username: {{ secrets.DOCKERHUB_USER }}
-#         password: {{ secrets.DOCKERHUB_TOKEN }}
+#         username: ${{ secrets.DOCKERHUB_USER }}
+#         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#     - name: Build and push Docker image
+#       run: |
+#         if [ "${{ matrix.image }}" = "postgres" ]; then
+#           docker pull postgres:15-alpine
+#           docker tag postgres:15-alpine ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
+#           docker push ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
+#         else
+#           docker build -t ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest ./${{ matrix.image }}
+#           docker push ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
+#         fi
+
+#     - name: Metadata tags for Docker images
+#       uses: docker/metadata-action@v3
+#       with:
+#         images: ${{ secrets.DOCKERHUB_USER }}/colina-docker:${{ matrix.image }}-latest
+#         tags: latest, v1.0
+
+
         
-#     - name: Build and push API image
-#       run: |
-#         docker build -t {{ secrets.DOCKERHUB_USER }}/colina-api:latest ./api
-#         docker push {{ secrets.DOCKERHUB_USER }}/api:latest
 
-#     - name: Build and push web image
-#       run: |
-#         docker build -t {{ secrets.DOCKERHUB_USER }}/colina-web:docker ./client
-#         docker push {{ secrets.DOCKERHUB_USER }}/client:latest
-
-#     - name: Build and push PostgreSQL image
-#       run: |
-#         docker pull postgres:15-alpine
-#         docker tag postgres:15-alpine {{ secrets.DOCKERHUB_USER }}/colina-postgres:latest
-#         docker push {{ secrets.DOCKERHUB_USER }}/postgres:latest
-
-#     - name: Metadata tags for API image
-#       uses: docker/metadata-action@v3
-#       with:
-#         images: cheskapg/colina-api:api-latest
-#         tags: latest, v1.0
-
-#     - name: Metadata tags for frontend web image
-#       uses: docker/metadata-action@v3
-#       with:
-#         images: cheskapg/colina-web:colina-web-latest
-#         tags: latest, v1.0
-
-#     - name: Metadata tags for PostgreSQL image
-#       uses: docker/metadata-action@v3
-#       with:
-#         images: cheskapg/colina-postgres:postgres-latest
-#         tags: latest, v1.0
+#individual repos for each image add $ to each variable
