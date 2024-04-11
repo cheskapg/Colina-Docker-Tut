@@ -25,7 +25,7 @@ services:
           target: /app
           action: sync+restart
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=chzcolinahealthwebsite.azurewebsites.net
       - SESSION_PASSWORD=c7c55dd6d529a39b5e8d214c3169bb7f7
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
@@ -50,9 +50,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-      - DB_DATABASE=ColinaHealth_db
+      - DB_USERNAME=tfsbuaxzey
+      - DB_PASSWORD=$MDG3cehPou5stjg
+      - DB_DATABASE=chzcolinahealthnest-database
     networks:
       - default
 
@@ -70,14 +70,14 @@ services:
     image: postgres:15-alpine
     restart: always
     container_name: postgres
-    user: postgres
+    user: tfsbuaxzey
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-      PGUSER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ColinaHealth_db
+      PGUSER: tfsbuaxzey
+      POSTGRES_PASSWORD: $MDG3cehPou5stjg
+      POSTGRES_DB: chzcolinahealthnest-database
 
     expose:
       - 5432
