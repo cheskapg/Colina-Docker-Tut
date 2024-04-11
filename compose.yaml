@@ -48,7 +48,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=db
+      - DB_HOST=chzcolinahealthnest-server.postgres.database.azure.com 
       - DB_PORT=5432
       - DB_USERNAME=tfsbuaxzey
       - DB_PASSWORD=$MDG3cehPou5stjg
