@@ -1,89 +1,89 @@
-version: "3.8"
+  version: "3.8"
 
-services:
-  web:
-    depends_on:
-      - api
-    image: colina-web
-    build: ./client
-    volumes:
-      - ./client:/app
-      - /app/node_modules # <-- try adding this!
-      - /app/.next
-    ports:
-      - 3001:3001
+  services:
+    web:
+      depends_on:
+        - api
+      image: colina-web
+      build: ./client
+      volumes:
+        - ./client:/app
+        - /app/node_modules # <-- try adding this!
+        - /app/.next
+      ports:
+        - 3001:3001
 
-    develop:
-      watch:
-        - path: ./client/package.json
-          action: rebuild
-        - path: ./client/next.config.js
-          action: rebuild
-        - path: ./client/package-lock.json
-          action: rebuild
-        - path: ./client
-          target: /app
-          action: sync+restart
-    environment:
-      - NEXT_PUBLIC_API_URL=chzcolinahealthnestapi.azurewebsites.net
-      - WATCHPACK_POLLING=true
+      develop:
+        watch:
+          - path: ./client/package.json
+            action: rebuild
+          - path: ./client/next.config.js
+            action: rebuild
+          - path: ./client/package-lock.json
+            action: rebuild
+          - path: ./client
+            target: /app
+            action: sync+restart
+      environment:
+        - NEXT_PUBLIC_API_URL=chzcolinahealthnestapi.azurewebsites.net
+        - WATCHPACK_POLLING=true
 
-    networks:
-      - default
-    # command: npm run dev
-    tty: true
+      networks:
+        - default
+      # command: npm run dev
+      tty: true
 
-  api:
-    depends_on:
-      - db
-      # db:
-      #   condition: service_healthy
-    build: ./api
-    image: api
-    volumes:
-      - ./api:/app
-      - /app/node_modules #
-    ports:
-      - 3000:3000
-    environment:
-      - DB_HOST=chzcolinahealthnest-server.postgres.database.azure.com 
-      - DB_PORT=5432
-      - DB_USERNAME=tfsbuaxzey
-      - DB_PASSWORD=$MDG3cehPou5stjg
-      - DB_DATABASE=chzcolinahealthnest-database
-    networks:
-      - default
+    api:
+      depends_on:
+        - db
+        # db:
+        #   condition: service_healthy
+      build: ./api
+      image: api
+      volumes:
+        - ./api:/app
+        - /app/node_modules #
+      ports:
+        - 3000:3000
+      environment:
+        - DB_HOST=chzcolinahealthnest-server.postgres.database.azure.com 
+        - DB_PORT=5432
+        - DB_USERNAME=tfsbuaxzey
+        - DB_PASSWORD=$MDG3cehPou5stjg
+        - DB_DATABASE=chzcolinahealthnest-database
+      networks:
+        - default
 
-    develop:
-      watch:
-        - path: ./api/package.json
-          action: rebuild
-        - path: ./api/package-lock.json
-          action: rebuild
-        - path: ./api
-          target: /app
-          action: sync+restart
+      develop:
+        watch:
+          - path: ./api/package.json
+            action: rebuild
+          - path: ./api/package-lock.json
+            action: rebuild
+          - path: ./api
+            target: /app
+            action: sync+restart
 
-  db:
-    image: postgres:15-alpine
-    restart: always
-    container_name: postgres
-    user: tfsbuaxzey
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-      PGUSER: tfsbuaxzey
-      POSTGRES_PASSWORD: $MDG3cehPou5stjg
-      POSTGRES_DB: chzcolinahealthnest-database
+    db:
+      image: postgres:15-alpine
+      restart: always
+      container_name: postgres
+      user: tfsbuaxzey
+      volumes:
+        - db-data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_HOST_AUTH_METHOD: trust
+        PGUSER: tfsbuaxzey
+        POSTGRES_PASSWORD: $MDG3cehPou5stjg
+        POSTGRES_DB: chzcolinahealthnest-database
 
-    expose:
-      - 5432
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      expose:
+        - 5432
+      healthcheck:
+        test: ["CMD", "pg_isready"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
-volumes:
-  db-data:
+  volumes:
+    db-data:
