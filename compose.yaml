@@ -25,9 +25,7 @@ services:
           target: /app
           action: sync+restart
     environment:
-      - NEXT_PUBLIC_API_URL=chzcolinahealthwebsite.azurewebsites.net
-      - SESSION_PASSWORD=c7c55dd6d529a39b5e8d214c3169bb7f7
-      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=chzcolinahealthnestapi.azurewebsites.net
       - WATCHPACK_POLLING=true
 
     networks:
