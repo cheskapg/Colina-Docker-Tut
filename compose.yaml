@@ -3,7 +3,7 @@
   services:
     web:
       depends_on:
-        - api
+        - apis
       image: colina-web
       build: ./client
       volumes:
@@ -33,10 +33,10 @@
       # command: npm run dev
       tty: true
 
-    api:
+    apis:
       depends_on:
         - db
-        # db:
+        # db: 
         #   condition: service_healthy
       build: ./api
       image: api
