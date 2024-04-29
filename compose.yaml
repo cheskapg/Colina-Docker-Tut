@@ -49,11 +49,11 @@ services:
       - PGDATABASE: colina
     expose:
       - 5432
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    # healthcheck:
+    #   test: ["CMD", "pg_isready"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
 
 networks:
   default:
