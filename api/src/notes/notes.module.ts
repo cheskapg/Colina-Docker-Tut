@@ -10,7 +10,8 @@ import { IdService } from 'services/uuid/id.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Notes, Patients])],
-  providers: [NotesService,PatientsService, IdService],
+  providers: [NotesService, PatientsService, IdService],
+
   controllers: [NotesController],
 })
 export class NotesModule {}

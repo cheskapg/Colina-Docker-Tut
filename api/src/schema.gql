@@ -36,8 +36,8 @@ type Users {
   uuid: String!
   email: String!
   password: String!
-  fname: String!
-  lname: String!
+  fName: String!
+  lName: String!
   status: String!
   updatedAt: String!
   createdAt: String!

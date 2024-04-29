@@ -5,9 +5,12 @@ import { Navbar } from "@/components/navbar";
 import { useParams, useRouter } from "next/navigation";
 import { fetchPatientOverview } from "@/app/api/patients-api/patientOverview.api";
 import { usePathname } from "next/navigation";
-import Loading from "./loading";
+
 import { getAccessToken } from "@/app/api/login-api/accessToken";
-import { toast } from "sonner";
+import { toast as sonner } from "sonner";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import Link from "next/link";
 export default function PatientOverviewLayout({
   children,
 }: Readonly<{
@@ -20,8 +23,9 @@ export default function PatientOverviewLayout({
     item: string;
   }>();
   if (!getAccessToken()) {
-    onNavigate(router, "/login");
+    router.replace("/login");
   }
+  const { toast } = useToast();
   const [patientData, setPatientData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -29,17 +33,8 @@ export default function PatientOverviewLayout({
   const [detailsClicked, setDetailsClicked] = useState<boolean>(false); // State to track if "See more details" is clicked
   const patientId = params.id.toUpperCase();
   const pathname = usePathname();
-  const [isAllergy, setIsAllergy] = useState(true);
-  const [isSurgery, setIsSurgery] = useState(false);
-  const [isMedicationLog, setIsMedicationLog] = useState(false);
-  const [isPrescription, setIsPrescription] = useState(false);
-  const [isVitalSign, setIsVitalSign] = useState(false);
-  const [isLabRes, setIsLabRes] = useState(false);
-  const [isAppointment, setIsAppointment] = useState(false);
-  const [isNotes, setIsNotes] = useState(false);
   const inputRef = useRef<HTMLSpanElement>(null);
 
-  console.log(getAccessToken, "getAccessToken");
   const tabs = [
     {
       label: "Medical History",
@@ -67,53 +62,68 @@ export default function PatientOverviewLayout({
     },
     {
       label: "Notes",
-      url: `/patient-overview/${params.id}/notes`,
+      url: `/patient-overview/${params.id}/notes/nurses-notes`,
+    },
+    {
+      label: "Forms",
+      url: `/patient-overview/${params.id}/forms`,
     },
   ];
 
+  const [currentRoute, setCurrentRoute] = useState<string>("");
+
+  const [seeMoreClicked, setSeeMoreClicked] = useState(
+    localStorage.getItem("seeMoreClicked") === "true" ? true : false
+  );
+  const [seeMoreHovered, setSeeMoreHovered] = useState(
+    localStorage.getItem("seeMoreHovered") === "true" ? true : false
+  );
+
   const handleSeeMoreDetails = (url: string, tabIndex: number) => {
-    setIsLoading(true);
-    onNavigate(router, url);
-    setActiveTab(-1);
-    setDetailsClicked(true);
-    
+    if (url) {
+      setActiveTab(-1);
+      setDetailsClicked(true);
+      localStorage.setItem("seeMoreClicked", "true"); // Set local storage
+      router.replace(url);
+    }
   };
 
+  const handleSeeMoreHover = () => {
+    setSeeMoreHovered(true);
+    localStorage.setItem("seeMoreHovered", "true"); // Set local storage
+  };
+
+  const handleSeeMoreLeave = () => {
+    setSeeMoreHovered(false);
+    localStorage.setItem("seeMoreHovered", "false"); // Set local storage
+  };
+
+  useEffect(() => {
+    const pathParts = pathname.split("/");
+    setCurrentRoute(pathParts[pathParts.length - 1]);
+
+    // Check local storage for previous state
+    const clicked = localStorage.getItem("seeMoreClicked") === "true";
+    const hovered = localStorage.getItem("seeMoreHovered") === "true";
+    setSeeMoreClicked(clicked);
+    setSeeMoreHovered(hovered);
+  }, [pathname]);
   // const handleTabClick = (index: number, url: string) => {
   //   setActiveTab(index);
   //   onNavigate(router, url);
   //   setDetailsClicked(false); // Reset detailsClicked to false when a tab is clicked
   // };
   const handleTabClick = (url: string, tabIndex: number) => {
-    setIsLoading(true);
-    onNavigate(router, url);
-    setActiveTab(tabIndex);
-    setDetailsClicked(false);
-    console.log(url, "url")
-    
+    if (url) {
+      setActiveTab(tabIndex);
+      setDetailsClicked(false);
+      router.replace(url);
+    }
   };
   console.log(pathname, "pathname");
   useEffect(() => {
     const pathParts = pathname.split("/");
     const tabUrl = pathParts[pathParts.length - 1];
-
-    if (tabUrl === "allergies") {
-      setIsAllergy(true);
-    } else if (tabUrl === "surgeries") {
-      setIsSurgery(true);
-    } else if (tabUrl === "medication") {
-      setIsMedicationLog(true);
-    } else if (tabUrl === "prescription") {
-      setIsPrescription(true);
-    } else if (tabUrl === "vital-signs") {
-      setIsVitalSign(true);
-    } else if (tabUrl === "lab-results") {
-      setIsLabRes(true);
-    } else if (tabUrl === "patient-appointment") {
-      setIsAppointment(true);
-    } else if (tabUrl === "notes") {
-      setIsNotes(true);
-    }
     const fetchData = async () => {
       try {
         const response = await fetchPatientOverview(patientId, router);
@@ -122,7 +132,21 @@ export default function PatientOverviewLayout({
         setIsLoading(false);
       } catch (error: any) {
         setError(error.message);
-        setIsLoading(false);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.message,
+          action: (
+            <ToastAction
+              altText="Try again"
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Try again
+            </ToastAction>
+          ),
+        });
       }
     };
 
@@ -130,26 +154,11 @@ export default function PatientOverviewLayout({
   }, [patientId, router, params]);
 
   if (isLoading) {
-    switch (true) {
-      case !isAllergy:
-        return <Loading></Loading>;
-      case !isSurgery:
-        return <Loading></Loading>;
-      case !isMedicationLog:
-        return <Loading></Loading>;
-      case !isPrescription:
-        return <Loading></Loading>;
-      case !isVitalSign:
-        return <Loading></Loading>;
-      case !isLabRes:
-        return <Loading></Loading>;
-      case !isAppointment:
-        return <Loading></Loading>;
-      case !isNotes:
-        return <Loading></Loading>;
-      default:
-        break;
-    }
+    return (
+      <div className="w-full h-full flex justify-center items-center ">
+        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+      </div>
+    );
   }
   console.log(patientData, "patientData");
 
@@ -158,7 +167,7 @@ export default function PatientOverviewLayout({
 
   const handleCopyClick = () => {
     if (inputRef.current) {
-      toast.success("Patient ID copied to clipboard")
+      sonner.success("Patient ID copied to clipboard");
       const range = document.createRange();
       range.selectNodeContents(inputRef.current);
       const selection = window.getSelection();
@@ -170,23 +179,16 @@ export default function PatientOverviewLayout({
   };
 
   return (
-    <div className="flex flex-col w-full  px-4 lg:px-28 mt-[100px]">
+    <div className="flex flex-col w-full px-[150px] pt-[90px]">
       <div className="flex flex-col gap-[3px]">
-        <div className="text-2xl font-bold">
+        <div className="p-title pb-2">
           <h1>Patient Overview</h1>
-          <p className="text-[14px] font-medium text-[#64748B] mt-[-5px]">
-            {detailsClicked
-              ? "View - Details"
-              : activeTab !== -1
-              ? tabs[activeTab]?.label
-              : ""}
-          </p>
         </div>
-        <div className="form ring-1 w-full h-[220px] shadow-md ring-gray-300 px-5 pt-5 rounded-md">
+        <div className="form ring-1 w-full h-[220px] ring-[#D0D5DD] px-5 pt-5 rounded-md">
           <div className="flex">
             <div className="flex flex-col">
               <img
-                src="/imgs/dennis.svg"
+                src="/imgs/drake.png"
                 alt="profile"
                 width="200"
                 height="200"
@@ -194,29 +196,41 @@ export default function PatientOverviewLayout({
             </div>
             <div className="justify-between ml-4 mt-1 flex flex-col w-full ">
               <div>
-                <div className=" w-full justify-between text-2xl font-semibold flex">
+                <div className="w-full justify-between p-title flex ml-2">
                   <h1>
                     {" "}
-                    {patientData[0]?.firstName} {patientData[0]?.middleName} {patientData[0]?.lastName}
+                    {patientData[0]?.firstName} {patientData[0]?.middleName}{" "}
+                    {patientData[0]?.lastName}
                   </h1>
                   <div className=" cursor-pointer items-center ml-10 flex ">
-                    <p
-                      className="underline text-sm font-semibold text-[#07143799] text-right"
-                      onClick={() =>
-                        handleSeeMoreDetails(
-                          `/patient-overview/${params.id}/patient-details`,
-                          -1
-                        )
-                      }
+                    <Link
+                      href={`/patient-overview/${params.id}/patient-details`}
                     >
-                      See more details
-                    </p>
+                      <p
+                        className={`underline text-[15px] font-semibold text-right mr-10 hover:text-[#007C85] ${
+                          currentRoute === "patient-details"
+                            ? "text-[#007C85]"
+                            : ""
+                        }`}
+                        onMouseEnter={handleSeeMoreHover}
+                        onMouseLeave={handleSeeMoreLeave}
+                        onClick={() => {
+                          setIsLoading(true);
+                          // handleSeeMoreDetails(
+                          //   `/patient-overview/${params.id}/patient-details`,
+                          //   -1
+                          // );
+                        }}
+                      >
+                        See more details
+                      </p>
+                    </Link>
                   </div>
                 </div>
                 <div>
-                  <div className="flex flex-row w-full mt-2">
+                  <div className="flex flex-row w-full mt-2 font-medium text-[15px]">
                     <img
-                      src="/imgs/profile-circle.svg"
+                      src="/imgs/profile-circle-new.svg"
                       className="px-1"
                       alt="profile"
                       width="26"
@@ -232,7 +246,7 @@ export default function PatientOverviewLayout({
                         </p>
                       </div>
                       <div>
-                        <p className="flex items-center mr-11">
+                        <p className="flex items-center mr-10 ml-1 ">
                           Gender: {patientData[0]?.gender}
                         </p>
                       </div>
@@ -243,41 +257,40 @@ export default function PatientOverviewLayout({
                         <img
                           src="/imgs/id.svg"
                           alt="copy"
-                          className="cursor-pointer"
+                          className="cursor-pointer ml-2"
                           onClick={handleCopyClick}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="mb-5"></div>
-                  <div className="flex flex-row w-full ">
-                    <div className="w-1/6 flex">
-                      <img
-                        src="/imgs/codestatus.svg"
-                        className="px-1"
-                        alt="codestatus"
-                        width="26"
-                        height="26"
-                      />
-                      <div className="">
-                        <h1 className={`flex items-center mr-11`}>
-                          Code Status:
-                          <p
-                            className={` 
+                  <div className="flex flex-row w-full font-medium text-[15px]">
+                    <img
+                      src="/imgs/codestatus.svg"
+                      className="px-1"
+                      alt="codestatus"
+                      width="26"
+                      height="26"
+                    />
+                    <div className="">
+                      <h1 className={`flex items-center`}>
+                        Code Status:
+                        <p
+                          className={` 
                           ${
                             patientData[0]?.codeStatus === "DNR"
                               ? "text-red-500"
                               : "text-blue-500"
-                          } ml-1`}
-                          >
-                            {patientData[0]?.codeStatus}
-                          </p>
-                        </h1>
-                      </div>
+                          } ml-1 w-[100px]`}
+                        >
+                          {patientData[0]?.codeStatus}
+                        </p>
+                      </h1>
                     </div>
-                    <div className="flex w-5/6">
+
+                    <div className="">
                       <div>
-                        <p className="flex items-center mr-11">
+                        <p className="flex items-center">
                           Allergy:{" "}
                           {patientData[0]?.allergies
                             ? patientData[0]?.allergies
@@ -290,22 +303,29 @@ export default function PatientOverviewLayout({
               </div>
               <div className="flex gap-[50px] px-2">
                 {tabs.map((tab, index) => (
-                  <p
-                    className={`cursor-pointer font-semibold ${
-                      pathname === tab.url ||
-                      (tabUrl === "surgeries" &&
-                        tab.label === "Medical History") ||
-                      (tabUrl === "prorenata" && tab.label === "Medication Log")
-                        ? "text-[#007C85] border-b-[3px] border-[#007C85]"
-                        : "hover:text-[#007C85] hover:border-b-[3px] h-[27px] border-[#007C85]"
-                    }`}
-                    key={index}
-                    onClick={() => {
-                      handleTabClick(tab.url, index);
-                    }}
-                  >
-                    {tab.label}
-                  </p>
+                  <Link href={tab.url}>
+                    <p
+                      className={`cursor-pointer font-bold ${
+                        pathname === tab.url ||
+                        (tabUrl === "surgeries" &&
+                          tab.label === "Medical History") ||
+                        (tabUrl === "prorenata" &&
+                          tab.label === "Medication Log") ||
+                        (tabUrl === "incident-report" &&
+                          tab.label === "Notes") ||
+                        (tabUrl === "archived" && tab.label === "Forms")
+                          ? "text-[#007C85] border-b-2 border-[#007C85] text-[15px] pb-1"
+                          : "hover:text-[#007C85] hover:border-b-2 pb-1 h-[31px] border-[#007C85] text-[15px]"
+                      }`}
+                      key={index}
+                      onClick={() => {
+                        setIsLoading(true);
+                        // handleTabClick(tab.url, index);
+                      }}
+                    >
+                      {tab.label}
+                    </p>
+                  </Link>
                 ))}
               </div>
             </div>

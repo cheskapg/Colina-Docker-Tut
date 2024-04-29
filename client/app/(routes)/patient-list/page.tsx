@@ -6,16 +6,26 @@ import DropdownMenu from "@/components/dropdown-menu";
 import Edit from "@/components/shared/buttons/view";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DemographicModal } from "@/components/modals/demographic.modal";
 import { ErrorModal } from "@/components/shared/error";
 import { SuccessModal } from "@/components/shared/success";
 import { getAccessToken } from "@/app/api/login-api/accessToken";
+import Add from "@/components/shared/buttons/add";
+import DownloadPDF from "@/components/shared/buttons/downloadpdf";
+import Modal from "@/components/reusable/modal";
+import { DemographicModalContent } from "@/components/modal-content/demographic-modal-content";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
 
-export default function PatientPage({ patient }: { patient: any }) {
+export default function PatientPage() {
   const router = useRouter();
-  if(!getAccessToken()){
-    onNavigate(router, "/dashboard");
+  if (typeof window === "undefined") {
+    return null;
   }
+  if (!getAccessToken()) {
+    router.replace("/login");
+  }
+  const { toast } = useToast();
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
   const [isOpenSortedBy, setIsOpenSortedBy] = useState(false);
   const [sortBy, setSortBy] = useState("firstName");
@@ -65,6 +75,11 @@ export default function PatientPage({ patient }: { patient: any }) {
 
   const isModalOpen = (isOpen: boolean) => {
     setIsOpen(isOpen);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else if (!isOpen) {
+      document.body.style.overflow = "visible";
+    }
   };
 
   const goToPreviousPage = () => {
@@ -113,7 +128,7 @@ export default function PatientPage({ patient }: { patient: any }) {
       pageNumbers.push(
         <button
           key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
+          className={`flex ring-1 ring-gray-300 items-center justify-center  w-[49px]  ${
             currentPage === i ? "btn-pagination" : ""
           }`}
           onClick={() => setCurrentPage(i)}
@@ -148,7 +163,22 @@ export default function PatientPage({ patient }: { patient: any }) {
         setIsLoading(false);
       } catch (error: any) {
         setError(error.message);
-        setIsLoading(false);
+        console.log("error", error.message);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.message,
+          action: (
+            <ToastAction
+              altText="Try again"
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Try again
+            </ToastAction>
+          ),
+        });
       }
     };
 
@@ -158,8 +188,7 @@ export default function PatientPage({ patient }: { patient: any }) {
   const handlePatientClick = (patientId: any) => {
     const lowercasePatientId = patientId.toLowerCase();
     setIsLoading(true);
-    onNavigate(
-      router,
+    router.replace(
       `/patient-overview/${lowercasePatientId}/medical-history/allergies`
     );
   };
@@ -181,54 +210,40 @@ export default function PatientPage({ patient }: { patient: any }) {
   };
 
   return (
-    <div className="relative w-full mx-24 mt-24 z-1">
+    <div className="w-full  px-[150px] pt-[90px]">
       <div className="flex justify-end">
         <p
-          onClick={() => onNavigate(router, "/dashboard")}
-          className="text-[#64748B] underline cursor-pointer"
+          onClick={() => {
+            setIsLoading(true);
+            router.replace("/dashboard");
+          }}
+          className="text-[#64748B] underline cursor-pointer text-[15px]"
         >
           Back to Dashboard
         </p>
       </div>
       <div className="flex justify-between items-center">
-        <div className="flex flex-col mb-5 px-5 ">
-          <p className="p-title ">Patients List Records</p>
+        <div className="flex flex-col mb-3">
+          <p className="p-title">Patients List Records</p>
           {/* number of patiens */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[21px] mt-2 ">
-            Total of {totalPatient} Patients
+          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
+            Total of {patientList.length == 0 ? "0" : totalPatient} Patients
           </p>
         </div>
         <div className="flex flex-row justify-end">
-          <button
-            className=" mr-2 btn-add h-12 cursor-pointer"
-            onClick={() => isModalOpen(true)}
-          >
-            <img
-              src="/imgs/add.svg"
-              alt="Custom Icon"
-              className="w-5 h-5 mr-2"
-            />
-            Add
-          </button>
-          <button className="btn-pdfs relative h-12">
-            <img
-              src="/imgs/downloadpdf.svg"
-              alt="Custom Icon"
-              className="w-5 h-5 mr-2 "
-            />
-            Download PDF
-          </button>
+          <Add onClick={() => isModalOpen(true)}></Add>
+          <DownloadPDF></DownloadPDF>
         </div>
       </div>
 
       <div className="w-full sm:rounded-lg items-center">
         <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-          <form className=" mr-5">
+          <form className="mr-5 relative">
             {/* search bar */}
             <label className=""></label>
             <div className="flex">
               <input
-                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px]  ring-[1px] ring-[#E7EAEE]"
+                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
                 type="text"
                 placeholder="Search by reference no. or name..."
                 value={term}
@@ -237,10 +252,18 @@ export default function PatientPage({ patient }: { patient: any }) {
                   setCurrentPage(1);
                 }}
               />
+              <img
+                src="/svgs/search.svg"
+                alt="Search"
+                width="20"
+                height="20"
+                className="absolute left-8 top-9 pointer-events-none"
+              />
             </div>
           </form>
+
           <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-            <p className="text-[#191D23] opacity-[60% font-semibold]">
+            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
               Order by
             </p>
             <DropdownMenu
@@ -254,7 +277,7 @@ export default function PatientPage({ patient }: { patient: any }) {
               width={"165px"}
               label={"Select"}
             />
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
+            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
               Sort by
             </p>
             <DropdownMenu
@@ -273,62 +296,55 @@ export default function PatientPage({ patient }: { patient: any }) {
         </div>
 
         {/* START OF TABLE */}
-        <div className="w-full h-full">
-          {patientList.length === 0 ? (
-            <div>
-              <div className="w-full flex justify-center text-xl py-5">
-                No Patient Found!
-              </div>
-            </div>
-          ) : (
-            <table className="w-full h-full justify-center items-start ">
-              <thead className=" text-left rtl:text-right">
-                <tr className="uppercase text-[#64748B] border border-[#E7EAEE]">
-                  <th scope="col" className="px-6 py-3 w-[286px] h-[70px]">
-                    Patient ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[552px]">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[277px]">
-                    Age
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[277px]">
-                    Gender
-                  </th>
+        <div>
+          <table className="w-full justify-center items-start text-[15px]">
+            <thead className="text-left rtl:text-right">
+              <tr className="uppercase text-[#64748B] border-b border-[#E7EAEE] h-[70px]">
+                <th className="px-6 py-3">Name</th>
+                <th className="px-6 py-3">Patient ID</th>
+                <th className="px-6 py-3">Age</th>
+                <th className="px-6 py-3">Gender</th>
 
-                  <th scope="col" className="px-[70px] py-3 w-[210px] ">
-                    Action
-                  </th>
+                <th className="px-20 py-3 items-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patientList.length === 0 && (
+                <tr>
+                  <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
+                    <p className="text-[15px] font-normal text-gray-700 flex text-center">
+                      No Patient Found! <br />
+                    </p>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {patientList.map((patient, index) => (
-                  <tr
-                    key={index}
-                    className=" group  odd:bg-white hover:bg-gray-100 even:bg-gray-50 border-b"
-                  >
-                    <th
-                      scope="row"
-                      className="truncate max-w-[286px] text-left px-6 py-5  font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      {patient.uuid}
-                    </th>
-                    <td className="px-6">
-                      {patient.firstName} {patient.lastName}
-                    </td>
-                    <td className="px-6">{patient.age}</td>
-                    <td className="px-6">{patient.gender}</td>
-                    <td className="px-[50px]">
-                      <p onClick={() => handlePatientClick(patient.uuid)}>
-                        <Edit></Edit>
-                      </p>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+              )}
+              {patientList.map((patient, index) => (
+                <tr
+                  key={index}
+                  className=" group  bg-white hover:bg-gray-100  border-b"
+                >
+                  <td className="truncate flex items-center gap-2 px-6 py-5">
+                    <Image
+                      className="rounded-full "
+                      src="/imgs/dennis.svg"
+                      alt="Icon"
+                      width={45}
+                      height={45}
+                    />
+                    {patient.firstName} {patient.lastName}
+                  </td>
+                  <td className="truncate px-6 py-5">{patient.uuid}</td>
+                  <td className="truncate px-6 py-5">{patient.age}</td>
+                  <td className="truncate px-6 py-5">{patient.gender}</td>
+                  <td className="px-[70px]">
+                    <p onClick={() => handlePatientClick(patient.uuid)}>
+                      <Edit></Edit>
+                    </p>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         {/* END OF TABLE */}
       </div>
@@ -336,36 +352,35 @@ export default function PatientPage({ patient }: { patient: any }) {
       {totalPages <= 1 ? (
         <div></div>
       ) : (
-        <div className="mt-5">
+        <div className="mt-5 pb-5">
           <div className="flex justify-between">
-            <p className="font-medium size-[18px] w-[138px] items-center">
+            <p className="font-medium size-[18px] text-[15px] w-[138px] items-center">
               Page {currentPage} of {totalPages}
             </p>
             <div>
               <nav>
-                <div className="flex -space-x-px text-sm">
-                  <div>
+                <div className="flex text-[15px] ">
+                  <div className="flex">
                     <button
                       onClick={goToPreviousPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
+                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
                     >
                       Prev
                     </button>
-                  </div>
-                  {renderPageNumbers()}
 
-                  <div className="ml-5">
+                    {renderPageNumbers()}
+
                     <button
                       onClick={goToNextPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
+                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
                     >
                       Next
                     </button>
                   </div>
                   <form onSubmit={handleGoToPage}>
-                    <div className="flex px-5 ">
+                    <div className="flex pl-4 ">
                       <input
-                        className={`ipt-pagination appearance-none  text-center border ring-1 ${
+                        className={`ipt-pagination appearance-none  text-center ring-1 ${
                           gotoError ? "ring-red-500" : "ring-gray-300"
                         } border-gray-100`}
                         type="text"
@@ -384,8 +399,11 @@ export default function PatientPage({ patient }: { patient: any }) {
                           }
                         }}
                       />
-                      <div className="px-5">
-                        <button type="submit" className="btn-pagination ">
+                      <div className="">
+                        <button
+                          type="submit"
+                          className="btn-pagination ring-1 ring-[#007C85]"
+                        >
                           Go{" "}
                         </button>
                       </div>
@@ -398,13 +416,18 @@ export default function PatientPage({ patient }: { patient: any }) {
         </div>
       )}
       {isOpen && (
-        <DemographicModal
+        <Modal
+          content={
+            <DemographicModalContent
+              isModalOpen={isModalOpen}
+              isOpen={isOpen}
+              label="sample label"
+              onSuccess={onSuccess}
+              onFailed={onFailed}
+              setErrorMessage={setError}
+            />
+          }
           isModalOpen={isModalOpen}
-          isOpen={isOpen}
-          label="sample label"
-          onSuccess={onSuccess}
-          onFailed={onFailed}
-          setErrorMessage={setError}
         />
       )}
       {isSuccessOpen && (
@@ -412,7 +435,8 @@ export default function PatientPage({ patient }: { patient: any }) {
           label="Success"
           isAlertOpen={isSuccessOpen}
           toggleModal={setIsSuccessOpen}
-          isEdit={isEdit}
+          setIsUpdated=""
+          isUpdated=""
         />
       )}
       {isErrorOpen && (

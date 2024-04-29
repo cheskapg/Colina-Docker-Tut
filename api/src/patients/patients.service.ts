@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreatePatientsInput } from './dto/create-patients.input';
 import { UpdatePatientsInput } from './dto/update-patients.input';
 import { Patients } from './entities/patients.entity';
-import { ILike, Like, Repository } from 'typeorm';
+import { Brackets, ILike, In, Like, Repository } from 'typeorm';
 import { IdService } from 'services/uuid/id.service'; //
 import {
   HttpException,
@@ -22,8 +22,11 @@ export class PatientsService {
   constructor(
     @InjectRepository(Patients)
     private patientsRepository: Repository<Patients>,
+    // @InjectRepository(Prescriptions)
+    // private prescriptionRepository: Repository<Prescriptions>,
+
     private idService: IdService, // Inject the IdService
-  ) { }
+  ) {}
 
   //CREATE PATIENT INFO
   async createPatients(input: CreatePatientsInput): Promise<Patients> {
@@ -33,7 +36,6 @@ export class PatientsService {
         firstName: Like(`%${input.firstName}%`),
         middleName: Like(`%${input.middleName}%`),
         lastName: Like(`%${input.lastName}%`),
-        dateOfBirth: input.dateOfBirth, // Check for exact match
       },
     });
     // If a patient with similar information exists, throw an error
@@ -57,8 +59,7 @@ export class PatientsService {
     delete result.id;
     delete result.deletedAt;
     delete result.updatedAt;
-    return (result)
-
+    return result;
   }
   //GET FULL PATIENT INFORMATION
   async getAllPatientsFullInfo(): Promise<Patients[]> {
@@ -68,7 +69,15 @@ export class PatientsService {
   //GET ONE  PATIENT INFORMATION VIA ID
   async getPatientOverviewById(id: string): Promise<ProcessedPatient[]> {
     const patientList = await this.patientsRepository.find({
-      select: ['uuid', 'firstName','middleName', 'lastName', 'age', 'gender', 'codeStatus'],
+      select: [
+        'uuid',
+        'firstName',
+        'middleName',
+        'lastName',
+        'age',
+        'gender',
+        'codeStatus',
+      ],
       where: { uuid: id },
       relations: ['allergies'],
     });
@@ -101,7 +110,6 @@ export class PatientsService {
         ...new Set(patient.allergies.map((allergy) => allergy.type)),
       ];
 
-
       // Creating a copy of patient object to avoid mutating original data
       const processedPatient = { ...patient };
 
@@ -112,7 +120,7 @@ export class PatientsService {
         allergies: uniqueAllergyTypes.join(', '), // Join unique allergy types into a single string
       };
     });
-    console.log(processedPatientList, "pp")
+    console.log(processedPatientList, 'pp');
     return processedPatientList;
   }
 

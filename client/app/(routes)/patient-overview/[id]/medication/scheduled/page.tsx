@@ -12,13 +12,18 @@ import { ScheduledMedModal } from "@/components/modals/sched-medication.modal";
 import { fetchScheduledMedByPatient } from "@/app/api/medication-logs-api/scheduled-med-api";
 import { ErrorModal } from "@/components/shared/error";
 import { SuccessModal } from "@/components/shared/success";
-import Loading from "../loading";
+
+import Modal from "@/components/reusable/modal";
+import { ScheduledModalContent } from "@/components/modal-content/scheduled-modal-content";
 
 const Scheduled = () => {
   const router = useRouter();
+  if (typeof window === "undefined") {
+    return null;
+  }
   // start of orderby & sortby function
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
-  const [sortOrder, setSortOrder] = useState("ASC");
+  const [sortOrder, setSortOrder] = useState("DESC");
   const [sortBy, setSortBy] = useState("createdAt");
   const [pageNumber, setPageNumber] = useState("");
   const [patientScheduledMed, setPatientScheduledMed] = useState<any[]>([]);
@@ -34,7 +39,7 @@ const Scheduled = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
-
+  const [isUpdated, setIsUpdated] = useState(false);
   interface Modalprops {
     label: string;
     isOpen: boolean;
@@ -46,7 +51,8 @@ const Scheduled = () => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else if (!isOpen) {
-      document.body.style.overflow = "scroll";
+      document.body.style.overflow = "visible";
+      setIsEdit(false);
       setScheduledMedData([]);
     }
   };
@@ -135,7 +141,7 @@ const Scheduled = () => {
       pageNumbers.push(
         <button
           key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
+          className={`flex ring-1 ring-gray-300 items-center justify-center  w-[49px]  ${
             currentPage === i ? "btn-pagination" : ""
           }`}
           onClick={() => setCurrentPage(i)}
@@ -183,64 +189,82 @@ const Scheduled = () => {
   };
 
   if (isLoading) {
-    return <Loading></Loading>;
+    return (
+      <div className="w-full h-full flex justify-center items-center ">
+        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+      </div>
+    );
   }
 
   console.log("patientScheduledMed", patientScheduledMed);
-  console.log(patientScheduledMed)
+  console.log(patientScheduledMed);
   return (
     <div className="  w-full">
-      <div className="flex justify-between ">
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center">
-            <h1 className="p-title">Medication Logs</h1>
-            <h1 className="p-title mx-2">{">"} </h1>
-            <h1 className="p-title text-[#007C85] cursor-pointer">Scheduled</h1>
-            <h1 className="p-title mx-2">{">"} </h1>
-            <h1
+      <div className="w-full justify-between flex mb-2">
+        <div className="flex-row">
+          <div className="flex gap-2">
+            <p className="p-title">Medication Logs</p>
+            <span className="slash">{">"}</span>
+            <span className="active">Scheduled</span>
+            <span className="slash">{"/"}</span>
+            <span
               onClick={() => {
-                onNavigate(
-                  router,
+                setIsLoading(true);
+                router.replace(
                   `/patient-overview/${patientId.toLowerCase()}/medication/prorenata`
                 );
-                setIsLoading(true);
               }}
-              className="p-title cursor-pointer text-gray-600"
+              className="bread"
             >
               PRN
-            </h1>
+            </span>
           </div>
-          {/* number of patiens */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px] mb-4 ">
-            Total of {totalScheduledMeds} Scheduled Medication Logs
-          </p>
+          <div>
+            <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px]">
+              Total of {totalScheduledMeds} Scheduled Medication Logs
+            </p>
+          </div>
         </div>
-        <div className="flex flex-row justify-end mt-[15px]">
-          <Add onClick={() => isModalOpen(true)} />
-          <DownloadPDF></DownloadPDF>
+        <div className="flex gap-2">
+          <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+            <img src="/imgs/add.svg" alt="" />
+            <p className="text-[18px]">Add</p>
+          </button>
+          <button className="btn-pdfs gap-2">
+            <img src="/imgs/downloadpdf.svg" alt="" />
+            <p className="text-[18px]">Download PDF</p>
+          </button>
         </div>
       </div>
 
       <div className="w-full m:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px] px-5">
-          <form className="">
+        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
+          <form className="mr-5 relative">
             {/* search bar */}
             <label className=""></label>
             <div className="flex">
               <input
-                className=" py-3 px-5  w-[573px] h-[47px] pt-[14px]  ring-[1px] ring-[#E7EAEE]"
+                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
                 type="text"
                 placeholder="Search by reference no. or name..."
-                name="term"
                 value={term}
                 onChange={(e) => {
                   setTerm(e.target.value);
+                  setCurrentPage(1);
                 }}
+              />
+              <img
+                src="/svgs/search.svg"
+                alt="Search"
+                width="20"
+                height="20"
+                className="absolute left-8 top-9 pointer-events-none"
               />
             </div>
           </form>
-          <div className="flex w-full justify-end items-center gap-[12px]">
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
+
+          <div className="flex w-full justify-end items-center gap-[12px] mr-3">
+            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
               Order by
             </p>
             <DropdownMenu
@@ -248,15 +272,13 @@ const Scheduled = () => {
                 label,
                 onClick: () => {
                   onClick(label);
-                  console.log("label", label);
                 },
               }))}
               open={isOpenOrderedBy}
               width={"165px"}
               label={"Select"}
             />
-
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
+            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
               Sort by
             </p>
             <DropdownMenu
@@ -276,38 +298,24 @@ const Scheduled = () => {
 
         {/* START OF TABLE */}
         <div>
-          <table className="w-full text-left rtl:text-right">
-            <thead className="">
-              <tr className="uppercase text-[#64748B] border-y  ">
-                <th scope="col" className="px-6 py-3 w-[300px] h-[60px] ">
-                  Medication ID
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px]">
-                  Date
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px]">
-                  Time
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px]">
-                  Medication
-                </th>
-                <th scope="col" className="px-5 py-3 w-[400px]">
-                  Notes
-                </th>
-                <th scope="col" className="px-6 py-3 w-[100px]">
-                  Status
-                </th>
-                <th scope="col" className=" px-20 py-4 w-[10px]">
-                  Action
-                </th>
+          <table className="text-left rtl:text-right">
+            <thead>
+              <tr className="uppercase text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
+                <td className="px-6 py-3">Medication ID</td>
+                <td className="px-6 py-3">Date</td>
+                <td className="px-5 py-3">Time</td>
+                <td className="px-4 py-3">Medication</td>
+                <td className="px-4 py-3">Notes</td>
+                <td className="px-4 py-3">Status</td>
+                <td className="px-4 py-4">Action</td>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="h-[220px]">
               {patientScheduledMed.length === 0 && (
                 <tr>
                   <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                    <p className="text-xl font-semibold text-gray-700">
-                      No Scheduled Medication Log/s
+                    <p className="text-[15px] font-normal text-gray-700 flex text-center">
+                      No Scheduled Medication Log/s <br />
                     </p>
                   </td>
                 </tr>
@@ -317,15 +325,12 @@ const Scheduled = () => {
                   {patientScheduledMed.map((schedMed, index) => (
                     <tr
                       key={index}
-                      className="odd:bg-white border-b hover:bg-[#f4f4f4] group"
+                      className="group hover:bg-[#f4f4f4]  border-b text-[15px]"
                     >
-                      <th
-                        scope="row"
-                        className="truncate max-w-[286px] px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                      >
+                      <td className="truncate px-6 py-3">
                         {schedMed.medicationlogs_uuid}
-                      </th>
-                      <td className="truncate max-w-[552px] px-6 py-4">
+                      </td>
+                      <td className="truncate px-6 py-3">
                         {schedMed.medicationlogs_medicationLogsDate}
                       </td>
                       <td className="px-6 py-4">
@@ -349,17 +354,32 @@ const Scheduled = () => {
                           hour12: true,
                         })}
                       </td>
-                      <td className="truncate max-w-[400px] px-6 py-4">
+                      <td className="truncate px-6 py-3">
                         {schedMed.medicationlogs_medicationLogsName}
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="truncate px-6 py-3">
                         {schedMed.medicationlogs_notes}
                       </td>
-                      <td className="px-6 py-4">
-                        {schedMed.medicationlogs_medicationLogStatus}
+                      <td className="text-15px me-1 px-6 py-5 rounded-full flex items-center">
+                        <div
+                          className={`px-2 font-semibold rounded-[20px] relative flex items-center ${
+                            schedMed.medicationlogs_medicationLogStatus ===
+                            "Given"
+                              ? "bg-[#dfffea] text-[#17C653] text-[15px]" // Green color for Given
+                              : schedMed.medicationlogs_medicationLogStatus ===
+                                "Held"
+                              ? "bg-[#E7EAEE] text-[#3C3C3C] text-[15px]" // Dark color for Held
+                              : schedMed.medicationlogs_medicationLogStatus ===
+                                "Refused"
+                              ? "bg-[#FEE9E9] text-[#EF4C6A] text-[15px]" // Red color for Refused
+                              : schedMed.medicationlogs_medicationLogStatus
+                          }`}
+                        >
+                          {schedMed.medicationlogs_medicationLogStatus}
+                        </div>
                       </td>
 
-                      <td className="px-[70px] py-4">
+                      <td className="px-6 py-3">
                         <p
                           onClick={() => {
                             isModalOpen(true);
@@ -385,34 +405,33 @@ const Scheduled = () => {
       ) : (
         <div className="mt-5 pb-5">
           <div className="flex justify-between">
-            <p className="font-medium size-[18px] w-[138px] items-center">
+            <p className="font-medium size-[18px] text-[15px] w-[138px] items-center">
               Page {currentPage} of {totalPages}
             </p>
             <div>
               <nav>
-                <div className="flex -space-x-px text-sm">
-                  <div>
+                <div className="flex text-[15px] ">
+                  <div className="flex">
                     <button
                       onClick={goToPreviousPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
+                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
                     >
                       Prev
                     </button>
-                  </div>
-                  {renderPageNumbers()}
 
-                  <div className="ml-5">
+                    {renderPageNumbers()}
+
                     <button
                       onClick={goToNextPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
+                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
                     >
                       Next
                     </button>
                   </div>
                   <form onSubmit={handleGoToPage}>
-                    <div className="flex px-5 ">
+                    <div className="flex pl-4 ">
                       <input
-                        className={`ipt-pagination appearance-none  text-center border ring-1 ${
+                        className={`ipt-pagination appearance-none  text-center ring-1 ${
                           gotoError ? "ring-red-500" : "ring-gray-300"
                         } border-gray-100`}
                         type="text"
@@ -431,8 +450,11 @@ const Scheduled = () => {
                           }
                         }}
                       />
-                      <div className="px-5">
-                        <button type="submit" className="btn-pagination ">
+                      <div className="">
+                        <button
+                          type="submit"
+                          className="btn-pagination ring-1 ring-[#007C85]"
+                        >
                           Go{" "}
                         </button>
                       </div>
@@ -445,15 +467,24 @@ const Scheduled = () => {
         </div>
       )}
       {isOpen && (
-        <ScheduledMedModal
+        <Modal
+          content={
+            <ScheduledModalContent
+              isModalOpen={isModalOpen}
+              uuid=""
+              name=""
+              aschData={""}
+              isOpen={isOpen}
+              isEdit={isEdit}
+              scheduledMedData={scheduledMedData}
+              setIsUpdated={setIsUpdated}
+              label="sample label"
+              onSuccess={onSuccess}
+              onFailed={onFailed}
+              setErrorMessage={setError}
+            />
+          }
           isModalOpen={isModalOpen}
-          isOpen={isOpen}
-          isEdit={isEdit}
-          scheduledMedData={scheduledMedData}
-          label="sample label"
-          onSuccess={onSuccess}
-          onFailed={onFailed}
-          setErrorMessage={setError}
         />
       )}
       {isSuccessOpen && (
@@ -461,7 +492,8 @@ const Scheduled = () => {
           label="Success"
           isAlertOpen={isSuccessOpen}
           toggleModal={setIsSuccessOpen}
-          isEdit={isEdit}
+          isUpdated={isUpdated}
+          setIsUpdated={setIsUpdated}
         />
       )}
       {isErrorOpen && (
