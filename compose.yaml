@@ -1,90 +1,62 @@
-  version: "3.8"
+version: "3.8"
 
-  services:
-    web:
-      depends_on:
-        - apis
-      image: colina-web
-      build: ./client
-      volumes:
-        - ./client:/app
-        - /app/node_modules # <-- try adding this!
-        - /app/.next
-      ports:
-        - 3001:3001
+services:
+  web:
+    depends_on:
+      - apis
+    image: colina-web
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/app
+      - /app/node_modules # Ensure node_modules are not overridden by the volume
+      - /app/.next
+    ports:
+      - 3001:3001
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000  # Use service name 'apis'
+      - WATCHPACK_POLLING=true
+    networks:
+      - default
+    tty: true
 
-      develop:
-        watch:
-          - path: ./client/package.json
-            action: rebuild
-          - path: ./client/next.config.js
-            action: rebuild
-          - path: ./client/package-lock.json
-            action: rebuild
-          - path: ./client
-            target: /app
-            action: sync+restart
-      environment:
-        - NEXT_PUBLIC_API_URL=http://localhost:3000
-        - WATCHPACK_POLLING=true
+  apis:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - PGHOST=colinadb.postgres.database.azure.com
+      - PGPORT=5432
+      - PGUSER=colina
+      - PGPASSWORD=jajnav5@
+      - DB_SYNCHRONIZE=colina
+    networks:
+      - default
 
-      networks:
-        - default
-      # command: npm run dev
-      tty: true
+  db:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD: trust
+      - PGUSER: colina
+      - POSTGRES_PASSWORD: jajnav5@
+      - PGHOST: colinadb.postgres.database.azure.com
+      - PGDATABASE: colina
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-    apis:
-      depends_on:
-        - db
-        # db: 
-        #   condition: service_healthy
-      build: ./api
-      image: api
-      volumes:
-        - ./api:/app
-        - /app/node_modules #
-      ports:
-        - 3000:3000
-      environment:
-        - PGHOST=colinadb.postgres.database.azure.com
-        - PGPORT=5432
-        - PGUSER=colina
-        - PGPASSWORD=jajnav5@
-        - DB_SYNCHRONIZE=colina
-      networks:
-        - default
+networks:
+  default:
 
-      develop:
-        watch:
-          - path: ./api/package.json
-            action: rebuild
-          - path: ./api/package-lock.json
-            action: rebuild
-          - path: ./api
-            target: /app
-            action: sync+restart
-
-    db:
-      image: postgres:15-alpine
-      restart: always
-      container_name: postgres
-      user: tfsbuaxzey
-      volumes:
-        - db-data:/var/lib/postgresql/data
-      environment:
-        POSTGRES_HOST_AUTH_METHOD: trust
-        PGUSER: colina
-        DB_LOGGING=true
-        POSTGRES_PASSWORD: jajnav5@
-        PGHOST: colinadb.postgres.database.azure.com-database
-
-      expose:
-        - 5432
-      healthcheck:
-        test: ["CMD", "pg_isready"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-
-  volumes:
-    db-data:
+volumes:
+  db-data:
