@@ -22,17 +22,17 @@ jobs:
         
     - name: Build and push API image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USER }}/api:latest \
-                     --build-arg DB_TYPE="postgres" \
-                     --build-arg DB_HOST="chzcolinahealthnest-server.postgres.database.azure.com" \
-                     --build-arg DB_PORT=5432 \
-                     --build-arg DB_USERNAME="tfsbuaxzey" \
-                     --build-arg DB_PASSWORD="$MDG3cehPou5stjg" \
-                     --build-arg DB_DATABASE="chzcolinahealthnest-database" \
-                     --build-arg DB_SYNCHRONIZE=true \
-                     --build-arg DB_LOGGING=true \
-                     ./api
-        docker push ${{ secrets.DOCKERHUB_USER }}/api:latest
+          docker build -t ${{ secrets.DOCKERHUB_USER }}/api:latest \
+                       --build-arg DB_TYPE="postgres" \
+                       --build-arg DB_HOST="colinadb.postgres.database.azure.com" \
+                       --build-arg DB_PORT=5432 \
+                       --build-arg DB_USERNAME="colina" \
+                       --build-arg DB_PASSWORD="jajnav5@" \
+                       --build-arg DB_DATABASE="colina" \
+                       --build-arg DB_SYNCHRONIZE=true \
+                       --build-arg DB_LOGGING=true \
+                       ./api
+          docker push ${{ secrets.DOCKERHUB_USER }}/api:latest
         
     - name: Build and push web image
       run: |
