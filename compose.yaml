@@ -49,8 +49,8 @@
         - PGHOST=colinadb.postgres.database.azure.com
         - PGPORT=5432
         - PGUSER=colina
-        - PGPASSWORD="jajnav5@"
-        - DB_SYNCHRONIZE=chzcolinahealthnest-database
+        - PGPASSWORD=jajnav5@
+        - DB_SYNCHRONIZE=colina
       networks:
         - default
 
@@ -74,7 +74,8 @@
       environment:
         POSTGRES_HOST_AUTH_METHOD: trust
         PGUSER: colina
-        POSTGRES_PASSWORD: $MDG3cehPou5stjg
+        DB_LOGGING=true
+        POSTGRES_PASSWORD: jajnav5@
         PGHOST: colinadb.postgres.database.azure.com-database
 
       expose:
