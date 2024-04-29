@@ -2,6 +2,9 @@ FROM node
 
 
 WORKDIR /app
+# Set environment variables
+ENV NEXT_PUBLIC_API_URL=http://localhost:3000
+ENV WATCHPACK_POLLING=true
 
 COPY package*.json ./
 

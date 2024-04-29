@@ -2,8 +2,6 @@ version: "3.8"
 
 services:
   web:
-    depends_on:
-      - apis
     image: colina-web
     build: 
       context: ./client
@@ -21,42 +19,69 @@ services:
       - default
     tty: true
 
-  apis:
-    build: 
-      context: ./api
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    environment:
-      - PGHOST=colinadb.postgres.database.azure.com
-      - PGPORT=5432
-      - PGUSER=colina
-      - PGPASSWORD=jajnav5@
-      - DB_SYNCHRONIZE=colina
-    networks:
-      - default
-
-  db:
-    image: postgres:15-alpine
-    restart: always
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD: trust
-      - PGUSER: colina
-      - POSTGRES_PASSWORD: jajnav5@
-      - PGHOST: colinadb.postgres.database.azure.com
-      - PGDATABASE: colina
-    expose:
-      - 5432
-    # healthcheck:
-    #   test: ["CMD", "pg_isready"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
-
 networks:
   default:
 
-volumes:
-  db-data:
+# working for web only
+# version: "3.8"
+
+# services:
+#   web:
+#     depends_on:
+#       - apis
+#     image: colina-web
+#     build: 
+#       context: ./client
+#       dockerfile: Dockerfile
+#     volumes:
+#       - ./client:/app
+#       - /app/node_modules # Ensure node_modules are not overridden by the volume
+#       - /app/.next
+#     ports:
+#       - 3001:3001
+#     environment:
+#       - NEXT_PUBLIC_API_URL=http://localhost:3000  # Use service name 'apis'
+#       - WATCHPACK_POLLING=true
+#     networks:
+#       - default
+#     tty: true
+
+#   apis:
+#     build: 
+#       context: ./api
+#       dockerfile: Dockerfile
+#     ports:
+#       - 3000:3000
+#     environment:
+#       - PGHOST=colinadb.postgres.database.azure.com
+#       - PGPORT=5432
+#       - PGUSER=colina
+#       - PGPASSWORD=jajnav5@
+#       - DB_SYNCHRONIZE=colina
+#     networks:
+#       - default
+
+#   db:
+#     image: postgres:15-alpine
+#     restart: always
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+#     environment:
+#       - POSTGRES_HOST_AUTH_METHOD: trust
+#       - PGUSER: colina
+#       - POSTGRES_PASSWORD: jajnav5@
+#       - PGHOST: colinadb.postgres.database.azure.com
+#       - PGDATABASE: colina
+#     expose:
+#       - 5432
+#     # healthcheck:
+#     #   test: ["CMD", "pg_isready"]
+#     #   interval: 10s
+#     #   timeout: 5s
+#     #   retries: 5
+
+# networks:
+#   default:
+
+# volumes:
+#   db-data:
