@@ -1,6 +1,7 @@
 "use client";
 import { merge } from "chart.js/helpers";
 import moment from "moment";
+import Image from "next/image";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 import {
@@ -201,15 +202,7 @@ const TimeGraph = ({
                     return (
                       <td
                         key={`${dataIndex}_${col.time}`}
-                        className={`
-                        ${
-                          patientWithMedicationLogsToday.length === 1
-                            ? "h-[610px]"
-                            : patientWithMedicationLogsToday.length === 2
-                            ? "h-[305px]"
-                            : "h-[204px]"
-                        }
-                        text-center border-x border-dashed  border-black overflow text-nowrap text-ellipsis overflow-hidden  ${
+                        className={`h-[204px] text-center border-x border-dashed  border-black overflow text-nowrap text-ellipsis overflow-hidden  ${
                           parseInt(col.time) <= parseInt(currentTime) - 100
                             ? "bg-[#E4E4E4] "
                             : "bg-white"
@@ -238,10 +231,11 @@ const TimeGraph = ({
                                         }) =>
                                           log.medicationLogStatus !== "pending"
                                       ) && (
-                                        <img
+                                        <Image
                                           src="/icons/chart-done.svg"
                                           alt="chart-done"
                                           width={30}
+                                          height={30}
                                           className="pointer-events-none select-none"
                                         />
                                       )}{" "}
@@ -340,10 +334,11 @@ const TimeGraph = ({
                                   <HoverCardTrigger>
                                     <div>
                                       <div className="cursor-pointer relative flex items-center justify-center">
-                                        <img
+                                        <Image
                                           src="/icons/chart-list.svg"
                                           alt="list"
                                           width={30}
+                                          height={30}
                                           className="pointer-events-none select-none"
                                         />
                                         {/* Calculate the count of logs where status is not pending */}
@@ -496,10 +491,11 @@ const TimeGraph = ({
                                         <span>{log.medicationLogsName}</span>
                                       ) : (
                                         <span>
-                                          <img
+                                          <Image
                                             src="/icons/chart-done.svg"
                                             alt="done"
                                             width={50}
+                                            height={50}
                                             className="pointer-events-none select-none"
                                             //
                                           />

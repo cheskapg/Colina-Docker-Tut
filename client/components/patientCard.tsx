@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-
-import { PRNMedModal } from "./modals/prn-medication.modal";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import { onNavigate } from "@/actions/navigation";
@@ -80,7 +79,7 @@ const PatientCard = ({
         {patientWithMedicationLogsToday.map((patient: any, index: number) => (
           <div
             className={`
-          ${patientWithMedicationLogsToday.length === 2 ? "mb-[103px]" : ""}
+
           w-full `}
             key={index}
           >
@@ -93,12 +92,13 @@ const PatientCard = ({
                 }}
               >
                 <div className="flex p-3 pl-5 flex-row w-full mt-2">
-                  <div className="rounded-full max-h-[60px] max-w-[60px] p-1 bg-[#007C854D]">
-                    <img
+                  <div className="rounded-full min-w-[60px] min-h-[60px] max-h-[60px] max-w-[60px] p-1 bg-[#007C854D]">
+                    <Image
                       className="rounded-full"
-                      src="/imgs/tao1.svg"
+                      src="/imgs/drake.png"
                       alt="Patient"
-                      width={50}
+                      width={60}
+                      height={60}
                     />
                   </div>
                   <div className="ml-5 max-w-[250px]  flex flex-col truncate text-ellipsis ">
@@ -141,10 +141,11 @@ const PatientCard = ({
 
               <div className="h-full w-1/6 border-[#F4F4F4] border-l-4 border-solid flex justify-between items-center flex-col">
                 <div className="h-full w-full flex flex-col border-[#F4F4F4] border-b-4 text-xs items-center justify-center  cursor-pointer">
-                  <img
+                  <Image
                     src="/icons/chart-order.svg"
                     alt="order"
                     width={20}
+                    height={20}
                     className="pointer-events-none select-none"
                   />
                   Orders
@@ -165,10 +166,11 @@ const PatientCard = ({
                     setPatientName(`${patient.firstName} ${patient.lastName}`);
                   }}
                 >
-                  <img
+                  <Image
                     src="/icons/chart-prn.svg"
                     alt="prn"
                     width={20}
+                    height={20}
                     className="pointer-events-none select-none"
                   />
                   PRN
@@ -187,28 +189,31 @@ const PatientCard = ({
                 </div>
                 <div className="h-full w-full flex flex-row border-[#F4F4F4] text-xs items-center gap-1 justify-center  cursor-pointer">
                   <div>
-                    <img
+                    <Image
                       src="/icons/chart-status.svg"
                       alt="status"
                       width={15}
+                      height={15}
                       className="pointer-events-none select-none"
                     />
                     A
                   </div>
                   <div>
-                    <img
+                    <Image
                       src="/icons/chart-status.svg"
                       alt="status"
                       width={15}
+                      height={15}
                       className="pointer-events-none select-none"
                     />
                     S
                   </div>
                   <div>
-                    <img
+                    <Image
                       src="/icons/chart-status.svg"
                       alt="status"
                       width={15}
+                      height={15}
                       className="pointer-events-none select-none"
                     />
                     D
@@ -233,10 +238,11 @@ const PatientCard = ({
                           <div
                             className={`bg-[#FACC15] rounded-full p-1.5 cursor-pointer`}
                           >
-                            <img
+                            <Image
                               src="icons/card-list.svg"
                               alt="list"
                               width={20}
+                              height={20}
                               className="pointer-events-none select-none"
                             />
                             <div className=" h-full  absolute -mt-6 ml-5">

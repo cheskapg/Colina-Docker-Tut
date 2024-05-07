@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import DropdownMenu from "@/components/dropdown-menu";
 import Add from "@/components/shared/buttons/add";
 import DownloadPDF from "@/components/shared/buttons/downloadpdf";
@@ -9,15 +9,14 @@ import { useEffect, useState } from "react";
 import { onNavigate } from "@/actions/navigation";
 import { useParams, useRouter } from "next/navigation";
 import { fetchLabResultsByPatient } from "@/app/api/lab-results-api/lab-results.api";
-import { LabResultModal } from "@/components/modals/labresults.modal";
 import Modal from "@/components/reusable/modal";
 import { SuccessModal } from "@/components/shared/success";
 import { LabresultsModalContent } from "@/components/modal-content/labresults-modal-content";
 import { LabResultsViewModalContent } from "@/components/modal-content/labresultsview-modal-content";
+import Pagination from "@/components/shared/pagination";
 export default function Laboratoryresults() {
   const router = useRouter();
   if (typeof window === "undefined") {
-    return null;
   }
   // start of orderby & sortby function
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
@@ -158,8 +157,13 @@ export default function Laboratoryresults() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-full flex justify-center items-center">
-        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+      <div className="container w-full h-full flex justify-center items-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
       </div>
     );
   }
@@ -196,83 +200,92 @@ export default function Laboratoryresults() {
   };
 
   return (
-    <div className="  w-full">
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <h1 className="p-title">Laboratory Results </h1>
-          {/* number of patients */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px] mb-4 ">
-            Total of {totalLabResults} Lab Results
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
-            <img src="/imgs/add.svg" alt="" />
-            <p className="text-[18px]">Add</p>
-          </button>
-          <button className="btn-pdfs gap-2">
-            <img src="/imgs/downloadpdf.svg" alt="" />
-            <p className="text-[18px]">Download PDF</p>
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full sm:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-          <form className="mr-5 relative">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                value={term}
-                onChange={(e) => {
-                  setTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+    <div className="  w-full h-full flex flex-col justify-between">
+      <div className="w-full h-full">
+        <div className="justify-between flex mb-2">
+          <div className="flex flex-col">
+            <p className="p-title">Laboratory Results </p>
+            {/* number of patients */}
+            <div>
+              <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
+                Total of {totalLabResults} Lab Results
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+              <Image src="/imgs/add.svg" alt="" width={22} height={22} />
+              <p className="text-[18px]">Add</p>
+            </button>
+            <button className="btn-pdfs gap-2">
+              <Image
+                src="/imgs/downloadpdf.svg"
+                alt=""
+                width={22}
+                height={22}
               />
-              <img
-                src="/svgs/search.svg"
-                alt="Search"
-                width="20"
-                height="20"
-                className="absolute left-8 top-9 pointer-events-none"
+              <p className="text-[18px]">Download PDF</p>
+            </button>
+          </div>
+        </div>
+
+        <div className="w-full sm:rounded-lg items-center">
+          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
+            <form className="mr-5 relative">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex">
+                <input
+                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width="20"
+                  height="20"
+                  className="absolute left-8 top-9 pointer-events-none"
+                />
+              </div>
+            </form>
+
+            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
+              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                label={"Select"}
+              />
+              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                label={"Select"}
               />
             </div>
-          </form>
-
-          <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-              Order by
-            </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Select"}
-            />
-            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
-            />
           </div>
         </div>
 
@@ -281,23 +294,24 @@ export default function Laboratoryresults() {
           <table className="text-left rtl:text-right">
             <thead>
               <tr className="text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
-                <td className="px-6 py-3 w-[160px]">LAB RESULT ID</td>
-                <td className="px-6 py-3 w-[150px]">DATE</td>
-                <td className="px-6 py-3 w-[210px]">HEMOGLOBIN A1c (%)</td>
-                <td className="px-6 py-3 w-[190px]">
+                <td className="px-6 py-3 w-[170px]">LAB RESULT ID</td>
+                <td className="px-6 py-3 w-[170px]">DATE</td>
+                <td className="px-6 py-3 w-[170px]">HEMOGLOBIN A1c (%)</td>
+                <td className="px-6 py-3 w-[170px]">
                   FASTING BLOOD GLUCOSE (mg/dL)
                 </td>
-                <td className="px-6 py-3 w-[200px]">
+                <td className="px-6 py-3 w-[170px]">
                   TOTAL CHOLESTEROL (mg/dL)
                 </td>
-                <td className="px-6 py-3 w-[150px]">LDL-C (mg/dL)</td>
-                <td className="px-6 py-3 w-[150px]">HDL-C (mg/dL)</td>
-                <td className="px-6 py-3 w-[160px]">TRIGLYCERIDES (mg/dL)</td>
+                <td className="px-6 py-3 w-[170px]">LDL-C (mg/dL)</td>
+                <td className="px-6 py-3 w-[170px]">HDL-C (mg/dL)</td>
+                <td className="px-6 py-3 w-[170px]">TRIGLYCERIDES (mg/dL)</td>
                 <td className="px-6 py-3 text-center">ACTION</td>
+                <td className="w-[14px]"></td>
               </tr>
             </thead>
 
-            <tbody className="h-[220px]">
+            <tbody className="h-[220px] overflow-y-scroll">
               {patientLabResults.length === 0 && (
                 <div className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
                   <p className="text-[15px] font-normal text-gray-700 text-center">
@@ -311,28 +325,28 @@ export default function Laboratoryresults() {
                     key={index}
                     className="odd:bg-white border-b hover:bg-[#f4f4f4] group text-[15px]"
                   >
-                    <td className="px-6 py-3 w-[160px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_uuid}
                     </td>
-                    <td className=" px-6 py-3 w-[150px]">
+                    <td className=" px-6 py-3 w-[170px]">
                       {labResult.labResults_date}
                     </td>
-                    <td className="px-6 py-3 w-[210px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_hemoglobinA1c}%
                     </td>
-                    <td className="px-6 py-3 w-[190px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_fastingBloodGlucose}mg/dL
                     </td>
-                    <td className="px-6 py-3 w-[200px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_totalCholesterol}mg/dL
                     </td>
-                    <td className="px-6 py-3 w-[150px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_ldlCholesterol}mg/dL
                     </td>
-                    <td className="px-6 py-3 w-[150px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_hdlCholesterol}mg/dL
                     </td>
-                    <td className="px-6 py-3 w-[160px]">
+                    <td className="px-6 py-3 w-[170px]">
                       {labResult.labResults_triglycerides}mg/dL
                     </td>
                     <td className="px-6 py-3 flex gap-2 justify-center">
@@ -364,73 +378,15 @@ export default function Laboratoryresults() {
         </div>
         {/* END OF TABLE */}
       </div>
+
       {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5 pb-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] text-[15px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex text-[15px] ">
-                  <div className="flex">
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-
-                    {renderPageNumbers()}
-
-                    <button
-                      onClick={goToNextPage}
-                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex pl-4 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="">
-                        <button
-                          type="submit"
-                          className="btn-pagination ring-1 ring-[#007C85]"
-                        >
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
-          </div>
-        </div>
-      )}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        setCurrentPage={setCurrentPage}
+      />
       {isOpen && (
         <Modal
           content={

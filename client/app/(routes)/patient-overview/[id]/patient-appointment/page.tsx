@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import React, { useEffect } from "react";
 import DropdownMenu from "@/components/dropdown-menu";
@@ -8,15 +9,18 @@ import View from "@/components/shared/buttons/view";
 import { useState } from "react";
 import { onNavigate } from "@/actions/navigation";
 import { useParams, useRouter } from "next/navigation";
-import { AppointmentsModal } from "@/components/modals/appointments.modal";
 import { fetchAppointmentsByPatient as fetchAppointmentsByPatient } from "@/app/api/appointments-api/appointments.api";
 import { AppointmentviewModalContent } from "@/components/modal-content/appointmentview-modal-content";
 import Modal from "@/components/reusable/modal";
 import { AppointmentModalContent } from "@/components/modal-content/appointment-modal-content";
+import { ClipboardList } from "lucide-react";
+import { AppointmentemailModalContent } from "@/components/modal-content/appointmentemail-modal-content";
+import { SuccessModal } from "@/components/shared/success";
+import { ErrorModal } from "@/components/shared/error";
+import Pagination from "@/components/shared/pagination";
 const Appointment = () => {
   const router = useRouter();
   if (typeof window === "undefined") {
-    return null;
   }
   // start of orderby & sortby function
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
@@ -85,6 +89,8 @@ const Appointment = () => {
   const [totalAppointments, setTotalAppointments] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isOpenSortedBy, setIsOpenSortedBy] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
   const handleOrderOptionClick = (option: string) => {
     if (option === "Ascending") {
       setSortOrder("ASC");
@@ -139,6 +145,7 @@ const Appointment = () => {
   const [gotoError, setGotoError] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenReminder, setIsOpenReminder] = useState(false);
   const renderPageNumbers = () => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -165,6 +172,24 @@ const Appointment = () => {
       setIsView(false);
       setAppointmentData([]);
     }
+  };
+
+  const isModalReminderOpen = (isOpen: boolean) => {
+    setIsOpenReminder(isOpen);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else if (!isOpen) {
+      document.body.style.overflow = "visible";
+      setIsView(false);
+      setAppointmentData([]);
+    }
+  };
+
+  const onSuccess = () => {
+    setIsSuccessOpen(true);
+  };
+  const onFailed = () => {
+    setIsErrorOpen(true);
   };
 
   useEffect(() => {
@@ -196,92 +221,102 @@ const Appointment = () => {
   }, [currentPage, sortOrder, sortBy, term, isOpen]);
   if (isLoading) {
     return (
-      <div className="w-full h-full flex justify-center items-center ">
-        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+      <div className="container w-full h-full flex justify-center items-center ">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="w-full justify-between flex mb-2">
-        <div className="flex-row">
-          <p className="p-title">Appointment</p>
+    <div className="w-full h-full flex flex-col justify-between">
+      <div className="w-full h-full">
+        <div className="w-full justify-between flex mb-2">
+          <div className="flex-row">
+            <p className="p-title">Appointment</p>
 
-          <div>
-            <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px] ">
-              Total of {totalAppointments} Appointments
-            </p>
+            <div>
+              <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px] ">
+                Total of {totalAppointments} Appointments
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+              <Image src="/imgs/add.svg" alt="" width={22} height={22} />
+              <p className="text-[18px]">Add</p>
+            </button>
+            <button
+              onClick={() => isModalReminderOpen(true)}
+              className="btn-pdfs gap-2"
+            >
+              <ClipboardList width={22} height={22} />
+              <p className="text-[18px]">Reminder</p>
+            </button>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
-            <img src="/imgs/add.svg" alt="" />
-            <p className="text-[18px]">Add</p>
-          </button>
-          <button className="btn-pdfs gap-2">
-            <img src="/imgs/downloadpdf.svg" alt="" />
-            <p className="text-[18px]">Download PDF</p>
-          </button>
-        </div>
-      </div>
 
-      <div className="w-full m:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-          <form className="mr-5 relative">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                value={term}
-                onChange={(e) => {
-                  setTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+        <div className="w-full m:rounded-lg items-center">
+          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
+            <form className="mr-5 relative">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex">
+                <input
+                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[15px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width={20}
+                  height={20}
+                  className="absolute left-8 top-9 pointer-events-none"
+                />
+              </div>
+            </form>
+
+            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
+              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                label={"Select"}
               />
-              <img
-                src="/svgs/search.svg"
-                alt="Search"
-                width="20"
-                height="20"
-                className="absolute left-8 top-9 pointer-events-none"
+              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                label={"Select"}
               />
             </div>
-          </form>
-
-          <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-              Order by
-            </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Select"}
-            />
-            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
-            />
           </div>
         </div>
         {/* START OF TABLE */}
@@ -289,19 +324,20 @@ const Appointment = () => {
           <table className="text-left rtl:text-right">
             <thead>
               <tr className="uppercase text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
-                <th className="px-6 py-3 ">STATUS</th>
-                <th className="px-6 py-3 ">DATE</th>
-                <th className="px-6 py-3 ">TIME</th>
-                <th className="px-4 py-3 ">END TIME</th>
-                <th className="px-4 py-3 ">DETAILS</th>
-                <th className="px-24 py-3">ACTION</th>
+                <td className="px-6 py-3 ">STATUS</td>
+                <td className="px-6 py-3 ">DATE</td>
+                <td className="px-6 py-3 ">TIME</td>
+                <td className="px-6 py-3 ">END TIME</td>
+                <td className="px-6 py-3 ">DETAILS</td>
+                <td className="py-3 px-6 text-center">ACTION</td>
+                <td className="w-[14px]"></td>
               </tr>
             </thead>
-            <tbody className="h-[220px]">
+            <tbody className="h-[220px] overflow-y-scroll">
               {patientAppointments.length === 0 && (
                 <tr>
                   <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                    <p className="font-semibold text-gray-700 text-center text-[15px]">
+                    <p className="font-normal text-gray-700 text-center text-[15px]">
                       No Appointment/s <br />
                     </p>
                   </td>
@@ -314,25 +350,25 @@ const Appointment = () => {
                       key={index}
                       className="odd:bg-white  even:bg-gray-50  border-b hover:bg-[#f4f4f4] group"
                     >
-                      <td className="text-15px me-1 px-6 py-5 rounded-full flex items-center">
+                      <td className="text-[15px] px-6 py-3  rounded-full flex items-center">
                         <div
                           className={`px-2 font-semibold rounded-[20px] relative flex items-center ${
                             appointments.appointments_appointmentStatus ===
                             "Scheduled"
-                              ? "bg-[#dfffea] text-[#17C653] text-[15px]" // Green color for Scheduled
+                              ? "bg-[#E7EAEE] text-[#71717A] text-[15px]" // Green color for Scheduled
                               : appointments.appointments_appointmentStatus ===
                                 "Done"
-                              ? "bg-[#E7EAEE] text-[#3C3C3C] text-[15px]" // Dark color for Done
+                              ? "bg-[#CCFFDD] text-[#17C653] text-[15px]" // Dark color for Done
                               : appointments.appointments_appointmentStatus ===
                                   "Patient-IN" ||
                                 appointments.appointments_appointmentStatus ===
                                   "On-going"
-                              ? "bg-[#FFFCDB] text-[#E0BD03] text-[15px]" // Yellow for On Going
+                              ? "bg-[#FFF8DD] text-[#F6C000] text-[15px]" // Yellow for On Going
                               : appointments.appointments_appointmentStatus ===
                                   "Missed" ||
                                 appointments.appointments_appointmentStatus ===
                                   "Cancelled"
-                              ? "bg-[#FEE9E9] text-[#EF4C6A] text-[15px]" // Red color for Missed and Cancelled
+                              ? "bg-[#FFE8EC] text-[#EF4C6A] text-[15px]" // Red color for Missed and Cancelled
                               : ""
                           }`}
                         >
@@ -340,20 +376,20 @@ const Appointment = () => {
                             className={`inline-block h-2 w-2 rounded-full mr-1 ${
                               appointments.appointments_appointmentStatus ===
                               "Scheduled"
-                                ? "bg-green-500" // Green color for Scheduled
+                                ? "bg-[#7E7E7E]" // Green color for Scheduled
                                 : appointments.appointments_appointmentStatus ===
                                   "Done"
-                                ? "bg-[#E7EAEE]" // Dark color for Done
+                                ? "bg-[#0EB146]" // Dark color for Done
                                 : appointments.appointments_appointmentStatus ===
                                     "Patient-IN" ||
                                   appointments.appointments_appointmentStatus ===
                                     "On-going"
-                                ? "bg-[#E0BD03]" // Yellow for On Going
+                                ? "bg-[#E4B90E]" // Yellow for On Going
                                 : appointments.appointments_appointmentStatus ===
                                     "Missed" ||
                                   appointments.appointments_appointmentStatus ===
                                     "Cancelled"
-                                ? "bg-[#EF4C6A]" // Red color for Missed and Cancelled
+                                ? "bg-[#EE4D4D]" // Red color for Missed and Cancelled
                                 : ""
                             }`}
                           ></span>
@@ -361,21 +397,21 @@ const Appointment = () => {
                         </div>
                       </td>
 
-                      <td className="px-6 py-3 text-[15px]">
+                      <td className="px-6 py-3 text-[15px] ">
                         {formatDate(appointments.appointments_appointmentDate)}
                       </td>
-                      <td className="px-6 py-3 text-[15px]">
+                      <td className="px-6 py-3 text-[15px] ">
                         {formatTime(appointments.appointments_appointmentTime)}
                       </td>
-                      <td className="px-6 py-3 text-[15px]">
+                      <td className="px-6 py-3 text-[15px] ">
                         {formatTime(
                           appointments.appointments_appointmentEndTime
                         )}
                       </td>
-                      <td className="px-6 py-3 text-[15px]">
+                      <td className="px-6 py-3 text-[15px] ">
                         {appointments.appointments_details}
                       </td>
-                      <td className="px-[90px] py-3 items-center">
+                      <td className="py-3 px-6 flex justify-center">
                         <p
                           onClick={() => {
                             isModalOpen(true);
@@ -396,72 +432,13 @@ const Appointment = () => {
         {/* END OF TABLE */}
       </div>
       {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5 pb-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] text-[15px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex text-[15px] ">
-                  <div className="flex">
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-
-                    {renderPageNumbers()}
-
-                    <button
-                      onClick={goToNextPage}
-                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex pl-4 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="">
-                        <button
-                          type="submit"
-                          className="btn-pagination ring-1 ring-[#007C85]"
-                        >
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
-          </div>
-        </div>
-      )}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        setCurrentPage={setCurrentPage}
+      />
       {isOpen && (
         <Modal
           content={
@@ -474,6 +451,37 @@ const Appointment = () => {
             />
           }
           isModalOpen={isModalOpen}
+        />
+      )}
+      {isOpenReminder && (
+        <Modal
+          content={
+            <AppointmentemailModalContent
+              onSuccess={onSuccess}
+              onFailed={onFailed}
+              isModalOpen={isModalReminderOpen}
+            />
+          }
+          isModalOpen={isModalOpen}
+        />
+      )}
+
+      {isSuccessOpen && (
+        <SuccessModal
+          label="Email Sent Succesfully"
+          isAlertOpen={isSuccessOpen}
+          toggleModal={setIsSuccessOpen}
+          isUpdated={isUpdated}
+          setIsUpdated={setIsUpdated}
+        />
+      )}
+      {isErrorOpen && (
+        <ErrorModal
+          label="Sending Email Failed"
+          isAlertOpen={isErrorOpen}
+          toggleModal={setIsErrorOpen}
+          isEdit={isEdit}
+          errorMessage={error}
         />
       )}
     </div>

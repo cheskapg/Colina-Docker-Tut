@@ -330,7 +330,7 @@ export const LabresultsModalContent = ({
             <label className="relative w-full bg-[#daf3f5] border-[#007C85] border-dashed border-2 flex justify-center items-center rounded-md cursor-pointer text-center text-[#101828] font-bold">
               <>
                 <Image
-                  className="w-10 h-10 mr-1"
+                  className="w-7 h-7 mr-1"
                   width={50}
                   height={50}
                   src={"/svgs/filein.svg"}
@@ -352,7 +352,7 @@ export const LabresultsModalContent = ({
                 {selectedFileNames.length > 0 ? (
                   // If files are selected, display filein.svg
                   <Image
-                    className="w-10 h-10 mr-1"
+                    className="w-7 h-7 mr-1"
                     width={50}
                     height={50}
                     src={"/svgs/filein.svg"}
@@ -361,7 +361,7 @@ export const LabresultsModalContent = ({
                 ) : (
                   // If no files are selected, display folder-add.svg
                   <Image
-                    className="w-10 h-10 mr-1"
+                    className="w-7 h-7 mr-1"
                     width={50}
                     height={50}
                     src={"/svgs/folder-add.svg"}
@@ -418,7 +418,7 @@ export const LabresultsModalContent = ({
   };
   return (
     <>
-      <div className="w-[676px] h-[571px]">
+      <div className="w-[676px] h-[584px]">
         {isLoading && isEdit ? (
           // Loading state
           <>
@@ -439,10 +439,11 @@ export const LabresultsModalContent = ({
             <div className="mb-9 pt-4">
               <div className="h-[380px] md:px-8 mt-5">
                 <div className="w-full h-full flex justify-center items-center ">
-                  <img
+                  <Image
                     src="/imgs/colina-logo-animation.gif"
                     alt="logo"
                     width={100}
+                    height={100}
                   />
                 </div>
               </div>
@@ -458,7 +459,7 @@ export const LabresultsModalContent = ({
                   </h2>
                   <X
                     onClick={() => isModalOpen(false)}
-                    className="w-6 h-6 text-black flex items-center mt-6 mr-9"
+                    className="w-6 h-6 text-black flex items-center mt-6 mr-9 cursor-pointer"
                   />
                 </div>
                 <p className="text-sm pl-10 text-gray-600 pb-10 pt-2">
@@ -466,7 +467,7 @@ export const LabresultsModalContent = ({
                 </p>
               </div>
               <div className=" mb-9 pt-4">
-                <div className="h-[600px] max-h-[400px] md:px-10 mt-5">
+                <div className="h-[600px] max-h-[412px] md:px-10 mt-5">
                   <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
                     <div>
                       <label

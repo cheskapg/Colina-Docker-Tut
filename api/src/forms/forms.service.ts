@@ -37,6 +37,7 @@ export class FormsService {
     const uuid = this.idService.generateRandomUUID(uuidPrefix);
     newForm.uuid = uuid;
     newForm.patientId = patientId;
+    newForm.isArchived=false;
     Object.assign(newForm, formsData);
     const savedForm = await this.formsRepository.save(newForm);
     const result = { ...savedForm };
@@ -53,6 +54,7 @@ export class FormsService {
     page: number = 1,
     sortBy: string = 'nameOfDocument',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
+    isArchived: boolean = false,
     perPage: number = 5,
   ): Promise<{
     data: Forms[];
@@ -76,9 +78,11 @@ export class FormsService {
         'forms.nameOfDocument',
         'forms.dateIssued',
         'forms.notes',
+        'forms.isArchived',
         'patient.uuid',
       ])
       .where('patient.uuid = :uuid', { uuid: patientUuid })
+      .andWhere('forms.isArchived = :isArchived', { isArchived })
       .orderBy(`forms.${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
@@ -172,39 +176,39 @@ export class FormsService {
     return this.formsFilesService.uploadFormFile(imageBuffer, filename, formsId);
   }
   
-  async getCurrentFileCountFromDatabase(formsUuid: string): Promise<number> {
-    const { id: formId } = await this.formsRepository.findOne({
+// Service method
+async getCurrentFileCountFromDatabase(formsUuid: string): Promise<number> {
+  const { id: formId } = await this.formsRepository.findOne({
       select: ["id"],
       where: { uuid: formsUuid }
-    });
-    try {
+  });
+
+  try {
       const files = await this.formsFilesService.getFilesByFormId(formId);
       return files.length; // Return the number of files
-    } catch (error) {
+  } catch (error) {
       throw new NotFoundException('Form files not found');
-    }
   }
-
+}
   async getFormFilesByUuid(formUuid: string) {
     const form = await this.formsRepository.findOne({
-      select: ['id'],
-      where: { uuid: formUuid },
+        select: ['id'],
+        where: { uuid: formUuid },
     });
 
     if (!form) {
-      throw new NotFoundException(`Form with UUID ${formUuid} not found`);
+        throw new NotFoundException(`Form with UUID ${formUuid} not found`);
     }
 
     const { id: formsId } = form;
 
     const formFiles = await this.formsFilesService.getFilesByFormId(formsId);
     if (!formFiles || formFiles.length === 0) {
-      throw new NotFoundException(`No files found for form with UUID ${formUuid}`);
+        throw new NotFoundException(`No files found for form with UUID ${formUuid}`);
     }
 
     return formFiles;
-  }
-
+}
   async updateFormFile(formUuid: string, imageBuffer: Buffer, filename: string): Promise<any> {
     const form = await this.formsRepository.findOne({
       where: { uuid: formUuid },

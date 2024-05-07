@@ -22,7 +22,7 @@ export class CronjobsService {
     private idService: IdService,
   ) {}
 
-  @Cron('* */60 * * *') // Cron job to check appointments every minute
+  @Cron('* * * * *') // Cron job to check appointments every minute
   async checkDailyAppointments() {
       const currentDateTime = DateTime.local(); // Get current date and time using Luxon
 
@@ -154,6 +154,7 @@ export class CronjobsService {
   ///
 
   // @Cron('*/5 * * * * *') // Cron job to run every 5 seconds
+  @Cron('0 0 * * * *') // Cron job to run every 12am
   async checkDailyPrescription(medicationLogData: CreateMedicationLogsInput) {
     const todayDate = new Date();
     todayDate.setUTCHours(0, 0, 0, 0);

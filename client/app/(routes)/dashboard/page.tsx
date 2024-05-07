@@ -1,27 +1,37 @@
 "use client";
 
+import Image from "next/image";
 import { onNavigate } from "@/actions/navigation";
 import { fetchUpcomingAppointments } from "@/app/api/appointments-api/upcoming-appointments-api";
 import { getAccessToken } from "@/app/api/login-api/accessToken";
 import { fetchDueMedication } from "@/app/api/medication-logs-api/due-medication-api";
 import { ToastAction } from "@/components/ui/toast";
 import { Edit, View } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const router = useRouter();
   if (typeof window === "undefined") {
-    return null;
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          width={100}
+          height={100}
+          alt="loading"
+        />
+      </div>
+    );
   }
-  if (!getAccessToken()) {
-    router.replace("/login");
-  }
+
   const { toast } = useToast();
   const [term, setTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [dueMedSortBy, setDueMedSortBy] = useState("medicationLogsTime");
+  const [dueMedSortBy, setDueMedSortBy] = useState(
+    "medicationlogs.medicationLogsTime"
+  );
   const [upcomingSortBy, setUpcomingSortBy] = useState("appointmentDate");
   const [sortOrder, setSortOrder] = useState("ASC");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -92,11 +102,11 @@ const Dashboard = () => {
           medicationlogs_medicationLogsDate: string;
           medicationlogs_medicationLogsTime: string;
         }[] = Object.values(filteredData);
-        const limitedArray = filteredArray.slice(0, 6);
+        const limitedArray = filteredArray.slice(0, 5);
 
         setDueMedicationList(limitedArray);
         setDueMedTotalPages(dueMedicationList.totalPages);
-        setTotalDueMedication(filteredArray.length);
+        setTotalDueMedication(dueMedicationList.totalCount);
         setIsLoading(false);
       } catch (error) {
         // Handle error
@@ -177,7 +187,12 @@ const Dashboard = () => {
   if (isLoading || isLoading2) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          width={100}
+          height={100}
+          alt="logo"
+        />
       </div>
     );
   }
@@ -197,14 +212,14 @@ const Dashboard = () => {
         <div className="flex justify-between gap-[28px]">
           {/* {/ Start of Upcoming Appointments /} */}
 
-          <div className="w-[930px] min-w-max-[930px] max-h-[670px] h-[670px] min-h-max-[670px]">
-            <div className="border-[1px] h-[95px] px-18 pt-3">
+          <div className="w-[930px] min-w-max-[930px] max-h-[670px] ">
+            <div className="border-x-[1px] border-t-[1px] h-[95px] px-18 pt-3">
               <p className="p-title mx-[30px] pt-2">
                 Upcoming Appointment
                 <span>{upcomingAppointments.length > 1 ? "s" : ""}</span>
               </p>
               <p className="font-normal text-[15px] text-[#71717A] mx-[30px] pt-3">
-                Total of {totalUpcoming} Appointment{" "}
+                Total of {totalUpcoming} upcoming appointment
                 <span>{upcomingAppointments.length > 1 ? "s" : ""}</span>
               </p>
             </div>
@@ -258,14 +273,14 @@ const Dashboard = () => {
           </div>
           {/* {/ End of Upcoming Appointments /}
       {/ Start of Due Medications /} */}
-          <div className="w-[621px] h-[666px] border-[1px] border-[#E4E4E7] py-3 select-none px-[40px]">
+          <div className="w-[621px]  border-[1px] border-[#E4E4E7] py-3 select-none px-[40px]">
             <div className="">
               <p className="p-title pt-2">
                 Due Medication
                 <span>{dueMedicationList.length > 1 ? "s" : ""}</span>
               </p>
               <p className="font-normal text-[15px] text-[#71717A] pt-3 mb-3">
-                Total of {totalDueMedication} Due Medication
+                Total of {totalDueMedication} due medication
                 <span>{dueMedicationList.length > 1 ? "s" : ""}</span>
               </p>
             </div>
@@ -277,7 +292,13 @@ const Dashboard = () => {
                     className="w-full flex flex-row h-[75px] mb-1 hover:bg-slate-100 cursor-pointer"
                   >
                     <div className="flex w-1/6 items-center ">
-                      <img src="/imgs/tao1.svg" alt="" width={58} height={58} />
+                      <Image
+                        className="rounded-full"
+                        src="/imgs/drake.png"
+                        width={58}
+                        height={58}
+                        alt="picture"
+                      />
                     </div>
                     <div className="flex w-4/6">
                       <div className="flex flex-col justify-center gap-1">
@@ -305,7 +326,7 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex items-center text-center justify-center font-semibold text-3xl w-full h-full -mt-10">
+              <div className="flex items-center text-center justify-center font-normal text-[15px] w-full h-full -mt-10">
                 No Due Medication/s
                 <br />
               </div>

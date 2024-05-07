@@ -33,15 +33,20 @@ import { PrescriptionFilesModule } from './prescriptionsFiles/prescriptionsFiles
 
 import { FormsModule } from './forms/forms.module';
 import { FormFilesModule } from './formFiles/formFiles.module';
-
+import { EmailModule } from '../services/email/email.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: '.env.local' }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env.local',
+    }),
     ScheduleModule.forRoot(),
     MulterModule.register({
       dest: './uploads',
     }),
-    TypeOrmModule.forRoot({
+  TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.PGHOST,
       port: parseInt(process.env.PGPORT, 10),
@@ -75,6 +80,7 @@ import { FormFilesModule } from './formFiles/formFiles.module';
     LabResultsFilesModule,
     FormsModule,
     FormFilesModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [

@@ -169,11 +169,11 @@ export const PrnModalContent = ({
   };
   console.log(formData, "formData");
   return (
-    <div className={`w-[676px] ${charactersFull ? "h-[646px]" : "h-[628px]"} `}>
+    <div className={`w-[676px] ${charactersFull ? "h-[646px]" : "h-[648px]"} `}>
       <form onSubmit={handleSubmit}>
         <div className="bg-[#ffffff] w-full h-[70px] flex flex-col justify-start rounded-md">
           <div className="items-center flex justify-between">
-            <h2 className="p-title text-left text-[#071437] pl-10 mt-7">
+            <h2 className="p-title text-left text-[#071437] pl-10 mt-7 truncate">
               {isEdit ? "Update" : "Add"} PRN Medication Log {name ? "for" : ""}{" "}
               <span className="text-[#007C85]">{name ? name : ""}</span>
             </h2>
@@ -193,7 +193,7 @@ export const PrnModalContent = ({
         <div
           className={` ${charactersFull ? "mb-[175px]" : "mb-[156px]"} pt-4`}
         >
-          <div className="w-full max-h-[300px] md:px-10 mt-5">
+          <div className="w-full h-[320px] md:px-10 mt-5">
             <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label
@@ -310,7 +310,7 @@ export const PrnModalContent = ({
                     <option value="Given">GIVEN</option>
                     <option value="Refused">REFUSED</option>
                   </select>
-                  {/* <img
+                  {/* <Image
                     className="absolute top-0 right-0 mt-3 mr-3 pointer-events-none"
                     src="svgs/chevron.svg"
                     alt="Dropdown Arrow"

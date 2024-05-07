@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import printJS from "print-js";
 import React, { useEffect } from "react";
 import DropdownMenu from "@/components/dropdown-menu";
@@ -12,18 +13,18 @@ import {
   fetchAllergiesByPatient,
   fetchAllergiesForPDF,
 } from "@/app/api/medical-history-api/allergies.api";
-import { AllergyModal } from "@/components/modals/allergies.modal";
 import { SuccessModal } from "@/components/shared/success";
 import { ErrorModal } from "@/components/shared/error";
 import Modal from "@/components/reusable/modal";
 import { AllergiesModalContent } from "@/components/modal-content/allergies-modal-content";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import Pagination from "@/components/shared/pagination";
+import PdfDownloader from "@/components/pdfDownloader";
 
 const Allergies = () => {
   const router = useRouter();
   if (typeof window === "undefined") {
-    return null;
   }
   const { toast } = useToast();
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
@@ -178,8 +179,13 @@ const Allergies = () => {
   console.log(allergyToEdit, "allergy uuid");
   if (isLoading) {
     return (
-      <div className="w-full h-full flex justify-center items-center ">
-        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+      <div className="container w-full h-full flex justify-center items-center ">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
       </div>
     );
   }
@@ -193,175 +199,112 @@ const Allergies = () => {
     setIsErrorOpen(true);
     setIsEdit(false);
   };
-  const handleDownloadPDF = async () => {
-    if (patientAllergies.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "Allergy list is empty",
-        action: (
-          <ToastAction
-            altText="Try again"
-            onClick={() => {
-              window.location.reload();
-            }}
-          >
-            Try again
-          </ToastAction>
-        ),
-      });
-    } else {
-      const allergies = await fetchAllergiesForPDF(
-        patientId,
-        term,
-        currentPage,
-        sortBy,
-        sortOrder as "ASC" | "DESC",
-        0,
-        router
-      );
-      let patientName =
-        allergies[0]?.patient_lastName +
-        ", " +
-        allergies[0]?.patient_firstName +
-        " " +
-        allergies[0]?.patient_middleName;
-      let jsonFile: {
-        "Allergy UID": string;
-        Date: string;
-        Type: string;
-        Allergen: string;
-        Severity: string;
-        Reaction: string;
-        Notes: string;
-      }[] = allergies.map((allergy) => ({
-        "Allergy UID": allergy.allergies_uuid,
-        Date: new Date(allergy.allergies_createdAt).toLocaleDateString(),
-        Type: allergy.allergies_type,
-        Allergen: allergy.allergies_allergen,
-        Severity: allergy.allergies_severity,
-        Reaction: allergy.allergies_reaction,
-        Notes: allergy.allergies_notes,
-      }));
-
-      const patientFullName = patientName;
-
-      printJS({
-        printable: jsonFile,
-        properties: [
-          "Allergy UID",
-          "Date",
-          "Type",
-          "Allergen",
-          "Severity",
-          "Reaction",
-          "Notes",
-        ],
-        type: "json",
-        gridHeaderStyle: "color: red;  border: 2px solid #3971A5;",
-        header: patientFullName,
-        gridStyle: "border: 2px solid #3971A5;",
-        documentTitle: `${patientFullName}'s Allergies`,
-      });
-    }
-  };
 
   return (
-    <div className="w-full">
-      <div className="w-full justify-between flex mb-2">
-        <div className="flex-row">
-          <div className="flex gap-2">
-            <p className="p-title">Medical History</p>
-            <span className="slash">{">"}</span>
-            <span className="active">Allergies</span>
-            <span className="slash">{"/"}</span>
-            <span
-              onClick={() => {
-                setIsLoading(true);
-                router.replace(
-                  `/patient-overview/${patientId.toLowerCase()}/medical-history/surgeries`
-                );
-              }}
-              className="bread"
-            >
-              Surgeries
-            </span>
-          </div>
-          <div>
-            <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px]">
-              Total of {totalAllergies} Allergies
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
-            <img src="/imgs/add.svg" alt="" />
-            <p className="text-[18px]">Add</p>
-          </button>
-
-          <button className="btn-pdfs gap-2" onClick={handleDownloadPDF}>
-            <img src="/imgs/downloadpdf.svg" alt="" />
-            <p className="text-[18px]">Download PDF</p>
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full m:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-          <form className="mr-5 relative">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                value={term}
-                onChange={(e) => {
-                  setTerm(e.target.value);
-                  setCurrentPage(1);
+    <div className="w-full h-full flex flex-col justify-between">
+      <div className="w-full h-full">
+        <div className="w-full justify-between flex mb-2">
+          <div className="flex-row">
+            <div className="flex gap-2">
+              <p className="p-title">Medical History</p>
+              <span className="slash">{">"}</span>
+              <span className="active">Allergies</span>
+              <span className="slash">{"/"}</span>
+              <span
+                onClick={() => {
+                  setIsLoading(true);
+                  router.replace(
+                    `/patient-overview/${patientId.toLowerCase()}/medical-history/surgeries`
+                  );
                 }}
+                className="bread"
+              >
+                Surgeries
+              </span>
+            </div>
+            <div>
+              <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
+                Total of {totalAllergies} Allergies
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+              <Image src="/imgs/add.svg" alt="" width={22} height={22} />
+              <p className="text-[18px]">Add</p>
+            </button>
+
+            <PdfDownloader
+              data={patientAllergies}
+              props={[
+                "Uuid",
+                "Date",
+                "Type",
+                "Allergen",
+                "Severity",
+                "Reaction",
+                "Notes",
+              ]}
+              variant={"Allergy Table"}
+            />
+          </div>
+        </div>
+        <div className="w-full m:rounded-lg items-center">
+          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
+            <form className="mr-5 relative">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex">
+                <input
+                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[15px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width="20"
+                  height="20"
+                  className="absolute left-8 top-9 pointer-events-none"
+                />
+              </div>
+            </form>
+            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
+              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                label={"Select"}
               />
-              <img
-                src="/svgs/search.svg"
-                alt="Search"
-                width="20"
-                height="20"
-                className="absolute left-8 top-9 pointer-events-none"
+              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                label={"Select"}
               />
             </div>
-          </form>
-
-          <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-              Order by
-            </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Select"}
-            />
-            <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
-            />
           </div>
         </div>
         {/* START OF TABLE */}
@@ -371,15 +314,16 @@ const Allergies = () => {
               <tr className="uppercase text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
                 <td className="px-6 py-3">Allergy ID</td>
                 <td className="px-6 py-3">Date</td>
-                <td className="px-5 py-3">Type</td>
-                <td className="px-5 py-3">Allergen</td>
-                <td className="px-4 py-3">Severity</td>
-                <td className="px-4 py-3">Reaction</td>
-                <td className="px-4 py-3 ">Notes</td>
-                <td className="py-3 px-14">Action </td>
+                <td className="px-6 py-3">Type</td>
+                <td className="px-6 py-3">Allergen</td>
+                <td className="px-6 py-3">Severity</td>
+                <td className="px-6 py-3">Reaction</td>
+                <td className="px-6 py-3">Notes</td>
+                <td className="py-3 px-6 text-center">Action</td>
+                <td className="w-[14px]"></td>
               </tr>
             </thead>
-            <tbody className="h-[220px]">
+            <tbody className="h-[220px] overflow-y-scroll">
               {patientAllergies.length === 0 && (
                 <h1 className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
                   <p className="text-[15px] font-normal text-gray-700 text-center">
@@ -392,10 +336,10 @@ const Allergies = () => {
                   key={index}
                   className=" group hover:bg-[#f4f4f4]  border-b text-[15px] "
                 >
-                  <td className="truncate px-5 py-3">
+                  <td className="truncate px-6 py-3 ">
                     {allergy.allergies_uuid}
                   </td>
-                  <td className="truncate px-5 py-3">
+                  <td className="truncate px-6 py-3">
                     {" "}
                     {new Date(allergy.allergies_createdAt).toLocaleDateString()}
                   </td>
@@ -406,8 +350,23 @@ const Allergies = () => {
                     {allergy.allergies_allergen}
                   </td>
 
-                  <td className="truncate px-6  py-3">
-                    {allergy.allergies_severity}
+                  <td className="text-15px me-1 px-6 py-3 rounded-full flex items-center">
+                    <div
+                      className={`px-2 font-semibold rounded-[20px] relative flex items-center ${
+                        allergy.allergies_severity === "Mild"
+                          ? "bg-[#FFF8DD] text-[#F6C000] text-[15px]" // Green color for Mild
+                          : allergy.allergies_severity === "Moderate"
+                          ? "bg-[#fff5ef] text-[#ff6f1e] text-[15px]" // Dark color for Moderate
+                          : allergy.allergies_severity === "Severe"
+                          ? "bg-[#FFE8EC] text-[#EF4C6A] text-[15px]" // Red color for Severe
+                          : ""
+                      }`}
+                    >
+                     
+                        {allergy.allergies_severity}
+                      
+                    </div>
+                    
                   </td>
                   <td className="truncate px-6  py-3">
                     {allergy.allergies_reaction}
@@ -416,7 +375,7 @@ const Allergies = () => {
                     {allergy.allergies_notes ? allergy.allergies_notes : "None"}
                   </td>
 
-                  <td className="py-3 flex justify-center">
+                  <td className="py-3 px-6 flex justify-center ">
                     <p
                       onClick={() => {
                         isModalOpen(true);
@@ -434,73 +393,17 @@ const Allergies = () => {
         </div>
         {/* END OF TABLE */}
       </div>
+
       {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5 pb-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] text-[15px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex text-[15px] ">
-                  <div className="flex">
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-
-                    {renderPageNumbers()}
-
-                    <button
-                      onClick={goToNextPage}
-                      className="flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex pl-4 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="">
-                        <button
-                          type="submit"
-                          className="btn-pagination ring-1 ring-[#007C85]"
-                        >
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="bottom-0">
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+          setCurrentPage={setCurrentPage}
+        />
+      </div>
       {isOpen && (
         <Modal
           content={
