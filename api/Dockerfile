@@ -18,6 +18,8 @@ ENV PGPASSWORD="jajnav5@"
 ENV DB_SYNCHRONIZE=true
 ENV DB_LOGGING=true
 ENV FE_URL="https://chzcolinahealthwebsite.azurewebsites.net"
+ENV NEXT_USER="destrada@jairosolutions.com"
+ENV NEXT_PASS="sadk vadn orma vyyl"
 
 COPY package*.json ./
 
