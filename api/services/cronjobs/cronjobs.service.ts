@@ -21,7 +21,7 @@ export class CronjobsService {
     private medicationLogsRepository: Repository<MedicationLogs>,
     private idService: IdService,
   ) { }
-  @Cron('* * * * * *') // Cron job to check appointments every minute
+  @Cron('* * * * *') // Cron job to check appointments every minute
 
   async checkDailyAppointments() {
     const currentDateTime = DateTime.local(); // Get current date and time using Luxon
@@ -46,18 +46,23 @@ export class CronjobsService {
       const isOngoing = appointment.appointmentStatus === 'On-going';
 
       if (currentDateTime > appointmentEndDateTime) {
-        if (isScheduled) {
+        if (isScheduled && !isPatientIn) {
+          await this.updateAppointmentStatus(appointment, 'Missed');
+        }
+        if (isOngoing && !isPatientIn) {
           await this.updateAppointmentStatus(appointment, 'Missed');
         }
         if (isPatientIn) {
           await this.updateAppointmentStatus(appointment, 'Done');
         }
       } else if (currentDateTime > appointmentDateTime) {
-        if (isScheduled && !isPatientIn && !isOngoing) {
+        if (isScheduled && !isPatientIn && !isOngoing && !isDone) {
           await this.updateAppointmentStatus(appointment, 'On-going');
         }
-      } else if (currentDateTime < appointmentDateTime && !isDone && !isPatientIn && !isOngoing) {
-        await this.updateAppointmentStatus(appointment, 'Scheduled');
+      } else if (currentDateTime < appointmentDateTime) {
+        if (!isDone && !isPatientIn && !isOngoing ) {
+          await this.updateAppointmentStatus(appointment, 'Scheduled');
+        }
       }
     }
   }

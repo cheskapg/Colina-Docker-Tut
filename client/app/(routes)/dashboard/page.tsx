@@ -201,7 +201,7 @@ const Dashboard = () => {
     <div className="w-full">
       <div className="justify-center items-center mx-[154px] mt-[90px] overflow-hidden">
         <div className="w-full">
-          <p className="p-title select-none mb-1">WELCOME TO DASHBOARD!</p>
+          <p className="p-title select-none mb-1">WELCOME TO DASHBOARD!!</p>
           <div className="font-bold text-[15px] flex mb-4 select-none">
             Hey Alexa Dramos -
             <p className="font-normal text-[15px] pl-1 text-[#71717A] select-none">
