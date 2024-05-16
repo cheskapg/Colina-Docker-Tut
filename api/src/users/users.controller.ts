@@ -220,11 +220,12 @@ export class UsersController {
 
   @Public()
   @Post('/generate-otp')
-  async generateOTP(@Body('email') email: string) {
+  async generateOTP(@Body('email') email: string, @Body('variant') variant:string) {
     const users = await this.usersService.searchUsersByEmail(email, 0, 1);
     if (users.length === 0) {
-      throw new Error('User not found');
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+    console.log(users, 'users');
 
     try {
       const user = users[0];
@@ -232,11 +233,11 @@ export class UsersController {
       const { otp, timestamp } = otpWithTimestamp;
 
       await this.usersService.updateOTP(user.id, otp);
-      await this.usersService.sendPasswordResetEmail(email, otp);
+      await this.usersService.sendPasswordResetEmail(email, otp, variant);
 
       return true;
     } catch (error) {
-      return false;
+      return error.message;
     }
   }
   @Public()
@@ -244,14 +245,16 @@ export class UsersController {
   async verifyOTP(
     @Body('userOTP') userOTP: string,
     @Body('email') email: string,
+    @Body('variant') variant:string,
+    @Body('expiresIn') expiresIn:string
   ): Promise<{ isValid: boolean }> {
     const generatedOTP = await this.usersService.getOTP(email);
 
     if (!generatedOTP) {
       throw new NotFoundException('Generated OTP not found for the user');
     }
-    console.log(userOTP, 'userotps')
-    console.log(email, 'emails')
+    console.log(userOTP, 'userotps');
+    console.log(email, 'emails');
     const isValid = this.otpService.verifyOTP(userOTP, generatedOTP);
     const expiryPayload = {
       email: email,
@@ -259,8 +262,14 @@ export class UsersController {
     if (isValid) {
       // If OTP is valid, generate JWT token
       const expiryToken = this.jwtService.sign(expiryPayload, {
-        expiresIn: '5m',
+        expiresIn: variant==="signIn"?expiresIn:"5m",
       });
+      const users = await this.usersService.searchUsersByEmail(email, 0, 1);
+      const user = users[0];
+      if (users.length === 0) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      await this.usersService.updateOTP(user.id, null);
       return { isValid: true, expiryToken } as {
         isValid: boolean;
         expiryToken: string;
