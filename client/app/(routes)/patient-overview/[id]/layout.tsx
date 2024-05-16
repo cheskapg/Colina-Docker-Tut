@@ -16,7 +16,7 @@ import { ToastAction } from "@/components/ui/toast";
 import Link from "next/link";
 import Image from "next/image";
 import { EditProvider, useEditContext } from "./editContext";
-function PatientOverview() {
+function PatientOverview({ setIsTableLoading }: { setIsTableLoading: any }) {
   const { isEdit, isSave, toggleEdit, disableEdit } = useEditContext();
 
   useEffect(() => {
@@ -41,16 +41,12 @@ function PatientOverview() {
 
   const tabs = [
     {
-      label: "Medical History",
-      url: `/patient-overview/${params.id}/medical-history/allergies`,
-    },
-    {
-      label: "Medication Log",
+      label: "MAR",
       url: `/patient-overview/${params.id}/medication/scheduled`,
     },
     {
-      label: "Prescription",
-      url: `/patient-overview/${params.id}/prescription`,
+      label: "Notes",
+      url: `/patient-overview/${params.id}/notes/nurses-notes`,
     },
     {
       label: "Vital Signs",
@@ -61,16 +57,20 @@ function PatientOverview() {
       url: `/patient-overview/${params.id}/lab-results`,
     },
     {
-      label: "Appointment",
-      url: `/patient-overview/${params.id}/patient-appointment`,
+      label: "Medical History",
+      url: `/patient-overview/${params.id}/medical-history/allergies`,
     },
     {
-      label: "Notes",
-      url: `/patient-overview/${params.id}/notes/nurses-notes`,
+      label: "Prescription",
+      url: `/patient-overview/${params.id}/prescription`,
     },
     {
       label: "Forms",
       url: `/patient-overview/${params.id}/forms`,
+    },
+    {
+      label: "Appointment",
+      url: `/patient-overview/${params.id}/patient-appointment`,
     },
   ];
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -121,6 +121,7 @@ function PatientOverview() {
   };
 
   const fetchData = async () => {
+    setIsTableLoading(false);
     try {
       const response = await fetchPatientOverview(patientId, router);
       console.log(response, "response");
@@ -159,7 +160,7 @@ function PatientOverview() {
   useEffect(() => {
     const pathParts = pathname.split("/");
     const tabUrl = pathParts[pathParts.length - 1];
-
+    setIsTableLoading(false);
     fetchData();
   }, [patientId, router, params]);
   //removed router and params replaced with pathname for reduce icon reload
@@ -322,7 +323,7 @@ function PatientOverview() {
                   className="object-cover rounded-md min-w-[200px] min-h-[200px] max-w-[200px] max-h-[200px]"
                   width={200}
                   height={200}
-                  src="/imgs/user-no-icon.jpg"
+                  src="/imgs/user-no-icon.svg"
                   alt="profile"
                 />
               )}
@@ -444,14 +445,14 @@ function PatientOverview() {
             <div className="flex gap-[50px] px-2 ">
               {isLoading ? (
                 <div className="flex items-start animate-pulse">
+                  <div className="h-8 w-10 bg-gray-300 rounded-full mr-12"></div>
+                  <div className="h-8 w-14 bg-gray-200 rounded-full mr-12"></div>
+                  <div className="h-8 w-20 bg-gray-300 rounded-full mr-12"></div>
+                  <div className="h-8 w-36 bg-gray-400 rounded-full mr-12"></div>
                   <div className="h-8 w-28 bg-gray-300 rounded-full mr-12"></div>
-                  <div className="h-8 w-28 bg-gray-200 rounded-full mr-12"></div>
-                  <div className="h-8 w-24 bg-gray-300 rounded-full mr-12"></div>
-                  <div className="h-8 w-20 bg-gray-400 rounded-full mr-12"></div>
-                  <div className="h-8 w-36 bg-gray-300 rounded-full mr-12"></div>
                   <div className="h-8 w-24 bg-gray-200 rounded-full mr-12"></div>
                   <div className="h-8 w-14 bg-gray-400 rounded-full mr-12"></div>
-                  <div className="h-8 w-14 bg-gray-200 rounded-full "></div>
+                  <div className="h-8 w-24 bg-gray-200 rounded-full "></div>
                 </div>
               ) : (
                 tabs.map((tab, index) => (
@@ -470,6 +471,7 @@ function PatientOverview() {
                           : "hover:text-[#007C85] hover:border-b-2 pb-1 h-[31px] border-[#007C85] text-[15px]"
                       }`}
                       onClick={() => {
+                        setIsTableLoading(true);
                         disableEdit(); // disable edit on tab change
                       }}
                     >
@@ -484,6 +486,9 @@ function PatientOverview() {
           <div className={`cursor-pointer ${isLoading ? "hidden" : ""}`}>
             <Link href={`/patient-overview/${params.id}/patient-details`}>
               <p
+                onClick={() => {
+                  setIsTableLoading(true);
+                }}
                 className={`underline text-[15px] font-semibold text-right mr-10 hover:text-[#007C85] ${
                   currentRoute === "patient-details" ? "text-[#007C85]" : ""
                 }`}
@@ -505,12 +510,25 @@ export default function PatientOverviewLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
+
   return (
     <div className="flex flex-col w-full px-[150px] pt-[90px] h-full">
       <EditProvider>
-        <PatientOverview />
+        <PatientOverview setIsTableLoading={setIsTableLoading} />
         <div className="w-full flex items-center justify-center mt-4 h-full">
-          {children}
+          {isTableLoading ? (
+            <div className="container w-full h-full flex justify-center items-center ">
+              <Image
+                src="/imgs/colina-logo-animation.gif"
+                alt="logo"
+                width={100}
+                height={100}
+              />
+            </div>
+          ) : (
+            children
+          )}
         </div>
       </EditProvider>
     </div>
