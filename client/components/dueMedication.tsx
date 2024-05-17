@@ -19,7 +19,8 @@ import Image from "next/image";
 import Pagination from "@/components/shared/pagination";
 import { fetchProfileImages } from "@/app/api/patients-api/patientProfileImage.api";
 import ResuableTooltip from "@/components/reusable/tooltip";
-import DueMedicationLoader from "@/components/loaders/DueMedicationLoader";
+import DueMedicationLoader from "./loaders/dueMedicationLoader";
+
 
 const DueMedication = () => {
   const router = useRouter();
