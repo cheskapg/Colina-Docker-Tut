@@ -129,6 +129,7 @@ const AuthForm = () => {
     }
     setIsSubmitted(false);
   };
+
   const handleCheckboxChange = () => {
     setRememberMe(!rememberMe); // Toggle rememberMe state
   };
@@ -219,7 +220,7 @@ const AuthForm = () => {
                     >
                       <div className="relative mb-4 flex flex-col">
                         <input
-                        autoFocus
+                          autoFocus
                           id="email"
                           type="email"
                           className={`${
