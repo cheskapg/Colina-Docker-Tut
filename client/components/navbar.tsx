@@ -6,45 +6,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import NavBarDropdown from "./shared/navbardropdown";
-<<<<<<< HEAD
-import { getAccessToken } from "@/app/api/login-api/accessToken";
-import Link from "next/link";
-import { searchPatientList } from "@/app/api/patients-api/patientList.api";
-import { CornerDownRightIcon } from "lucide-react";
-
-interface Tabs {
-  name: string;
-  patientId: string;
-}
-
-export const Navbar = ({
-  setIsLoading,
-}: {
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const router = useRouter();
-  
-  const [isActive, setIsActive] = useState(false);
-  const pathname = usePathname();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
-  const [suggestionContainer, setSuggestionContainer] = useState(false);
-  const [isAnimate, setIsAnimate] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [tabs, setTabs] = useState<Tabs[]>([]);
-  const [selectedPatientId, setSelectedPatientId] = useState("");
-  const [id, setId] = useState(selectedPatientId);
-  const [filteredPatient, setFilteredPatient] = useState<Tabs[]>([]);
-
-  const handleSearchChange = (e: { target: { value: any } }) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    const filteredPatient = searchData.filter(
-      (patient) =>
-        patient.name.toLowerCase().startsWith(value.toLowerCase()) ||
-        patient.patientId.toLowerCase().startsWith(value.toLowerCase())
-    );
-=======
 import { getAccessToken, getUserDetail } from "@/app/api/login-api/accessToken";
 import Link from "next/link";
 import { searchPatientList } from "@/app/api/patients-api/patientList.api";
@@ -210,7 +171,6 @@ export const Navbar = (
       console.log("No result found");
     }
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     setFilteredPatient(filteredPatient);
   };
 
@@ -227,140 +187,21 @@ export const Navbar = (
     {
       label: "Due Medications",
       url: "/due-medications",
-<<<<<<< HEAD
-    },
-    {
-      label: "Patients List",
-      url: "/patient-list",
-=======
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     },
     {
       label: "Appointments",
       url: "/appointments",
     },
     {
-<<<<<<< HEAD
-=======
       label: "Patients List",
       url: "/patient-list",
     },
     {
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       label: "Chart",
       url: "/chart",
     },
   ];
 
-<<<<<<< HEAD
-  const searchData = [
-    {
-      name: "Chesky Marga Chesky Marga Marga C. Palma Gil",
-      patientId: "PTN-20234A41",
-    },
-    {
-      name: "Daryl Lesiguez Estrada",
-      patientId: "PTN-25613682",
-    },
-  ];
-
-  const onPatientClick = (patientId: string, url: string) => {
-    setSelectedPatientId(patientId);
-    const urlParts = url.split("/");
-    const path = `/${urlParts[urlParts.length - 2]}/${
-      urlParts[urlParts.length - 1]
-    }`;
-    router.push(`/patient-overview/${patientId}${path}`);
-    setTimeout(() => {
-      setShowGlobalSearch(false);
-      setSuggestionContainer(false);
-    }, 300);
-  };
-  const tabsUrls = [
-    {
-      label: "MAR",
-      subTab: [
-        {
-          label: "Scheduled",
-          url: `/patient-overview/${selectedPatientId}/medication/scheduled`,
-        },
-        {
-          label: "PRN",
-          url: `/patient-overview/${selectedPatientId}/medication/prorenata`,
-        },
-      ],
-    },
-    {
-      label: "Notes",
-      subTab: [
-        {
-          label: "Nurse's Notes",
-          url: `/patient-overview/${selectedPatientId}/notes/nurses-notes`,
-        },
-        {
-          label: "Incident Report",
-          url: `/patient-overview/${selectedPatientId}/notes/incident-report`,
-        },
-      ],
-    },
-    {
-      label: "Vital Signs",
-      url: `/patient-overview/${selectedPatientId}/vital-signs`,
-    },
-    {
-      label: "Laboratory Results",
-      url: `/patient-overview/${selectedPatientId}/lab-results`,
-    },
-    {
-      label: "Medical History",
-      subTab: [
-        {
-          label: "Surgeries",
-          url: `/patient-overview/${selectedPatientId}/medical-history/surgeries`,
-        },
-        {
-          label: "Allergies",
-          url: `/patient-overview/${selectedPatientId}/medical-history/allergies`,
-        },
-      ],
-    },
-    {
-      label: "Prescription",
-      url: `/patient-overview/${selectedPatientId}/prescription`,
-    },
-    {
-      label: "Forms",
-      url: `/patient-overview/${selectedPatientId}/forms`,
-      subTab: [
-        {
-          label: "Archived",
-          url: `/patient-overview/${selectedPatientId}/forms/archived`,
-        },
-      ],
-    },
-    {
-      label: "Appointment",
-      url: `/patient-overview/${selectedPatientId}/patient-appointment`,
-    },
-  ];
-
-  const [OpenProfile, setOpenProfile] = useState(false);
-
-  const menuRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const iconRef = useRef<HTMLImageElement>(null);
-
-  const handleMouseDownOutside = useCallback(
-    (event: MouseEvent) => {
-      if (
-        dropdownOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        !iconRef.current?.contains(event.target as Node)
-      ) {
-        console.log("Dropdown is being closed");
-        setDropdownOpen(false);
-=======
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -368,14 +209,9 @@ export const Navbar = (
         setSearchData(response.data);
       } catch (error: any) {
         console.log(error);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       }
-    },
-    [dropdownOpen]
-  );
+    };
 
-<<<<<<< HEAD
-=======
     fetchData();
   }, []);
 
@@ -491,7 +327,6 @@ export const Navbar = (
     [dropdownOpen, isNotificationOpen],
   );
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   useEffect(() => {
     document.addEventListener("mousedown", handleMouseDownOutside);
 
@@ -516,11 +351,7 @@ export const Navbar = (
         }, 300);
       }
     },
-<<<<<<< HEAD
-    [showGlobalSearch]
-=======
     [showGlobalSearch],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   );
 
   useEffect(() => {
@@ -539,34 +370,13 @@ export const Navbar = (
       pathname === "/appointments" ||
       pathname === "/dashboard"
     ) {
-<<<<<<< HEAD
-      setIsLoading(false);
-=======
       // setIsLoading(false);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
   }, [pathname]);
 
   const handleSearchClick = () => {
     setShowGlobalSearch(true);
     setIsAnimate(true);
-<<<<<<< HEAD
-  };
-
-  return (
-    <div className="fixed bg-[#007C85] w-full h-[70px] flex items-center justify-between px-[145px] z-10 font-medium text-[15px]">
-      <Link href="/dashboard" shallow>
-        <Image
-          src={"/imgs/colina-logo.png"}
-          alt={""}
-          width={200}
-          height={37}
-          className="cursor-pointer"
-          onClick={(event) => {
-            if (pathname === "/dashboard") {
-              event.preventDefault();
-              setIsLoading(true);
-=======
     // setIsFocused(true);
     // if (globalSearchRef.current) {
     //   globalSearchRef.current.focus();
@@ -586,32 +396,20 @@ export const Navbar = (
             if (pathname === "/dashboard") {
               event.preventDefault();
               // setIsLoading(true);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               window.location.reload();
             }
           }}
         />
       </Link>
-<<<<<<< HEAD
-      <div className="flex gap-[30px] items-center">
-        <div className="flex gap-[40px] items-end">
-=======
       <div className="flex items-center gap-[30px]">
         <div className="flex items-end gap-[30px]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           {routes.map((route, index) => (
             <Link
               key={index}
               href={route.url}
-<<<<<<< HEAD
-              className={`cursor-pointer text-white relative `}
-              onClick={() => {
-                setIsLoading(true);
-=======
               className={`relative cursor-pointer font-medium text-white`}
               onClick={() => {
                 // setIsLoading(true);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 if (pathname === route.url) {
                   window.location.reload();
                 }
@@ -620,22 +418,14 @@ export const Navbar = (
               <p className="hover:text-gray-200">{route.label}</p>
               {pathname === route.url && !showGlobalSearch && (
                 <p
-<<<<<<< HEAD
-                  className={`${"border-b-[3px] border-[#ffffff] w-full absolute bottom-[-20px]"}`}
-=======
                   className={`${"absolute bottom-[-20px] w-full border-b-[2px] border-[#ffffff]"}`}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 ></p>
               )}
             </Link>
           ))}
         </div>
         <div
-<<<<<<< HEAD
-          className="flex justify-center items-center"
-=======
           className="relative -ml-3 -mr-3 flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-full hover:bg-[#D9D9D91A]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           onClick={handleSearchClick}
           ref={searchRef}
         >
@@ -644,111 +434,11 @@ export const Navbar = (
             width={15}
             height={15}
             alt="search"
-<<<<<<< HEAD
-            className="cursor-pointer absolute"
-=======
             className="absolute cursor-pointer"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           />
           {showGlobalSearch && (
             <>
               <div
-<<<<<<< HEAD
-                className={`bg-white flex items-center global-search h-[40px] rounded-lg shadow-md transition duration-300 relative
-              ${isAnimate ? "animate " : "animate-close"}`}
-              >
-                <Image
-                  src="/icons/search-icon.svg"
-                  width={15}
-                  height={15}
-                  alt="search"
-                  className="cursor-pointer absolute ml-2"
-                />
-                <input
-                  type="text"
-                  className="w-full h-full rounded-lg ml-7 appearance-none outline-none"
-                  placeholder="Search for patient names or id..."
-                  value={searchValue}
-                  onChange={(e) => handleSearchChange(e)}
-                />
-              </div>
-              {searchValue && (
-                <div
-                  className={`bg-white w-full h-[310px]  bottom-[-300px] global-search truncate p-[10px] rounded-sm shadow-md ${
-                    isAnimate ? " " : "animate-close"
-                  }`}
-                >
-                  <div className="h-full w-full overflow-y-scroll flex flex-col gap-[8px]">
-                    {tabsUrls.map((tab, index) => (
-                      <div key={index} className="flex flex-col gap-[8px]">
-                        <p
-                          className="bg-[#007C85] p-[10px] text-white font-bold flex justify-between items-center"
-                          key={index}
-                        >
-                          <span>{tab.label}</span>
-                          <span className="italic">TAB</span>
-                        </p>
-                        {!tab.url ? (
-                          <>
-                            {tab.subTab && (
-                              <>
-                                {tab.subTab.map((sub, subIndex) => (
-                                  <div key={subIndex}>
-                                    <div
-                                      className="bg-[#007C85] p-[10px] text-white font-bold flex justify-between items-center"
-                                      key={index}
-                                    >
-                                      <div className="flex gap-[10px]">
-                                        <CornerDownRightIcon
-                                          width={20}
-                                          height={20}
-                                        />
-                                        <p>{sub.label}</p>
-                                      </div>
-                                      <p className="italic">SUBTAB</p>
-                                    </div>
-
-                                    {filteredPatient.map((patient, index) => (
-                                      <p
-                                        onClick={() => {
-                                          onPatientClick(
-                                            patient.patientId,
-                                            tab.subTab[index]?.url
-                                          );
-                                        }}
-                                        key={index}
-                                        data-uuid={patient.patientId}
-                                        className="bg-white hover:bg-[#D9D9D933] p-[10px] pl-[40px] flex justify-between cursor-pointer"
-                                      >
-                                        <span>{patient.name}</span>
-                                        <span>{patient.patientId}</span>
-                                      </p>
-                                    ))}
-                                  </div>
-                                ))}
-                              </>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {filteredPatient.map((patient, index) => (
-                              <p
-                                onClick={() => {
-                                  onPatientClick(patient.patientId, tab.url);
-                                }}
-                                key={index}
-                                data-uuid={patient.patientId}
-                                className="bg-white hover:bg-[#D9D9D933] p-[10px] flex justify-between cursor-pointer"
-                              >
-                                <span>{patient.name}</span>
-                                <span>{patient.patientId}</span>
-                              </p>
-                            ))}
-
-                            {tab.subTab && (
-                              <>
-                                {tab.url && (
-=======
                 className={`global-search relative flex h-[40px] items-center rounded-sm bg-white shadow-md transition duration-300 ${isAnimate ? "animate" : "animate-close"}`}
               >
                 {/* <Image
@@ -798,25 +488,10 @@ export const Navbar = (
                             {!tab.url ? (
                               <>
                                 {tab.subTab && (
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                   <>
                                     {tab.subTab.map((sub, subIndex) => (
                                       <div key={subIndex}>
                                         <div
-<<<<<<< HEAD
-                                          className="bg-[#007C85] p-[10px] text-white font-bold flex justify-between items-center"
-                                          key={index}
-                                        >
-                                          <div className="flex gap-[10px]">
-                                            <CornerDownRightIcon
-                                              width={20}
-                                              height={20}
-                                            />
-                                            <p>{sub.label}</p>
-                                          </div>
-
-                                          <p className="italic">SUBTAB</p>
-=======
                                           className="mr-2 flex items-center justify-between bg-[#007C85] p-[10px] font-bold text-white"
                                           key={index}
                                         >
@@ -830,7 +505,6 @@ export const Navbar = (
                                             <p>{sub.label}</p>
                                           </div>
                                           {/* <p className="italic">SUBTAB</p> */}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                         </div>
 
                                         {filteredPatient.map(
@@ -838,20 +512,6 @@ export const Navbar = (
                                             <p
                                               onClick={() => {
                                                 onPatientClick(
-<<<<<<< HEAD
-                                                  patient.patientId,
-                                                  tab.subTab[index]?.url
-                                                );
-                                              }}
-                                              key={index}
-                                              data-uuid={patient.patientId}
-                                              className="bg-white hover:bg-[#D9D9D933] p-[10px] pl-[40px] flex justify-between cursor-pointer"
-                                            >
-                                              <span>{patient.name}</span>
-                                              <span>{patient.patientId}</span>
-                                            </p>
-                                          )
-=======
                                                   patient.uuid,
                                                   tab.subTab[0]?.url,
                                                 );
@@ -867,21 +527,12 @@ export const Navbar = (
                                               <span>{patient.uuid}</span>
                                             </p>
                                           ),
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                         )}
                                       </div>
                                     ))}
                                   </>
                                 )}
                               </>
-<<<<<<< HEAD
-                            )}
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-=======
                             ) : (
                               <>
                                 {filteredPatient.map((patient, index) => (
@@ -965,15 +616,11 @@ export const Navbar = (
                      
                     )}
                   </>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 </div>
               )}
             </>
           )}
         </div>
-<<<<<<< HEAD
-        <div className="flex gap-3 items-center mr-2">
-=======
         {/* Notification */}
         <div
           ref={notifIconRef}
@@ -1010,7 +657,6 @@ export const Navbar = (
           />
         )}
         <div className="flex items-center justify-end gap-3">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           <Image
             src={"/imgs/drake.png"}
             alt={""}
@@ -1020,15 +666,9 @@ export const Navbar = (
           />
           <Image
             ref={iconRef}
-<<<<<<< HEAD
-            className={`cursor-pointer select-none ${
-              dropdownOpen ? "rotate-180" : ""
-            } duration-300 w-auto h-auto`}
-=======
             className={`flex w-full cursor-pointer select-none justify-end ${
               dropdownOpen ? "rotate-180" : ""
             } h-auto w-auto duration-300`}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             onClick={() => {
               console.log("Toggling dropdownOpen state");
               setDropdownOpen((prevValue) => !prevValue);

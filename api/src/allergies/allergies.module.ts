@@ -10,11 +10,7 @@ import { EmergencyContacts } from 'src/emergencyContacts/entities/emergencyConta
 import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContacts.service';
 
 @Module({
-<<<<<<< HEAD
-  imports: [TypeOrmModule.forFeature([Allergies, Patients])],
-=======
   imports: [TypeOrmModule.forFeature([Allergies, Patients, EmergencyContacts])],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
   controllers: [AllergiesController],
   providers: [AllergiesService, IdService, PatientsService,EmergencyContactsService],

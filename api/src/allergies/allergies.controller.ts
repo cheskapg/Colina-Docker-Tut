@@ -28,18 +28,11 @@ export class AllergiesController {
   @Post('list/:id')
   findAllergiesByPatient(
     @Param('id') patientId: string,
-<<<<<<< HEAD
-    @Body() body: { term: string, page: number, sortBy: string, sortOrder: 'ASC' | 'DESC' , perPage:number }
-  ) {
-    const { term = "", page, sortBy, sortOrder, perPage } = body;
-    return this.allergiesService.getAllAllergiesByPatient(patientId, term, page, sortBy, sortOrder,perPage);
-=======
     @Body() body: { term: string, page: number, sortBy: string, sortOrder: 'ASC' | 'DESC' , perPage:number ,    filterSeverity: string[];
     }
   ) {
     const { term = "", page, sortBy, sortOrder, perPage, filterSeverity } = body;
     return this.allergiesService.getAllAllergiesByPatient(patientId, term, page, sortBy, sortOrder,perPage, filterSeverity);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   }
 
 

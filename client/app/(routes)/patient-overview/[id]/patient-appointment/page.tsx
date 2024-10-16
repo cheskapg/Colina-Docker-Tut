@@ -8,15 +8,9 @@ import DownloadPDF from "@/components/shared/buttons/downloadpdf";
 import View from "@/components/shared/buttons/view";
 import { useState } from "react";
 import { onNavigate } from "@/actions/navigation";
-<<<<<<< HEAD
-import { useParams, useRouter } from "next/navigation";
-import { fetchAppointmentsByPatient as fetchAppointmentsByPatient } from "@/app/api/appointments-api/appointments.api";
-import { AppointmentviewModalContent } from "@/components/modal-content/appointmentview-modal-content";
-=======
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { fetchAppointmentsByPatient as fetchAppointmentsByPatient } from "@/app/api/appointments-api/appointments.api";
 import { AppointmenViewModalContent } from "@/components/modal-content/appointmentview-modal-content";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import Modal from "@/components/reusable/modal";
 import { AppointmentModalContent } from "@/components/modal-content/appointment-modal-content";
 import { ClipboardList } from "lucide-react";
@@ -25,23 +19,14 @@ import { SuccessModal } from "@/components/shared/success";
 import { ErrorModal } from "@/components/shared/error";
 import Pagination from "@/components/shared/pagination";
 import ResuableTooltip from "@/components/reusable/tooltip";
-<<<<<<< HEAD
-=======
 import PdfDownloader from "@/components/pdfDownloader";
 import Edit from "@/components/shared/buttons/edit";
 import { useEditContext } from "@/app/(routes)/patient-overview/[id]/editContext";
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 const Appointment = () => {
   const router = useRouter();
   if (typeof window === "undefined") {
   }
-<<<<<<< HEAD
-  // start of orderby & sortby function
-  const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isEdit, setIsView] = useState(false);
-=======
   const { isOpenHovered } = useEditContext();
 
   const searchParams = useSearchParams();
@@ -51,7 +36,6 @@ const Appointment = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
 console.log(isEdit, "isEdit");
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const [isUpdated, setIsUpdated] = useState(false);
   const formatDate = (createdAt: string | number | Date) => {
     // Create a new Date object from the provided createdAt date string
@@ -108,11 +92,7 @@ console.log(isEdit, "isEdit");
 
   const [patientAppointments, setPatientAppointments] = useState<any[]>([]);
   const [term, setTerm] = useState("");
-<<<<<<< HEAD
-  const [sortOrder, setSortOrder] = useState("ASC");
-=======
   const [sortOrder, setSortOrder] = useState("DESC");
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const [sortBy, setSortBy] = useState("appointmentDate");
   const [pageNumber, setPageNumber] = useState("");
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -158,27 +138,6 @@ console.log(isEdit, "isEdit");
     { label: "Status", onClick: handleSortOptionClick },
   ]; // end of orderby & sortby function
   const [gotoError, setGotoError] = useState(false);
-<<<<<<< HEAD
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpenReminder, setIsOpenReminder] = useState(false);
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`flex ring-1 ring-gray-300 items-center justify-center  w-[49px]  ${
-            currentPage === i ? "btn-pagination" : ""
-          }`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
-=======
   const [filterStatusFromCheck, setFilterStatusFromCheck] = useState<string[]>(
     [],
   );
@@ -188,7 +147,6 @@ console.log(isEdit, "isEdit");
   const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
   const handleStatusUpdate = (checkedFilters: string[]) => {
     setFilterStatusFromCheck(checkedFilters);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   };
   const handleTypeUpdate = (checkedFilters: string[]) => {
     setFilterTypeFromCheck(checkedFilters);
@@ -218,10 +176,7 @@ console.log(isEdit, "isEdit");
       document.body.style.overflow = "hidden";
     } else if (!isOpen) {
       document.body.style.overflow = "visible";
-<<<<<<< HEAD
-=======
       setIsEdit(false);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       setIsView(false);
       setAppointmentData([]);
     }
@@ -233,31 +188,21 @@ console.log(isEdit, "isEdit");
       document.body.style.overflow = "hidden";
     } else if (!isOpen) {
       document.body.style.overflow = "visible";
-<<<<<<< HEAD
-      setIsView(false);
-=======
       setIsEdit(false);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       setAppointmentData([]);
     }
   };
 
   const onSuccess = () => {
-<<<<<<< HEAD
-=======
     setIsEdit(false);
     setIsView(false);
     isModalOpen(false);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     setIsSuccessOpen(true);
   };
   const onFailed = () => {
     setIsErrorOpen(true);
-<<<<<<< HEAD
-=======
     setIsEdit(false);
     setIsView(false);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   };
 
   useEffect(() => {
@@ -289,12 +234,6 @@ console.log(isEdit, "isEdit");
     };
 
     fetchData();
-<<<<<<< HEAD
-  }, [currentPage, sortOrder, sortBy, term, isOpen]);
-  if (isLoading) {
-    return (
-      <div className="container w-full h-full flex justify-center items-center ">
-=======
   }, [currentPage, sortOrder, sortBy, term, isOpen, filterStatusFromCheck, filterTypeFromCheck]);
 
   useEffect(() => {
@@ -309,7 +248,6 @@ console.log(isEdit, "isEdit");
   if (isLoading) {
     return (
       <div className="container flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           alt="logo"
@@ -321,16 +259,6 @@ console.log(isEdit, "isEdit");
   }
 
   return (
-<<<<<<< HEAD
-    <div className="w-full h-full flex flex-col justify-between">
-      <div className="w-full h-full">
-        <div className="w-full justify-between flex mb-2">
-          <div className="flex-row">
-            <p className="p-title">Appointment</p>
-
-            <div>
-              <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px] ">
-=======
     <div className="flex h-full w-full flex-col justify-between">
       <div className="h-full w-full">
         <div className="mb-2 flex w-full justify-between">
@@ -339,31 +267,12 @@ console.log(isEdit, "isEdit");
 
             <div>
               <p className="my-1 h-[23px] text-[15px] font-normal text-[#64748B]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Total of {totalAppointments} Appointments
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
-<<<<<<< HEAD
-              <Image src="/imgs/add.svg" alt="" width={22} height={22} />
-              <p className="text-[18px]">Add</p>
-            </button>
-            <button
-              onClick={() => isModalReminderOpen(true)}
-              className="btn-pdfs gap-2"
-            >
-              <ClipboardList width={22} height={22} />
-              <p className="text-[18px]">Reminder</p>
-            </button>
-          </div>
-        </div>
-
-        <div className="w-full m:rounded-lg items-center">
-          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-            <form className="mr-5 relative">
-=======
               <Image src="/imgs/add.svg" alt="" width={18} height={18} />
               <p className="">Add</p>
             </button>
@@ -378,16 +287,11 @@ console.log(isEdit, "isEdit");
         <div className="m:rounded-lg w-full items-center">
           <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
             <form className="relative mr-5">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               {/* search bar */}
               <label className=""></label>
               <div className="flex">
                 <input
-<<<<<<< HEAD
-                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[15px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat"
-=======
                   className="relative mx-5 my-4 h-[47px] w-[460px] rounded-[3px] border-[1px] border-[#E7EAEE] bg-[#fff] bg-[center] bg-no-repeat px-5 py-3 pl-10 pt-[14px] text-[15px] outline-none placeholder:text-[#64748B]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   type="text"
                   placeholder="Search by reference no. or name..."
                   value={term}
@@ -401,22 +305,13 @@ console.log(isEdit, "isEdit");
                   alt="Search"
                   width={20}
                   height={20}
-<<<<<<< HEAD
-                  className="absolute left-8 top-9 pointer-events-none"
-=======
                   className="pointer-events-none absolute left-8 top-8"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 />
               </div>
             </form>
 
-<<<<<<< HEAD
-            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
             <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Order by
               </p>
               <DropdownMenu
@@ -430,11 +325,7 @@ console.log(isEdit, "isEdit");
                 width={"165px"}
                 label={"Select"}
               />
-<<<<<<< HEAD
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Sort by
               </p>
               <DropdownMenu
@@ -456,23 +347,6 @@ console.log(isEdit, "isEdit");
         <div>
           <table className="text-left rtl:text-right">
             <thead>
-<<<<<<< HEAD
-              <tr className="uppercase text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
-                <td className="px-6 py-3 ">STATUS</td>
-                <td className="px-6 py-3 ">DATE</td>
-                <td className="px-6 py-3 ">TIME</td>
-                <td className="px-6 py-3 ">END TIME</td>
-                <td className="px-6 py-3 ">DETAILS</td>
-                <td className="py-3 px-6 text-center">ACTION</td>
-                <td className="w-[14px]"></td>
-              </tr>
-            </thead>
-            <tbody className="h-[220px] overflow-y-scroll">
-              {patientAppointments.length === 0 && (
-                <tr>
-                  <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                    <p className="font-normal text-gray-700 text-center text-[15px]">
-=======
               <tr className="h-[70px] border-b text-[15px] font-semibold uppercase text-[#64748B]">
                 <td className="w-[190px] py-3 pl-6">APPOINTMENT UID</td>
                 <td className="w-[130px] py-3">DATE</td>
@@ -538,7 +412,6 @@ console.log(isEdit, "isEdit");
                 <tr>
                   <td className="border-1 absolute flex w-[180vh] items-center justify-center py-5">
                     <p className="text-center text-[15px] font-normal text-gray-700">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       No Appointment/s <br />
                     </p>
                   </td>
@@ -551,62 +424,6 @@ console.log(isEdit, "isEdit");
                       key={index}
                       className="group h-[63px] border-b text-[15px] hover:bg-[#f4f4f4]"
                     >
-<<<<<<< HEAD
-                      <td className="text-[15px] px-6 py-3  rounded-full flex items-center">
-                        <div
-                          className={`px-2 font-semibold rounded-[20px] relative flex items-center ${
-                            appointments.appointments_appointmentStatus ===
-                            "Scheduled"
-                              ? "bg-[#E7EAEE] text-[#71717A] text-[15px]" // Green color for Scheduled
-                              : appointments.appointments_appointmentStatus ===
-                                "Done"
-                              ? "bg-[#CCFFDD] text-[#17C653] text-[15px]" // Dark color for Done
-                              : appointments.appointments_appointmentStatus ===
-                                  "Patient-IN" ||
-                                appointments.appointments_appointmentStatus ===
-                                  "On-going"
-                              ? "bg-[#FFF8DD] text-[#F6C000] text-[15px]" // Yellow for On Going
-                              : appointments.appointments_appointmentStatus ===
-                                  "Missed" ||
-                                appointments.appointments_appointmentStatus ===
-                                  "Cancelled"
-                              ? "bg-[#FFE8EC] text-[#EF4C6A] text-[15px]" // Red color for Missed and Cancelled
-                              : ""
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-2 w-2 rounded-full mr-1 ${
-                              appointments.appointments_appointmentStatus ===
-                              "Scheduled"
-                                ? "bg-[#7E7E7E]" // Green color for Scheduled
-                                : appointments.appointments_appointmentStatus ===
-                                  "Done"
-                                ? "bg-[#0EB146]" // Dark color for Done
-                                : appointments.appointments_appointmentStatus ===
-                                    "Patient-IN" ||
-                                  appointments.appointments_appointmentStatus ===
-                                    "On-going"
-                                ? "bg-[#E4B90E]" // Yellow for On Going
-                                : appointments.appointments_appointmentStatus ===
-                                    "Missed" ||
-                                  appointments.appointments_appointmentStatus ===
-                                    "Cancelled"
-                                ? "bg-[#EE4D4D]" // Red color for Missed and Cancelled
-                                : ""
-                            }`}
-                          ></span>
-                          {appointments.appointments_appointmentStatus}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-3 text-[15px] ">
-                        {appointments.appointments_appointmentDate}
-                      </td>
-                      <td className="px-6 py-3 text-[15px] ">
-                        {formatTime(appointments.appointments_appointmentTime)}
-                      </td>
-                      <td className="px-6 py-3 text-[15px] ">
-=======
                       <td className="w-[190px] py-3 pl-6">
                         {appointments.appointments_uuid}
                       </td>
@@ -623,26 +440,18 @@ console.log(isEdit, "isEdit");
                         {formatTime(appointments.appointments_appointmentTime)}
                       </td>
                       <td className="w-[130px] py-3">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         {formatTime(
                           appointments.appointments_appointmentEndTime,
                         )}
                       </td>
-<<<<<<< HEAD
-                      <td className="px-6 py-3 text-[15px] ">
-=======
                       <td className="w-[170px] py-3"><ResuableTooltip
                           text={appointments.appointments_appointmentType}
                         /></td>
                       <td className="w-[150px] py-3">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         <ResuableTooltip
                           text={appointments.appointments_details}
                         />
                       </td>
-<<<<<<< HEAD
-                      <td className="py-3 px-6 flex justify-center">
-=======
                       <td className="px-5 py-3">
                         <div
                           className={`relative flex h-[25px] w-[95px] items-center justify-center rounded-[30px] font-semibold capitalize placeholder:text-[15px] ${
@@ -682,7 +491,6 @@ console.log(isEdit, "isEdit");
                         >
                           <Edit></Edit>
                         </p>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         <p
                           onClick={() => {
                             isModalOpen(true);
@@ -726,8 +534,6 @@ console.log(isEdit, "isEdit");
           isModalOpen={isModalOpen}
         />
       )}
-<<<<<<< HEAD
-=======
       {isView && (
         <Modal
           content={
@@ -743,7 +549,6 @@ console.log(isEdit, "isEdit");
         />
       )}
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       {isOpenReminder && (
         <Modal
           content={
@@ -759,17 +564,10 @@ console.log(isEdit, "isEdit");
 
       {isSuccessOpen && (
         <SuccessModal
-<<<<<<< HEAD
-          label="Email Sent Succesfully"
-          isAlertOpen={isSuccessOpen}
-          toggleModal={setIsSuccessOpen}
-          isUpdated={isUpdated}
-=======
           label={isEdit? "Updated" : "Submitted"}
           isAlertOpen={isSuccessOpen}
           toggleModal={setIsSuccessOpen}
           isUpdated={isEdit}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           setIsUpdated={setIsUpdated}
         />
       )}

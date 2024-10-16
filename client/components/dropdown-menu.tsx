@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-'use client'
-import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { ChevronDown } from "lucide-react";
-=======
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import ResuableTooltip from "./reusable/tooltip";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 interface DropdownMenuProps {
   open?: boolean;
   width: string;
@@ -128,23 +121,6 @@ const DropdownMenu = ({
   };
 
   return (
-<<<<<<< HEAD
-    <div className={` w-full max-w-[165px] w-${width} `} ref={menuRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-white w-full h-[47px] rounded-[5px] px-[20px] items-center flex justify-between font-bold text-[15px] text-[#191D23] text-opacity-60 shadow-sm"
-      >
-        {optionLabel}
-        <ChevronDown width={18} height={18} />
-      </button>
-
-      {isOpen && (
-        <div className=" bg-white w-[165px] flex flex-col absolute mt-2 rounded-md p-4 shadow-xl cursor-pointer text-[15px]">
-          {options.map((option, index) => (
-            <div
-              key={index}
-              className="flex flex-row gap-2 "
-=======
     <div className={`w-full max-w-[166px] w-${width} `} ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -168,7 +144,6 @@ const DropdownMenu = ({
             <div
               key={index}
               className="flex flex-row gap-2"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               onClick={() => {
                 handleOptionClick(option.onClick);
                 setOptionLabel(option.label);
@@ -187,11 +162,7 @@ const DropdownMenu = ({
               ) : (
                 <div></div>
               )}
-<<<<<<< HEAD
-              <p className="hover:text-[#007C85] font-semibold" key={index}>
-=======
               <p className="font-semibold hover:text-[#007C85]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 {option.label}
               </p>
             </div>

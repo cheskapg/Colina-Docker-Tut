@@ -58,11 +58,7 @@ export class MedicationLogsService {
     const uuid = this.idService.generateRandomUUID(uuidPrefix);
     newMedicationLogs.uuid = uuid;
     newMedicationLogs.patientId = patientId;
-<<<<<<< HEAD
-    newMedicationLogs.prescriptionId = prescriptionId;
-=======
     newMedicationLogs.prescriptionId = medicationLogData.startDate? prescriptionId : null;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     Object.assign(newMedicationLogs, medicationLogData);
     const savedMedicationLogs =
       await this.medicationLogsRepository.save(newMedicationLogs);
@@ -80,12 +76,8 @@ export class MedicationLogsService {
     page: number = 1,
     sortBy: string = 'medicationLogsTime',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
-<<<<<<< HEAD
-    perPage: number = 5,
-=======
     perPage: number = 4,
     filterStatus?: string[] | undefined,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ): Promise<{
     data: MedicationLogs[];
     totalPages: number;
@@ -111,10 +103,7 @@ export class MedicationLogsService {
         'medicationlogs.medicationLogsDate',
         'medicationlogs.medicationLogsTime',
         'medicationlogs.medicationLogStatus',
-<<<<<<< HEAD
-=======
         'medicationlogs.medicationLogsDosage',
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         'patient.uuid',
       ])
       .where('patient.uuid = :uuid', { uuid: patientUuid })
@@ -124,8 +113,6 @@ export class MedicationLogsService {
       .orderBy(`medicationlogs.${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
-<<<<<<< HEAD
-=======
     if (filterStatus && filterStatus.length > 0) {
       // Use `IN` clause to filter appointments based on multiple statuses
       aschMedicationQueryBuilder.andWhere(
@@ -135,7 +122,6 @@ export class MedicationLogsService {
         },
       );
     }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     if (term !== '') {
       console.log('term', term);
       aschMedicationQueryBuilder
@@ -164,8 +150,6 @@ export class MedicationLogsService {
               .orWhere('medicationlogs.uuid ILIKE :searchTerm', { searchTerm });
           }),
         );
-<<<<<<< HEAD
-=======
       if (filterStatus && filterStatus.length > 0) {
         // Use `IN` clause to filter appointments based on multiple statuses
         aschMedicationQueryBuilder.andWhere(
@@ -175,7 +159,6 @@ export class MedicationLogsService {
           },
         );
       }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     } else {
       aschMedicationQueryBuilder
         .where('patient.uuid = :uuid', { uuid: patientUuid })
@@ -188,8 +171,6 @@ export class MedicationLogsService {
             medicationLogStatus: 'pending',
           },
         );
-<<<<<<< HEAD
-=======
     }
     if (filterStatus && filterStatus.length > 0) {
       // Use `IN` clause to filter appointments based on multiple statuses
@@ -199,7 +180,6 @@ export class MedicationLogsService {
           filterStatus: filterStatus,
         },
       );
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
     const aschMedicationList = await aschMedicationQueryBuilder.getRawMany();
     const totalPatientASCHMedication =
@@ -248,14 +228,9 @@ export class MedicationLogsService {
     term: string,
     page: number = 1,
     sortBy: string = 'medicationLogsDate',
-<<<<<<< HEAD
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-    perPage: number = 5,
-=======
     sortOrder: 'ASC' | 'DESC' = 'DESC',
     perPage: number = 4,
     filterStatus?: string[] | undefined,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ): Promise<{
     data: MedicationLogs[];
     totalPages: number;
@@ -292,8 +267,6 @@ export class MedicationLogsService {
       .orderBy(`medicationlogs.${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
-<<<<<<< HEAD
-=======
     if (filterStatus && filterStatus.length > 0) {
       // Use `IN` clause to filter appointments based on multiple statuses
       prnMedicationQueryBuilder.andWhere(
@@ -303,7 +276,6 @@ export class MedicationLogsService {
         },
       );
     }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     if (term !== '') {
       console.log('term', term);
       prnMedicationQueryBuilder
@@ -316,15 +288,12 @@ export class MedicationLogsService {
           }),
         )
         .andWhere(
-<<<<<<< HEAD
-=======
           'medicationlogs.medicationLogStatus != :medicationLogStatus',
           {
             medicationLogStatus: 'pending',
           },
         )
         .andWhere(
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           new Brackets((qb) => {
             qb.andWhere('medicationlogs.medicationLogsName ILIKE :searchTerm', {
               searchTerm,
@@ -335,8 +304,6 @@ export class MedicationLogsService {
               .orWhere('medicationlogs.uuid ILIKE :searchTerm', { searchTerm });
           }),
         );
-<<<<<<< HEAD
-=======
       if (filterStatus && filterStatus.length > 0) {
         // Use `IN` clause to filter appointments based on multiple statuses
         prnMedicationQueryBuilder.andWhere(
@@ -346,15 +313,11 @@ export class MedicationLogsService {
           },
         );
       }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     } else {
       prnMedicationQueryBuilder
         .where('patient.uuid = :uuid', { uuid: patientUuid })
         .andWhere('medicationlogs.medicationType = :medicationType', {
           medicationType: 'PRN',
-<<<<<<< HEAD
-        });
-=======
         })
         .andWhere(
           'medicationlogs.medicationLogStatus != :medicationLogStatus',
@@ -371,7 +334,6 @@ export class MedicationLogsService {
           },
         );
       }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
     const prnMedicationList = await prnMedicationQueryBuilder.getRawMany();
     const totalPatientPRNMedication = prnMedicationList.length; // Count the number of PRN medications returned
@@ -395,20 +357,12 @@ export class MedicationLogsService {
     totalPages: number;
     currentPage: number;
     totalCount: number;
-<<<<<<< HEAD
-=======
     totalDone: number;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   }> {
     const todayDate = new Date();
     const skip = (page - 1) * perPage;
     todayDate.setUTCHours(0, 0, 0, 0);
     const searchTerm = `%${term}%`;
-<<<<<<< HEAD
-    const dueMedicationQueryBuilder = this.medicationLogsRepository
-      .createQueryBuilder('medicationlogs')
-      .innerJoinAndSelect('medicationlogs.patient', 'patient')
-=======
     const dueMedicationDoneQueryBuilder = this.medicationLogsRepository
       .createQueryBuilder('medicationlogs')
       .where('medicationlogs.medicationLogStatus != :medicationLogStatus', {
@@ -430,7 +384,6 @@ export class MedicationLogsService {
         'prescription.status = :status',
         { status: 'active' },
       )
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       .select([
         'medicationlogs.uuid',
         'medicationlogs.medicationLogsName',
@@ -447,39 +400,23 @@ export class MedicationLogsService {
       .where('medicationlogs.medicationLogStatus = :medicationLogStatus', {
         medicationLogStatus: 'pending',
       })
-<<<<<<< HEAD
-      .andWhere('medicationlogs.createdAt >= :todayDate', {
-        todayDate: todayDate.toISOString().split('T')[0],
-      }) // Filter by today's date
-=======
       .andWhere('medicationlogs.prescriptionId = prescription.id')
       .andWhere('medicationlogs.createdAt >= :todayDate', {
         todayDate: todayDate.toISOString().split('T')[0],
       })
       .andWhere('prescription.status = :status', { status: 'active' })
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       .orderBy(`${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
 
     if (term !== '') {
       console.log('term', term);
-<<<<<<< HEAD
-      dueMedicationQueryBuilder
-        .where(
-          new Brackets((qb) => {
-            qb.andWhere('medicationlogs.medicationType = :medicationType', {
-              medicationType: 'ASCH',
-            })
-              .andWhere('medicationlogs.createdAt >= :todayDate', {
-=======
       const searchTerms = term.trim().toLowerCase().split(/\s+/);
 
       dueMedicationQueryBuilder
         .where(
           new Brackets((qb) => {
             qb.andWhere('medicationlogs.createdAt >= :todayDate', {
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 todayDate: todayDate.toISOString().split('T')[0],
               }) // Filter by today's date
               .andWhere(
@@ -487,27 +424,12 @@ export class MedicationLogsService {
                 {
                   medicationLogStatus: 'pending',
                 },
-<<<<<<< HEAD
-              );
-=======
               )
               .andWhere('prescription.status = :status', { status: 'active' });
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           }),
         )
         .andWhere(
           new Brackets((qb) => {
-<<<<<<< HEAD
-            qb.andWhere('medicationlogs.medicationLogsName ILIKE :searchTerm', {
-              searchTerm,
-            })
-              .orWhere('patient.firstName ILIKE :searchTerm', { searchTerm })
-              .orWhere('patient.lastName ILIKE :searchTerm', { searchTerm })
-              .orWhere('medicationlogs.medicationLogStatus ILIKE :searchTerm', {
-                searchTerm,
-              })
-              .orWhere('medicationlogs.uuid ILIKE :searchTerm', { searchTerm });
-=======
             qb.andWhere(
               new Brackets((subQb) => {
                 subQb
@@ -593,46 +515,29 @@ export class MedicationLogsService {
                 }
               }),
             );
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           }),
         );
     } else {
       dueMedicationQueryBuilder
-<<<<<<< HEAD
-        .andWhere('medicationlogs.medicationType = :medicationType', {
-          medicationType: 'ASCH',
-        })
-=======
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         .andWhere('medicationlogs.createdAt >= :todayDate', {
           todayDate: todayDate.toISOString().split('T')[0],
         }) // Filter by today's date
         .andWhere('medicationlogs.medicationLogStatus = :medicationLogStatus', {
           medicationLogStatus: 'pending',
-<<<<<<< HEAD
-        });
-=======
         })
         .andWhere('prescription.status = :status', { status: 'active' });
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
     const dueMedicationList = await dueMedicationQueryBuilder.getRawMany();
     const totalPatientdueMedication =
       await dueMedicationQueryBuilder.getCount();
-<<<<<<< HEAD
-=======
 
     const totalDone = await dueMedicationDoneQueryBuilder.getCount();
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     const totalPages = Math.ceil(totalPatientdueMedication / perPage);
 
     return {
       data: dueMedicationList,
       totalPages: totalPages,
-<<<<<<< HEAD
-=======
       totalDone: totalDone,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       currentPage: page,
       totalCount: totalPatientdueMedication,
     };

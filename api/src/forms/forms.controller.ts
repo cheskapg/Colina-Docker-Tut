@@ -22,17 +22,10 @@ export class FormsController {
   @Post('list/:id')
   findAllPatientForms(
     @Param('id') patientId: string,
-<<<<<<< HEAD
-    @Body() body: { term: string; page: number; sortBy: string; sortOrder: 'ASC' | 'DESC' ,isArchived:boolean},
-  ) {
-    const { term = '', page, sortBy, sortOrder, isArchived } = body;
-    return this.formsService.getAllFormsByPatient(patientId, term, page, sortBy, sortOrder,isArchived);
-=======
     @Body() body: { term: string; page: number; sortBy: string; sortOrder: 'ASC' | 'DESC' ,isArchived:boolean, perPage: number},
   ) {
     const { term = '', page, sortBy, sortOrder, isArchived, perPage } = body;
     return this.formsService.getAllFormsByPatient(patientId, term, page, sortBy, sortOrder,isArchived, perPage);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   }
 
   @Patch('update/:id')

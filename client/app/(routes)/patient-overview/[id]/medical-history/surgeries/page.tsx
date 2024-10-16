@@ -14,11 +14,8 @@ import { SurgeriesModalContent } from "@/components/modal-content/surgeries-moda
 import Modal from "@/components/reusable/modal";
 import Pagination from "@/components/shared/pagination";
 import ResuableTooltip from "@/components/reusable/tooltip";
-<<<<<<< HEAD
-=======
 import { formatTableDate } from "@/lib/utils";
 import PdfDownloader from "@/components/pdfDownloader";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 export default function Surgeries() {
   if (typeof window === "undefined") {
@@ -93,79 +90,6 @@ export default function Surgeries() {
     }
   };
 
-<<<<<<< HEAD
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Function to handle going to next page
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handleGoToPage = (e: React.MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const pageNumberInt = parseInt(pageNumber, 10);
-
-    // Check if pageNumber is a valid number and greater than 0
-    if (
-      !isNaN(pageNumberInt) &&
-      pageNumberInt <= totalPages &&
-      pageNumberInt > 0
-    ) {
-      setCurrentPage(pageNumberInt);
-
-      console.log("Navigate to page:", pageNumberInt);
-    } else {
-      setGotoError(true);
-      setTimeout(() => {
-        setGotoError(false);
-      }, 3000);
-      console.error("Invalid page number:", pageNumber);
-    }
-  };
-  const formatDate = (dateOfSurgery: string | number | Date) => {
-    // Create a new Date object from the provided createdAt date string
-    const date = new Date(dateOfSurgery);
-
-    // Get the month, day, and year
-    const month = date.toLocaleString("default", { month: "short" });
-    const day = date.getDate();
-    const year = date.getFullYear();
-
-    const formattedDate = `${month} ${day}, ${year}`;
-
-    return formattedDate;
-  };
-  const handlePageNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPageNumber(e.target.value);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`flex ring-1 ring-gray-300 items-center justify-center  w-[49px]  ${
-            currentPage === i ? "btn-pagination" : ""
-          }`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
-  };
-
-=======
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -197,11 +121,7 @@ export default function Surgeries() {
 
   if (isLoading) {
     return (
-<<<<<<< HEAD
-      <div className="container w-full h-full flex justify-center items-center ">
-=======
       <div className="container flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           alt="logo"
@@ -224,31 +144,18 @@ export default function Surgeries() {
   };
   console.log(patientSurgeries, "PatientSurgeries");
   return (
-<<<<<<< HEAD
-    <div className="  w-full h-full flex flex-col justify-between">
-      <div className="w-full h-full">
-        <div className="w-full justify-between flex mb-2">
-          <div className="flex-row">
-            <div className="flex gap-2">
-              <p className="p-title">Medical History</p>
-=======
     <div className="flex h-full w-full flex-col justify-between">
       <div className="h-full w-full">
         <div className="mb-2 flex w-full justify-between">
           <div className="flex-row">
             <div className="flex gap-2">
               <p className="p-table-title">Medical History</p>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               <p className="slash">{">"}</p>
               <p
                 onClick={() => {
                   setIsLoading(true);
                   router.replace(
-<<<<<<< HEAD
-                    `/patient-overview/${patientId.toLowerCase()}/medical-history/allergies`
-=======
                     `/patient-overview/${patientId.toLowerCase()}/medical-history/allergies`,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   );
                 }}
                 className="bread"
@@ -259,37 +166,13 @@ export default function Surgeries() {
               <p className="active">Surgeries</p>
             </div>
             <div>
-<<<<<<< HEAD
-              <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
-=======
             <p className="my-1 h-[23px] text-[15px] font-normal text-[#64748B]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Total of {totalSurgeries} Surgeries
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
-<<<<<<< HEAD
-              <Image src="/imgs/add.svg" alt="" width={22} height={22} />
-              <p className="text-[18px]">Add</p>
-            </button>
-            <button className="btn-pdfs gap-2">
-              <Image
-                src="/imgs/downloadpdf.svg"
-                alt=""
-                width={22}
-                height={22}
-              />
-              <p className="text-[18px]">Download PDF</p>
-            </button>
-          </div>
-        </div>
-
-        <div className="w-full sm:rounded-lg items-center">
-          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-            <form className="mr-5 relative">
-=======
               <Image src="/imgs/add.svg" alt="" width={18} height={18} />
               <p className="">Add</p>
             </button>
@@ -304,16 +187,11 @@ export default function Surgeries() {
         <div className="w-full items-center sm:rounded-lg">
           <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
             <form className="relative mr-5">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               {/* search bar */}
               <label className=""></label>
               <div className="flex">
                 <input
-<<<<<<< HEAD
-                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[15px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
-=======
                   className="relative mx-5 my-4 h-[47px] w-[460px] rounded-[3px] border-[1px] border-[#E7EAEE] bg-[#fff] bg-[center] bg-no-repeat px-5 py-3 pl-10 pt-[14px] text-[15px] outline-none placeholder:text-[#64748B]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   type="text"
                   placeholder="Search by reference no. or name..."
                   value={term}
@@ -327,21 +205,12 @@ export default function Surgeries() {
                   alt="Search"
                   width="20"
                   height="20"
-<<<<<<< HEAD
-                  className="absolute left-8 top-9 pointer-events-none"
-                />
-              </div>
-            </form>
-            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
                   className="pointer-events-none absolute left-8 top-8"
                 />
               </div>
             </form>
             <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Order by
               </p>
               <DropdownMenu
@@ -355,11 +224,7 @@ export default function Surgeries() {
                 width={"165px"}
                 label={"Select"}
               />
-<<<<<<< HEAD
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Sort by
               </p>
               <DropdownMenu
@@ -382,25 +247,6 @@ export default function Surgeries() {
         <div>
           <table className="text-left rtl:text-right">
             <thead>
-<<<<<<< HEAD
-              <tr className="uppercase text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
-                <td className="px-6 py-3 ">Surgery ID </td>
-                <td className="px-6 py-3 ">DATE OF SURGERY</td>
-                <td className="px-6 py-3 ">TYPE</td>
-                <td className="px-6 py-3 ">SURGERY</td>
-                <td className="px-6 py-3 ">NOTES</td>
-                <td className="py-3 px-6 text-center">Action</td>
-                <td className="w-[14px]"></td>
-              </tr>
-            </thead>
-            <tbody className="h-[220px] overflow-y-scroll">
-              {patientSurgeries.length == 0 && (
-                <div className="border-1 w-[180vh] py-5  absolute flex justify-center items-center">
-                  <p className="text-[15px] font-normal text-gray-700 text-center">
-                    No Surgeries Found <br />
-                  </p>
-                </div>
-=======
             <tr className="h-[70px] border-b text-[15px] font-semibold uppercase text-[#64748B]">
                 <td className="px-6 py-3">Surgery ID </td>
                 <td className="px-6 py-3">DATE OF SURGERY</td>
@@ -419,31 +265,10 @@ export default function Surgeries() {
                     No Surgeries Found <br />
                   </p>
                 </h1>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               )}
               {patientSurgeries.map((surgery, index) => (
                 <tr
                   key={index}
-<<<<<<< HEAD
-                  className="group hover:bg-[#f4f4f4]  border-b text-[15px]"
-                >
-                  <td className="px-6 py-3 ">
-                    <ResuableTooltip text={surgery.surgeries_uuid} />
-                  </td>
-                  <td className="px-6 py-3 ">
-                    {formatDate(surgery.surgeries_dateOfSurgery)}
-                  </td>
-                  <td className="px-6 py-3 ">
-                    <ResuableTooltip text={surgery.surgeries_typeOfSurgery} />
-                  </td>
-                  <td className="px-6 py-3 ">
-                    <ResuableTooltip text={surgery.surgeries_surgery} />
-                  </td>
-                  <td className="px-6 py-3 ">
-                    <ResuableTooltip text={surgery.surgeries_notes} />
-                  </td>
-                  <td className="py-3 px-6 flex justify-center">
-=======
                   className="group h-[63px] border-b text-[15px] hover:bg-[#f4f4f4]"
                 >
                   <td className="px-6 py-3">
@@ -462,17 +287,13 @@ export default function Surgeries() {
                     <ResuableTooltip text={surgery.surgeries_notes} />
                   </td>
                   <td className="relative py-3 pl-6">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     <div
                       onClick={() => {
                         isModalOpen(true);
                         setIsEdit(true);
                         setSurgeryData(surgery);
                       }}
-<<<<<<< HEAD
-=======
                       className="absolute right-[40px] top-[11px]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     >
                       <Edit></Edit>
                     </div>

@@ -47,10 +47,6 @@ export class NotesService {
     patientUuid: string,
     term: string,
     type: string,
-<<<<<<< HEAD
-
-=======
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     page: number = 1,
     sortBy: string = 'createdAt',
     sortOrder: 'ASC' | 'DESC' = 'DESC',

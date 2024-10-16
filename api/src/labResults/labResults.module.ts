@@ -9,11 +9,6 @@ import { Patients } from 'src/patients/entities/patients.entity';
 import { PatientsService } from 'src/patients/patients.service';
 import LabResultsFiles from 'src/labResultsFiles/entities/labResultsFiles.entity';
 import { LabResultsFilesService } from 'src/labResultsFiles/labResultsFiles.service';
-<<<<<<< HEAD
-
-@Module({
-  imports: [TypeOrmModule.forFeature([LabResults, LabResultsFiles, Patients])],
-=======
 import { EmergencyContacts } from 'src/emergencyContacts/entities/emergencyContacts.entity';
 import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContacts.service';
 import { OrdersLaboratory } from 'src/orders_laboratory/entities/orders_laboratory.entity';
@@ -29,20 +24,15 @@ import { OrdersDietaryService } from 'src/orders_dietary/orders_dietary.service'
 
 @Module({
   imports: [TypeOrmModule.forFeature([LabResults, LabResultsFiles, Patients, EmergencyContacts, Orders, AppointmentsFiles,Appointments,OrdersLaboratory, OrdersDietary])],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   providers: [
     LabResultsResolver,
     LabResultsService,
     PatientsService,
     IdService,
-<<<<<<< HEAD
-    LabResultsFilesService,
-=======
     EmergencyContactsService,
     LabResultsFilesService,
     OrdersLaboratoryService,
      OrdersService,AppointmentFilesService, AppointmentsService,OrdersDietaryService
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ],
 
   controllers: [LabResultsController],

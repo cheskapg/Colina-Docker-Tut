@@ -9,11 +9,7 @@ import { Patients } from 'src/patients/entities/patients.entity';
 import { PatientsService } from 'src/patients/patients.service';
 
 @Module({
-<<<<<<< HEAD
-  imports: [TypeOrmModule.forFeature([EmergencyContacts, Patients])],
-=======
   imports: [TypeOrmModule.forFeature([EmergencyContacts, Patients, ])],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   providers: [
     EmergencyContactsResolver,
     EmergencyContactsService,

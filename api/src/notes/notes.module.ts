@@ -11,13 +11,8 @@ import { EmergencyContacts } from 'src/emergencyContacts/entities/emergencyConta
 import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContacts.service';
 
 @Module({
-<<<<<<< HEAD
-  imports: [TypeOrmModule.forFeature([Notes, Patients])],
-  providers: [NotesService, PatientsService, IdService],
-=======
   imports: [TypeOrmModule.forFeature([Notes, Patients,EmergencyContacts])],
   providers: [NotesService, PatientsService, IdService,EmergencyContactsService],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
   controllers: [NotesController],
 })

@@ -27,21 +27,14 @@ import { ErrorModal } from "@/components/shared/error";
 import Pagination from "@/components/shared/pagination";
 import { fetchProfileImages } from "@/app/api/patients-api/patientProfileImage.api";
 import ResuableTooltip from "@/components/reusable/tooltip";
-<<<<<<< HEAD
-=======
 import PdfDownloader from "@/components/pdfDownloader";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 export default function AppointmentPage() {
   const router = useRouter();
 
   if (typeof window === "undefined") {
     return (
-<<<<<<< HEAD
-      <div className="w-full h-full flex justify-center items-center">
-=======
       <div className="flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           width={100}
@@ -55,15 +48,9 @@ export default function AppointmentPage() {
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
 
   const [isOpenSortedBy, setIsOpenSortedBy] = useState(false);
-<<<<<<< HEAD
-  const [sortBy, setSortBy] = useState("appointmentDate");
-  const [appointmentList, setAppointmentList] = useState<any[]>([]);
-  const [patientIdappointmentList, setPatientId] = useState<number>(0);
-=======
   const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
   const [sortBy, setSortBy] = useState("appointmentStatus");
   const [appointmentList, setAppointmentList] = useState<any[]>([]);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalAppointments, setTotalAppointments] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -72,25 +59,6 @@ export default function AppointmentPage() {
   const [pageNumber, setPageNumber] = useState("");
   const [gotoError, setGotoError] = useState(false);
   const [term, setTerm] = useState("");
-<<<<<<< HEAD
-  const [sortOrder, setSortOrder] = useState("ASC");
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
-  const [totalUpcoming, setTotalUpcoming] = useState(0);
-  const [upcomingTotalPages, setUpcomingTotalPages] = useState(0);
-  const [startDate, setStartDate] = React.useState<Date>();
-  const [endDate, setEndDate] = React.useState<Date>();
-  const [upcomingAppointments, setUpcomingAppointments] = useState<
-    {
-      patient_firstName: string;
-      patient_middleName: string;
-      patient_lastName: string;
-      appointments_appointmentDate: string;
-      appointments_appointmentEndTime: string;
-      appointments_appointmentTime: string;
-    }[]
-  >([]);
-=======
   const [sortOrder, setSortOrder] = useState("DESC");
   // const [filterStatus, setFilterStatus] = useState("");
 
@@ -99,7 +67,6 @@ export default function AppointmentPage() {
   const [startDate, setStartDate] = React.useState<Date>();
   const [endDate, setEndDate] = React.useState<Date>();
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const startD = startDate
     ? startDate.toISOString().slice(0, 10)
     : "2021-01-01";
@@ -123,12 +90,6 @@ export default function AppointmentPage() {
       setSortBy("appointmentTime");
     } else if (option == "Endtime") {
       setSortBy("appointmentEndTime");
-<<<<<<< HEAD
-    }
-    console.log(sortBy, "ooption");
-  };
-
-=======
     } else if (option == "Name") {
       setSortBy("patient_firstName");
     }
@@ -162,84 +123,11 @@ export default function AppointmentPage() {
   const [filterStatusFromCheck, setFilterStatusFromCheck] = useState<string[]>(
     [],
   );
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const optionsOrderedBy = [
     { label: "Ascending", onClick: handleOrderOptionClick },
     { label: "Descending", onClick: handleOrderOptionClick },
   ];
   const optionsSortBy = [
-<<<<<<< HEAD
-    { label: "Status", onClick: handleSortOptionClick },
-    { label: "Date", onClick: handleSortOptionClick },
-    { label: "Time", onClick: handleSortOptionClick },
-    { label: "Endtime", onClick: handleSortOptionClick },
-  ]; // end of orderby & sortby function
-
-  const isModalOpen = (isOpen: boolean) => {
-    setIsOpen(isOpen);
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Function to handle going to next page
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handleGoToPage = (e: React.MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const pageNumberInt = parseInt(pageNumber, 10);
-
-    // Check if pageNumber is a valid number and greater than 0
-    if (
-      !isNaN(pageNumberInt) &&
-      pageNumberInt <= totalPages &&
-      pageNumberInt > 0
-    ) {
-      setCurrentPage(pageNumberInt);
-
-      console.log("Navigate to page:", pageNumberInt);
-    } else {
-      setGotoError(true);
-      setTimeout(() => {
-        setGotoError(false);
-      }, 3000);
-      console.error("Invalid page number:", pageNumber);
-    }
-  };
-
-  const handlePageNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPageNumber(e.target.value);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
-            currentPage === i ? "btn-pagination" : ""
-          }`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
-  };
-  const [patientImages, setPatientImages] = useState<any[]>([]);
-
-  useEffect(() => {
-=======
     { label: "Name", onClick: handleSortOptionClick },
     { label: "Date", onClick: handleSortOptionClick },
     { label: "Time", onClick: handleSortOptionClick },
@@ -267,7 +155,6 @@ export default function AppointmentPage() {
 
   useEffect(() => {
     // setStatusFiltered(filterStatusFromCheck.join(", "));
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     const fetchData = async () => {
       try {
         const upcomingAppoinments = await fetchAllAppointments(
@@ -275,29 +162,18 @@ export default function AppointmentPage() {
           currentPage,
           sortBy,
           sortOrder as "ASC" | "DESC",
-<<<<<<< HEAD
-          startD,
-          endD,
-          router
-=======
           filterStatusFromCheck,
           startD,
           endD,
           5,
           router,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         );
         // Convert the Set back to an array
         // Extract unique patient UUIDs using a Set
         const uniquePatientUuids = new Set(
           upcomingAppoinments.data.map(
-<<<<<<< HEAD
-            (patient: { patient_uuid: any }) => patient.patient_uuid
-          )
-=======
             (patient: { patient_uuid: any }) => patient.patient_uuid,
           ),
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         );
 
         const patientUuids = Array.from(uniquePatientUuids);
@@ -308,11 +184,7 @@ export default function AppointmentPage() {
         setTotalAppointments(upcomingAppoinments.totalCount);
         setIsLoading(false);
         const profileImagesResponse = await fetchProfileImages(
-<<<<<<< HEAD
-          patientUuids as string[]
-=======
           patientUuids as string[],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         );
         if (profileImagesResponse) {
           const patientImagesData = profileImagesResponse.map((image: any) => {
@@ -320,11 +192,7 @@ export default function AppointmentPage() {
             if (image.data) {
               const buffer = Buffer.from(image.data);
               const dataUrl = `data:image/jpeg;base64,${buffer.toString(
-<<<<<<< HEAD
-                "base64"
-=======
                 "base64",
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               )}`;
               return {
                 patientUuid: image.patientUuid,
@@ -346,10 +214,6 @@ export default function AppointmentPage() {
       } catch (error) {}
     };
     fetchData();
-<<<<<<< HEAD
-  }, [currentPage, startDate, endDate, sortBy, sortOrder, term]);
-
-=======
   }, [
     currentPage,
     filterStatusFromCheck,
@@ -371,7 +235,6 @@ export default function AppointmentPage() {
     console.log(filterStatusFromCheck.join(", "), "parent");
     console.log(newLabel, "new parent");
   }, [filterStatusFromCheck]);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   // const handlePatientClick = (patientId: any) => {
   //   const lowercasePatientId = patientId.toLowerCase();
   //   setIsLoading(true);
@@ -384,11 +247,7 @@ export default function AppointmentPage() {
   console.log(appointmentList, "appointmentList");
   if (isLoading) {
     return (
-<<<<<<< HEAD
-      <div className="container w-full h-full flex justify-center items-center">
-=======
       <div className="container flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           alt="logo"
@@ -407,23 +266,6 @@ export default function AppointmentPage() {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="w-full px-[150px] pt-[90px] flex flex-col justify-between h-full">
-      <div className="h-full w-full">
-        <div className="flex justify-end">
-          {/* <p
-            onClick={() => router.push("/dashboard")}
-            className="text-[#64748B] underline cursor-pointer text-[15px]"
-          >
-            Back to Dashboard
-          </p> */}
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col mb-3">
-            <p className="p-title">Appointments List Records</p>
-
-            <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
-=======
     <div className="flex h-full w-full flex-col justify-between px-[150px] py-[90px]">
       <div className="h-full w-full">
         <div className="flex items-center justify-between">
@@ -431,25 +273,10 @@ export default function AppointmentPage() {
             <p className="p-table-title">Appointments List Records</p>
 
             <p className="h-[22px] w-[1157px] text-[15px] font-normal text-[#64748B]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               Total of {totalAppointments} Appointments
             </p>
           </div>
           <div className="flex flex-row justify-end">
-<<<<<<< HEAD
-            <DownloadPDF></DownloadPDF>
-          </div>
-        </div>
-
-        <div className="w-full">
-          <div className="w-full bg-[#F4F4F4] justify-between items-center flex px-5 h-[75px] rounded-sm gap-5">
-            <div className="flex items-center bg-white rounded-sm border border-gray-200  px-4 py-2 h-[47px] w-[460px]">
-              <Search className="h-4 w-4 text-gray-500 mr-2" />
-              <input
-                type="text"
-                placeholder="Search by reference no. or name..."
-                className="flex-grow focus:outline-none text-gray-700"
-=======
             <PdfDownloader
               props={[
                 "Name",
@@ -472,19 +299,12 @@ export default function AppointmentPage() {
                 type="text"
                 placeholder="Search by reference no. or name..."
                 className="flex-grow text-gray-700 focus:outline-none"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 value={term}
                 onChange={(e) => {
                   setTerm(e.target.value);
                   setCurrentPage(1);
                 }}
               />
-<<<<<<< HEAD
-            </div>
-
-            <div className="w-[500px]">
-              <div className="flex w-full justify-end items-center gap-3">
-=======
             </div> */}
             <form className="relative">
               {/* search bar */}
@@ -517,7 +337,6 @@ export default function AppointmentPage() {
             </form>
             <div className="w-[500px]">
               <div className="flex w-full items-center justify-end gap-3">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 <p className="font-semibold text-[#191D23] text-opacity-60">
                   Filter Date
                 </p>
@@ -527,13 +346,8 @@ export default function AppointmentPage() {
                     <Button
                       variant={"outline"}
                       className={cn(
-<<<<<<< HEAD
-                        "w-[166px] justify-start text-left font-normal h-[47px] rounded-[5px]",
-                        !startDate && "text-muted-foreground"
-=======
                         "h-[47px] w-[166px] justify-start rounded-[5px] text-left font-normal",
                         !startDate && "text-muted-foreground",
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
@@ -555,13 +369,8 @@ export default function AppointmentPage() {
                     <Button
                       variant={"outline"}
                       className={cn(
-<<<<<<< HEAD
-                        "w-[166px] justify-start text-left font-normal h-[47px] rounded-[5px] *:",
-                        !endDate && "text-muted-foreground"
-=======
                         "*: h-[47px] w-[166px] justify-start rounded-[5px] text-left font-normal",
                         !endDate && "text-muted-foreground",
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
@@ -580,13 +389,8 @@ export default function AppointmentPage() {
               </div>
             </div>
             <div className="w-[500px]">
-<<<<<<< HEAD
-              <div className="w-full justify-end items-center flex gap-3">
-                <p className="flex text-[#191D23] opacity-[60%] font-semibold">
-=======
               <div className="flex w-full items-center justify-end gap-3">
                 <p className="flex font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   Order by
                 </p>
                 <DropdownMenu
@@ -598,15 +402,9 @@ export default function AppointmentPage() {
                   }))}
                   open={isOpenOrderedBy}
                   width={"165px"}
-<<<<<<< HEAD
-                  label={"Select"}
-                />
-                <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
                   label={"Descending"}
                 />
                 <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   Sort by
                 </p>
                 <DropdownMenu
@@ -624,19 +422,6 @@ export default function AppointmentPage() {
               </div>
             </div>
           </div>
-<<<<<<< HEAD
-
-          <div>
-            <table className="w-full h-full justify-center items-start text-[15px]">
-              <thead className="text-left rtl:text-right">
-                <tr className="uppercase font-semibold text-[#64748B] border-b border-[#E7EAEE] h-[70px]">
-                  <td className="px-6 py-5 ">Name</td>
-                  <td className="px-6 py-5 ">Appointment UID</td>
-                  <td className="px-6 py-5 ">Date</td>
-                  <td className="px-6 py-5 ">Time</td>
-                  <td className="px-6 py-5 ">End time</td>
-                  <td className="px-6 py-5  flex justify-start">Status</td>
-=======
           <div>
             <table className="h-full w-full items-start justify-center">
               <thead className="text-left rtl:text-right">
@@ -665,19 +450,13 @@ export default function AppointmentPage() {
                       label={"Status"}
                     />
                   </td>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 </tr>
               </thead>
               <tbody>
                 {appointmentList.length === 0 && (
                   <tr>
-<<<<<<< HEAD
-                    <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                      <p className="text-[15px] font-normal text-gray-700 flex text-center">
-=======
                     <td className="border-1 absolute flex w-[180vh] items-center justify-center py-5">
                       <p className="flex text-center text-[15px] font-normal text-gray-700">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         No Appointments Found! <br />
                       </p>
                     </td>
@@ -686,21 +465,12 @@ export default function AppointmentPage() {
                 {appointmentList.map((appointment, index) => (
                   <tr
                     key={index}
-<<<<<<< HEAD
-                    className="bg-white hover:bg-[#f4f4f4] group border-b "
-                  >
-                    <td className="px-6 py-5 flex items-center gap-2">
-                      {patientImages.some(
-                        (image) =>
-                          image.patientUuid === appointment.patient_uuid
-=======
                     className="group border-b bg-white hover:bg-[#f4f4f4]"
                   >
                     <td className="flex items-center gap-2 px-6 py-5">
                       {patientImages.some(
                         (image) =>
                           image.patientUuid === appointment.patient_uuid,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       ) ? (
                         // Render the matched image
                         <div>
@@ -711,15 +481,9 @@ export default function AppointmentPage() {
                               return (
                                 <div key={imgIndex}>
                                   {image.data ? (
-<<<<<<< HEAD
-                                    <div className=" min-w-[45px] min-h-[45px] max-w-[45px] max-h-[45px]">
-                                      <Image
-                                        className="rounded-full object-cover w-12 h-12"
-=======
                                     <div className="max-h-[45px] min-h-[45px] min-w-[45px] max-w-[45px]">
                                       <Image
                                         className="h-12 w-12 rounded-full object-cover"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                         src={image.data} // Use the base64-encoded image data directly
                                         alt=""
                                         width={45}
@@ -729,11 +493,7 @@ export default function AppointmentPage() {
                                   ) : (
                                     // Render the stock image (.svg) if data is empty
                                     <Image
-<<<<<<< HEAD
-                                      className="rounded-full min-w-[45px] min-h-[45px] max-w-[45px] max-h-[45px]"
-=======
                                       className="max-h-[45px] min-h-[45px] min-w-[45px] max-w-[45px] rounded-full"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                       src="/imgs/user-no-icon.svg"
                                       alt=""
                                       width={45}
@@ -750,11 +510,7 @@ export default function AppointmentPage() {
                         // Render a placeholder image if no matching image found
                         <div>
                           <Image
-<<<<<<< HEAD
-                            className="rounded-full min-w-[45px] min-h-[45px] max-w-[45px] max-h-[45px]"
-=======
                             className="max-h-[45px] min-h-[45px] min-w-[45px] max-w-[45px] rounded-full"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             src="/imgs/loading.gif" // Show loading gif while fetching images
                             alt="Loading"
                             width={45}
@@ -769,28 +525,12 @@ export default function AppointmentPage() {
                         />
                       </span>
                     </td>
-<<<<<<< HEAD
-                    <td className="px-6 py-5 ">
-=======
                     <td className="px-6 py-5">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       {appointment.appointments_uuid}
                     </td>
                     <td className="px-6 py-5">
                       {appointment.appointments_appointmentDate}
                     </td>
-<<<<<<< HEAD
-                    <td className="px-6 py-5 ">
-                      {appointment.appointments_appointmentTime}
-                    </td>
-                    <td className=" px-6 py-5">
-                      {appointment.appointments_appointmentEndTime}
-                    </td>
-
-                    <td className="text-15px text-nowrap  px-6 py-5 rounded-full">
-                      <div
-                        className={`px-2 font-semibold rounded-[20px] flex items-center w-fit ${
-=======
                     <td className="px-6 py-5">
                       {appointment.appointments_appointmentTime}
                     </td>
@@ -801,31 +541,10 @@ export default function AppointmentPage() {
                     <td className="text-15px text-nowrap rounded-full px-6 py-5">
                       <div
                         className={`flex w-fit items-center rounded-[20px] px-2 font-semibold ${
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           appointment.appointments_appointmentStatus ===
                           "Scheduled"
                             ? "bg-[#E7EAEE] text-[#71717A]" // Green color for Scheduled
                             : appointment.appointments_appointmentStatus ===
-<<<<<<< HEAD
-                              "Done"
-                            ? "bg-[#CCFFDD] text-[#17C653]" // Dark color for Done
-                            : appointment.appointments_appointmentStatus ===
-                                "Patient-IN" ||
-                              appointment.appointments_appointmentStatus ===
-                                "On-going"
-                            ? "bg-[#FFF8DD] text-[#F6C000]" // Yellow for On Going
-                            : appointment.appointments_appointmentStatus ===
-                              "Missed"
-                            ? "bg-[#FFE8EC] text-[#EF4C6A]" // Red color for Missed
-                            : appointment.appointments_appointmentStatus ===
-                              "Cancelled"
-                            ? "bg-[#FFE8EC] text-[#EF4C6A]" // Red color for Cancelled
-                            : ""
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-2 w-2 rounded-full mr-1 ${
-=======
                                 "Done"
                               ? "bg-[#CCFFDD] text-[#17C653]" // Dark color for Done
                               : appointment.appointments_appointmentStatus ===
@@ -844,26 +563,10 @@ export default function AppointmentPage() {
                       >
                         <span
                           className={`mr-1 inline-block h-2 w-2 rounded-full ${
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             appointment.appointments_appointmentStatus ===
                             "Scheduled"
                               ? "bg-[#7E7E7E]" // Green color for Scheduled
                               : appointment.appointments_appointmentStatus ===
-<<<<<<< HEAD
-                                "Done"
-                              ? "bg-[#0EB146]" // Dark color for Done
-                              : appointment.appointments_appointmentStatus ===
-                                  "Patient-IN" ||
-                                appointment.appointments_appointmentStatus ===
-                                  "On-going"
-                              ? "bg-[#E4B90E]" // Yellow for On Going
-                              : appointment.appointments_appointmentStatus ===
-                                  "Missed" ||
-                                appointment.appointments_appointmentStatus ===
-                                  "Cancelled"
-                              ? "bg-[#EE4D4D]" // Red color for Missed and Cancelled
-                              : ""
-=======
                                   "Done"
                                 ? "bg-[#0EB146]" // Dark color for Done
                                 : appointment.appointments_appointmentStatus ===
@@ -877,7 +580,6 @@ export default function AppointmentPage() {
                                         "Cancelled"
                                     ? "bg-[#EE4D4D]" // Red color for Missed and Cancelled
                                     : ""
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           }`}
                         ></span>
                         {appointment.appointments_appointmentStatus}

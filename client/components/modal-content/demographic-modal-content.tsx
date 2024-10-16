@@ -8,10 +8,7 @@ import React, { useEffect, useState } from "react";
 import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 import { addPatientProfileImage } from "@/app/api/patients-api/patientProfileImage.api";
-<<<<<<< HEAD
-=======
 import { cn } from "@/lib/utils";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 interface Modalprops {
   label: string;
   isOpen: boolean;
@@ -20,8 +17,6 @@ interface Modalprops {
   onSuccess: () => void;
   onFailed: () => void;
 }
-<<<<<<< HEAD
-=======
 
 type EmergencyContact = {
   name: string;
@@ -29,7 +24,6 @@ type EmergencyContact = {
   phoneNumber: string;
   email: string;
 };
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 interface UserIcon {
   file: any; // Assuming file property exists for the key
   filename: string;
@@ -51,12 +45,9 @@ export const DemographicModalContent = ({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-<<<<<<< HEAD
-=======
   const [isEmergency, setIsEmergency] = useState(false);
   const [contact1, setContact1] = useState(false);
   const [contact2, setContact2] = useState(false);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -71,13 +62,6 @@ export const DemographicModalContent = ({
     state: "",
     country: "",
     zip: "",
-<<<<<<< HEAD
-    admissionDate: "",
-    codeStatus: "",
-    email: "",
-  });
-
-=======
     admissionDate: new Date().toISOString().slice(0, 10),
     codeStatus: "",
     email: "",
@@ -130,14 +114,11 @@ export const DemographicModalContent = ({
   console.log(contact1, "contact1");
   console.log(contact2, "contact2");
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "age" && !/^\d*$/.test(value)) {
       return; // Don't update state
     }
-<<<<<<< HEAD
-=======
     if (name === "dateOfBirth") {
       const calculateAge = (dateOfBirth: string) => {
         if (!dateOfBirth) {
@@ -162,7 +143,6 @@ export const DemographicModalContent = ({
       }));
     }
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -194,15 +174,12 @@ export const DemographicModalContent = ({
         admissionDate: "",
         codeStatus: "",
         email: "",
-<<<<<<< HEAD
-=======
         height: "",
         weight: "",
         mobility: "",
         dietaryRestriction: "",
         admissionStatus: "",
         emergencyContacts: [],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       });
       const getUuid = patientList.uuid;
       console.log("patientList UUID:", getUuid);
@@ -213,30 +190,18 @@ export const DemographicModalContent = ({
           userIconFormData.append(
             "profileimage",
             selectedFiles[i],
-<<<<<<< HEAD
-            fileNames[i]
-=======
             fileNames[i],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           );
 
           // Add lab file
           const addUserIcon = await addPatientProfileImage(
             getUuid,
-<<<<<<< HEAD
-            userIconFormData
-=======
             userIconFormData,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           );
 
           console.log(
             `Icon FILE ${fileNames[i]} added successfully:`,
-<<<<<<< HEAD
-            addUserIcon
-=======
             addUserIcon,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           );
         }
       } else {
@@ -271,12 +236,6 @@ export const DemographicModalContent = ({
     }));
   };
 
-<<<<<<< HEAD
-  const handleCodeStatusChange = (codeStatus: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      codeStatus: codeStatus,
-=======
   const handleCodeStatusChange = (status: string) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -287,7 +246,6 @@ export const DemographicModalContent = ({
     setFormData((prevData) => ({
       ...prevData,
       admissionStatus: status,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }));
   };
   console.log(error, "error");
@@ -314,11 +272,7 @@ export const DemographicModalContent = ({
     if (files) {
       const totalSize = Array.from(files).reduce(
         (acc, file) => acc + file.size,
-<<<<<<< HEAD
-        0
-=======
         0,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       );
       const totalSizeMB = totalSize / (1024 * 1024); // Convert bytes to MB
 
@@ -404,15 +358,6 @@ export const DemographicModalContent = ({
   }, []);
   console.log(formData, "formData");
 
-<<<<<<< HEAD
-  return (
-    <>
-      <div className="w-[1200px] h-[642px]">
-        <form className="" onSubmit={handleSubmit}>
-          <div className="bg-[#ffffff] w-full h-[70px] flex flex-col justify-start rounded-md">
-            <div className="items-center flex justify-between px-8">
-              <h2 className="p-title text-left text-[#071437] mt-5 w-full pl-2">
-=======
   const onNext = (e: any) => {
     e.preventDefault();
     setIsEmergency(true);
@@ -459,40 +404,12 @@ export const DemographicModalContent = ({
           <div className="flex h-[70px] w-full flex-col justify-start rounded-md bg-[#ffffff]">
             <div className="flex items-center justify-between px-8">
               <h2 className="p-title mt-5 w-full pl-2 text-left !font-medium">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Patient Demographic
               </h2>
               <X
                 onClick={() => {
                   isSubmitted ? null : isModalOpen(false);
                 }}
-<<<<<<< HEAD
-                className={`
-                ${isSubmitted && " cursor-not-allowed"}
-                w-6 h-6  text-black flex items-center mt-4 mr-1 cursor-pointer`}
-              />
-            </div>
-            <p className="text-sm pl-10 text-gray-600 pb-10 pt-2">
-              Add patient demographic and make sure to submit.
-            </p>
-            <div className="flex place-items-end mr-4"></div>
-          </div>
-          <div className=" mb-9 pt-4">
-            <div className="h-[600px] max-h-[470px] md:px-10 mt-5">
-              <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-                <div>
-                  <label
-                    htmlFor="first-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    First Name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-=======
                 className={` ${isSubmitted && "cursor-not-allowed"} mr-1 mt-4 flex h-6 w-6 cursor-pointer items-center text-black`}
               />
             </div>
@@ -516,7 +433,6 @@ export const DemographicModalContent = ({
                       type="text"
                       required
                       className="block h-[48px] w-full rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       placeholder="input first name"
                       name="firstName"
                       value={formData.firstName}
@@ -527,17 +443,6 @@ export const DemographicModalContent = ({
                 <div>
                   <label
                     htmlFor="last-name"
-<<<<<<< HEAD
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Middle Name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-=======
                     className="not-required block text-[20px] font-medium leading-6"
                   >
                     Middle Name
@@ -546,7 +451,6 @@ export const DemographicModalContent = ({
                     <input
                       type="text"
                       className="block h-[48px] w-full rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       placeholder="input middle name"
                       name="middleName"
                       value={formData.middleName}
@@ -557,17 +461,6 @@ export const DemographicModalContent = ({
                 <div>
                   <label
                     htmlFor="first-name"
-<<<<<<< HEAD
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Last Name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-=======
                     className="required-field block text-[20px] font-medium leading-6"
                   >
                     Last Name
@@ -577,7 +470,6 @@ export const DemographicModalContent = ({
                       type="text"
                       required
                       className="block h-[48px] w-full rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       placeholder="input last name"
                       name="lastName"
                       value={formData.lastName}
@@ -585,21 +477,6 @@ export const DemographicModalContent = ({
                     />
                   </div>
                 </div>
-<<<<<<< HEAD
-                <div className="flex flex-row">
-                  <div>
-                    <label
-                      htmlFor="last-name"
-                      className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                    >
-                      Age
-                    </label>
-                    <div className="mt-1 mr-4">
-                      <input
-                        type="text"
-                        required
-                        className="block w-[174px] h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6 appearance-none"
-=======
                 <div className="flex w-full flex-row gap-5">
                   <div className="w-full">
                     <label
@@ -671,7 +548,6 @@ export const DemographicModalContent = ({
                         type="text"
                         required
                         className="block h-[48px] w-full appearance-none rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         placeholder="input age"
                         name="age"
                         value={formData.age}
@@ -679,36 +555,6 @@ export const DemographicModalContent = ({
                       />
                     </div>
                   </div>
-<<<<<<< HEAD
-                  <div className="flex flex-row">
-                    <div>
-                      <label
-                        htmlFor="last-name"
-                        className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                      >
-                        Gender
-                      </label>
-                      <div className="mt-1 relative">
-                        <select
-                          id="status"
-                          className="block w-[173px] h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                          onChange={(e) => handleGenderChange(e.target.value)}
-                          style={{ cursor: "pointer" }}
-                          name="lastName"
-                        >
-                          <option value="">select gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                        </select>
-                        <Image
-                          className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                          width={20}
-                          height={20}
-                          src={"/svgs/chevron-up.svg"}
-                          alt={""}
-                        />
-                      </div>
-=======
                   <div className="w-full">
                     <label
                       htmlFor="last-name"
@@ -766,36 +612,12 @@ export const DemographicModalContent = ({
                         value={formData.mobility}
                         onChange={handleChange}
                       />
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     </div>
                   </div>
                 </div>
                 <div>
                   <label
                     htmlFor="first-name"
-<<<<<<< HEAD
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Date of Birth
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      type="date"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                      placeholder="input date"
-                      name="dateOfBirth"
-                      value={formData.dateOfBirth}
-                      onChange={handleChange}
-                    />
-                    <Image
-                      className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                      width={20}
-                      height={20}
-                      src={"/svgs/calendark.svg"}
-                      alt={""}
-                    />
-=======
                     className="required-field block text-[20px] font-medium leading-6"
                   >
                     Dietary Restriction
@@ -810,23 +632,11 @@ export const DemographicModalContent = ({
                       value={formData.dietaryRestriction}
                       onChange={handleChange}
                     />
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   </div>
                 </div>
                 <div>
                   <label
                     htmlFor="first-name"
-<<<<<<< HEAD
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Address 1
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-=======
                     className="required-field block text-[20px] font-medium leading-6"
                   >
                     Phone Number
@@ -874,7 +684,6 @@ export const DemographicModalContent = ({
                       type="text"
                       required
                       className="block h-[48px] w-full rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       placeholder="input address 1"
                       name="address1"
                       value={formData.address1}
@@ -885,17 +694,6 @@ export const DemographicModalContent = ({
                 <div>
                   <label
                     htmlFor="first-name"
-<<<<<<< HEAD
-                    className="block text-lg font-bold leading-6 text-gray-900"
-                  >
-                    Address 2
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                      placeholder="input address 2 (optional)"
-=======
                     className="not-required block text-[20px] font-medium leading-6"
                   >
                     Address 2
@@ -905,28 +703,12 @@ export const DemographicModalContent = ({
                       type="text"
                       className="block h-[48px] w-full rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
                       placeholder="input address 2"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       name="address2"
                       value={formData.address2}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
-<<<<<<< HEAD
-                <div className="flex flex-row">
-                  <div>
-                    <label
-                      htmlFor="last-name"
-                      className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                    >
-                      City
-                    </label>
-                    <div className="mt-1 mr-4">
-                      <input
-                        type="text"
-                        required
-                        className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-=======
 
                 <div className="flex w-full flex-row gap-5">
                   <div className="w-full">
@@ -973,7 +755,6 @@ export const DemographicModalContent = ({
                         type="text"
                         required
                         className="block h-[48px] w-full rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:mr-1 placeholder:text-[15px] placeholder:text-[#64748B] sm:text-sm sm:leading-6"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         placeholder="input city"
                         name="city"
                         value={formData.city}
@@ -981,176 +762,6 @@ export const DemographicModalContent = ({
                       />
                     </div>
                   </div>
-<<<<<<< HEAD
-                  <div className="flex flex-row">
-                    <div>
-                      <label
-                        htmlFor="last-name"
-                        className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                      >
-                        State
-                      </label>
-                      <div className="mt-1">
-                        <input
-                          type="text"
-                          required
-                          className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                          placeholder="input state"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="first-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Country
-                  </label>
-                  <div className="mt-1 relative">
-                    <select
-                      required
-                      className="block cursor-pointer w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                      name="country"
-                      onChange={(event) =>
-                        handleCountryChange(event.target.value)
-                      }
-                    >
-                      <option>Select a country</option>
-                      {countryList.map((country) => (
-                        <option key={country.countryId} value={country.id}>
-                          {country.name}
-                        </option>
-                      ))}
-                    </select>
-                    <Image
-                      className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                      width={20}
-                      height={20}
-                      src={"/svgs/chevron-up.svg"}
-                      alt={""}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="last-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Zip
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                      placeholder="input zip"
-                      name="zip"
-                      value={formData.zip}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="">
-                  <label
-                    htmlFor="last-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Code Status
-                  </label>
-                  <div className="mt-1 relative">
-                    <select
-                      id="status"
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6 cursor-pointer"
-                      name="codeStatus"
-                      onChange={(e) => handleCodeStatusChange(e.target.value)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <option value="">select status</option>
-                      <option value="DNR" className="text-red-500">
-                        DNR
-                      </option>
-                      <option value="FULL CODE" className="text-blue-500">
-                        FULL CODE
-                      </option>
-                    </select>
-                    <Image
-                      className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                      width={20}
-                      height={20}
-                      src={"/svgs/chevron-up.svg"}
-                      alt={""}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="last-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Admission Date
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      type="date"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                      placeholder="input addmission date"
-                      name="admissionDate"
-                      value={formData.admissionDate}
-                      onChange={handleChange}
-                    />
-                    <Image
-                      className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                      width={20}
-                      height={20}
-                      src={"/svgs/calendark.svg"}
-                      alt={""}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="first-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Email
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="email"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                      placeholder="input email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="first-name"
-                    className="block text-lg font-bold leading-6 text-gray-900 required-field"
-                  >
-                    Phone Number
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                      placeholder="input phone number"
-                      name="phoneNo"
-                      value={formData.phoneNo}
-                      onChange={handleChange}
-                    />
-=======
                 </div>
                 <div className="flex flex-row gap-5">
                   <div className="w-full">
@@ -1249,36 +860,12 @@ export const DemographicModalContent = ({
                         alt={""}
                       />
                     </div>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   </div>
                 </div>
 
                 <div className="w-full">
                   <label
                     htmlFor="imageUpload"
-<<<<<<< HEAD
-                    className="relative h-[70px] w-full bg-[#daf3f5] border-[#007C85] border-dashed border-2 flex justify-center items-center rounded-md cursor-pointer text-center text-[#101828] font-bold mt-1.5"
-                  >
-                    {selectedFileNames.length > 0 ? (
-                      // If files are selected, display filein.svg
-                      <Image
-                        className="w-10 h-10 mr-1"
-                        width={50}
-                        height={50}
-                        src={"/svgs/filein.svg"}
-                        alt=""
-                      />
-                    ) : (
-                      // If no files are selected, display folder-add.svg
-                      <Image
-                        className="w-10 h-10 mr-1"
-                        width={50}
-                        height={50}
-                        src={"/svgs/gallery-export.svg"}
-                        alt=""
-                      />
-                    )}
-=======
                     className="relative mt-5 flex h-[62px] w-full cursor-pointer items-center justify-center rounded-[3px] border-2 border-dashed border-[#007C85] bg-[#007C851A] text-center font-medium"
                   >
                     <Image
@@ -1289,44 +876,27 @@ export const DemographicModalContent = ({
                       alt=""
                     />
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     <div className="flex pb-5">
                       {selectedFileNames.length > 0 ? (
                         <>
                           <p className="">File Attached.</p>
-<<<<<<< HEAD
-                          <p className="underline decoration-solid text-blue-500 ml-1">
-=======
                           <p className="ml-1 text-blue-500 underline decoration-solid">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             Replace
                           </p>
                         </>
                       ) : (
                         <>
-<<<<<<< HEAD
-                          <p className="">Drag & Drop files or</p>
-                          <p className="underline decoration-solid text-blue-500 ml-1">
-=======
                           <p className="">Upload or Attach Files or</p>
                           <p className="ml-1 text-blue-500 underline decoration-solid">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             Browse
                           </p>
                         </>
                       )}
                     </div>
-<<<<<<< HEAD
-                    <span className="text-sm font-normal absolute bottom-2 text-[#667085] ml-10 pb-1">
-                      {selectedFileNames.length === 0 ? (
-                        // Display "Support PNG & JPG" if no files are attached
-                        <span>Support PNG & JPG</span>
-=======
                     <span className="absolute bottom-2 ml-10 pb-1 text-sm font-normal text-[#667085]">
                       {selectedFileNames.length === 0 ? (
                         // Display "Support PNG & JPG" if no files are attached
                         <span>Miximum file size 50 MB.</span>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       ) : (
                         // Display the file name if one file is attached, or the number of files if more than one are attached
                         <span>{selectedFileNames[0]}</span>
@@ -1343,45 +913,25 @@ export const DemographicModalContent = ({
                 </div>
               </div>
             </div>
-<<<<<<< HEAD
-            <div className="justify-end flex mr-10">
-=======
             <div className="absolute bottom-11 right-14 flex justify-end">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               <button
                 onClick={() => isModalOpen(false)}
                 disabled={isSubmitted}
                 type="button"
-<<<<<<< HEAD
-                className={`
-                ${isSubmitted && " cursor-not-allowed"}
-                w-[150px] h-[45px]  bg-[#F3F3F3] hover:bg-[#D9D9D9] font-medium text-black  mr-4 rounded-sm `}
-=======
                 className={` ${isSubmitted && "cursor-not-allowed"} mr-4 h-[45px] w-[150px] rounded-sm bg-[#F3F3F3] font-medium text-black hover:bg-[#D9D9D9]`}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               >
                 Cancel
               </button>
               <button
                 disabled={isSubmitted}
                 type="submit"
-<<<<<<< HEAD
-                className={`
-                 ${isSubmitted && " cursor-not-allowed"}
-                 w-[150px] h-[45px] px-3 py-2 bg-[#007C85] hover:bg-[#03595B]  text-[#ffff] font-medium  rounded-sm`}
-              >
-                Submit
-=======
                 className={` ${isSubmitted && "cursor-not-allowed"} h-[45px] w-[150px] rounded-sm bg-[#007C85] px-3 py-2 font-medium text-[#ffff] hover:bg-[#03595B]`}
               >
                 Next
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               </button>
             </div>
           </div>
         </form>
-<<<<<<< HEAD
-=======
         {/* Emergency Contact */}
         {isEmergency && (
           <form
@@ -1643,7 +1193,6 @@ export const DemographicModalContent = ({
             </div>
           </form>
         )}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       </div>
     </>
   );

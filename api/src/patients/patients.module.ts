@@ -7,13 +7,6 @@ import { IdService } from 'services/uuid/id.service';
 import { PatientsService } from './patients.service';
 import { PatientsProfileImage } from 'src/patientsProfileImage/entities/patientsProfileImage.entity';
 import { PatientsProfileImageService } from 'src/patientsProfileImage/patientsProfileImage.service';
-<<<<<<< HEAD
-
-@Module({
-  imports: [TypeOrmModule.forFeature([Patients, PatientsProfileImage])],
-
-  providers: [PatientsResolver, PatientsService, IdService, PatientsProfileImageService],
-=======
 import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContacts.service';
 import { EmergencyContacts } from 'src/emergencyContacts/entities/emergencyContacts.entity';
 import { Orders } from 'src/orders/entities/order.entity';
@@ -31,7 +24,6 @@ import { OrdersDietaryService } from 'src/orders_dietary/orders_dietary.service'
   imports: [TypeOrmModule.forFeature([Patients, PatientsProfileImage, EmergencyContacts,Orders, OrdersLaboratory, Appointments, AppointmentsFiles, OrdersDietary])],
 
   providers: [PatientsResolver, PatientsService, EmergencyContactsService, IdService, PatientsProfileImageService, OrdersService, OrdersLaboratoryService, AppointmentFilesService, AppointmentsService, OrdersDietaryService],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   controllers: [PatientsController],
 })
 export class PatientsModule {}

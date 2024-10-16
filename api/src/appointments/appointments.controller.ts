@@ -12,13 +12,9 @@ import { AppointmentFilesService } from 'src/appointmentsFiles/appointmentsFiles
 
 @Controller('appointments')
 export class AppointmentsController {
-<<<<<<< HEAD
-  constructor(private readonly appointmentService: AppointmentsService) {}
-=======
   constructor(private readonly appointmentService: AppointmentsService,
     private readonly appointmentFilesService: AppointmentFilesService
   ) {}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
   @Post('upcoming-appointments')
   getUpcomingAppointments(
@@ -49,31 +45,6 @@ export class AppointmentsController {
       patientId,
       createAppointmentsInput,
     );
-<<<<<<< HEAD
-  }
-  @Post('get/all')
-  getAllAppointments(
-    @Body()
-    body: {
-      term: string;
-      page: number;
-      sortBy: string;
-      sortOrder: 'ASC' | 'DESC';
-      startDate: string;
-      endDate: string;
-    },
-  ) {
-    const { term = '', page, sortBy, sortOrder,startDate,endDate } = body;
-    return this.appointmentService.getAllAppointments(
-      term,
-      page,
-      sortBy,
-      sortOrder,
-      startDate,
-      endDate,
-    );
-  }
-=======
   }
     @Post('get/all')
     getAllAppointments(
@@ -101,7 +72,6 @@ export class AppointmentsController {
         endDate,
       );
     }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   
   @Post('list/:id')
   findAllAppointmentsByPatient(
@@ -112,11 +82,6 @@ export class AppointmentsController {
       page: number;
       sortBy: string;
       sortOrder: 'ASC' | 'DESC';
-<<<<<<< HEAD
-    },
-  ) {
-    const { term = '', page, sortBy, sortOrder } = body;
-=======
       perPage: number;
       filterStatus: string[];
       filterType: string[];
@@ -124,20 +89,16 @@ export class AppointmentsController {
     },
   ) {
     const { term = '', page, sortBy, sortOrder, perPage, filterStatus, filterType} = body;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     return this.appointmentService.getAllAppointmentsByPatient(
       patientId,
       term,
       page,
       sortBy,
       sortOrder,
-<<<<<<< HEAD
-=======
       perPage,
       filterStatus,
       filterType,
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     );
   }
   @Patch('update/:id')

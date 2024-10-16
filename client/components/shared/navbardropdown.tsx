@@ -14,10 +14,7 @@ interface UserDetail {
   fName?: string;
   lName?: string;
   uuid?: string;
-<<<<<<< HEAD
-=======
   email?: string;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }
 const NavBarDropdown = forwardRef<HTMLDivElement, NavBarDropdownProps>(
   (props, ref) => {
@@ -41,17 +38,6 @@ const NavBarDropdown = forwardRef<HTMLDivElement, NavBarDropdownProps>(
         ref={ref}
         className={`${
           dropDownOpen ? "opacity-100 visible" : "opacity-0 invisible"
-<<<<<<< HEAD
-        } transition ease-in duration-300 flex flex-col dropdowncss shadow-lg select-none z-[9999] 
-    `}
-      >
-        <ul className="flex flex-col z-50">
-          <li className="flex">
-            <div className="flex flex-col">
-              <h1 className="pl-3 font-bold ">ADMIN</h1>
-              <div className="pl-3">
-                {userDetail.fName} {userDetail.lName}
-=======
         } transition ease-in duration-300 flex flex-col dropdowncss shadow-lg select-none z-[9999] justify-end w-full 
     `}
       >
@@ -61,7 +47,6 @@ const NavBarDropdown = forwardRef<HTMLDivElement, NavBarDropdownProps>(
               <h1 className="pl-3 font-bold ">ADMIN</h1>
               <div className="pl-3">
                 <p className="text-ellipsis">{userDetail.email}</p>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               </div>
             </div>
           </li>

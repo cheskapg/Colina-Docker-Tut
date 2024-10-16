@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-import qs from 'query-string'
-import { UrlQueryParams, RemoveUrlQueryParams } from '@/types'
-=======
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import qs from "query-string";
@@ -11,40 +5,21 @@ import { UrlQueryParams, RemoveUrlQueryParams } from "@/types";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { DateTime } from "luxon";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formUrlQuery({ params, key, value }: UrlQueryParams) {
-<<<<<<< HEAD
-  const currentUrl = qs.parse(params)
-
-  currentUrl[key] = value
-=======
   const currentUrl = qs.parse(params);
 
   currentUrl[key] = value;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
   return qs.stringifyUrl(
     {
       url: window.location.pathname,
       query: currentUrl,
     },
-<<<<<<< HEAD
-    { skipNull: true }
-  )
-}
-
-export function removeKeysFromQuery({ params, keysToRemove }: RemoveUrlQueryParams) {
-  const currentUrl = qs.parse(params)
-
-  keysToRemove.forEach(key => {
-    delete currentUrl[key]
-  })
-=======
     { skipNull: true },
   );
 }
@@ -58,17 +33,12 @@ export function removeKeysFromQuery({
   keysToRemove.forEach((key) => {
     delete currentUrl[key];
   });
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
   return qs.stringifyUrl(
     {
       url: window.location.pathname,
       query: currentUrl,
     },
-<<<<<<< HEAD
-    { skipNull: true }
-  )
-=======
     { skipNull: true },
   );
 }
@@ -236,5 +206,4 @@ export function timeElapsed(dateString: string, timeString: string): string {
   if (diffInHours > 0) return `${diffInHours}h`;
   if (diffInMinutes > 0) return `${diffInMinutes}m`;
   return `${diffInSeconds}s`;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }

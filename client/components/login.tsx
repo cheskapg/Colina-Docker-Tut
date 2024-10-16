@@ -1,16 +1,5 @@
+"use client";
 
-<<<<<<< HEAD
-import Image from "next/image";
-import AuthForm from "./authForm";
-
-export const Login = () => {
-
-  return (
-    <div className="w-full h-full flex ">
-      <section className="w-full h-full">
-        <AuthForm />
-      </section>
-=======
 import {
   getAccessToken,
   getRememberToken,
@@ -408,7 +397,6 @@ export const Login = () => {
           </div>
         </div>
       )}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     </div>
   );
 };

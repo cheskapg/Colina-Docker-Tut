@@ -11,13 +11,6 @@ import { PrescriptionsService } from 'src/prescriptions/prescriptions.service';
 import { MedicationLogsService } from 'src/medicationLogs/medicationLogs.service';
 import { PrescriptionFilesService } from 'src/prescriptionsFiles/prescriptionsFiles.service';
 import { PrescriptionsFiles } from 'src/prescriptionsFiles/entities/prescriptionsFiles.entity';
-<<<<<<< HEAD
-
-@Module({
-  imports: [TypeOrmModule.forFeature([Appointments, Patients, Prescriptions,MedicationLogs,PrescriptionsFiles])],
-
-  providers: [CronjobsService, AppointmentsService, PrescriptionsService,MedicationLogsService,  PrescriptionFilesService, IdService] // Include AppointmentsService here
-=======
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { UserNotification } from 'src/userNotifications/entities/user-notification.entity';
@@ -38,7 +31,6 @@ import { OrdersDietary } from 'src/orders_dietary/entities/orders_dietary.entity
   imports: [TypeOrmModule.forFeature([Appointments, Patients, Prescriptions,MedicationLogs,PrescriptionsFiles, Notification, AppointmentsFiles ,UserNotification, Users, Appointments, AppointmentsFiles, Orders,OrdersPrescriptions, OrdersLaboratory, OrdersDietary])],
 
   providers: [CronjobsService, AppointmentsService, AppointmentFilesService, UserNotificationGateway, PrescriptionsService,MedicationLogsService,  PrescriptionFilesService, IdService, NotificationsService, OrdersService,OrdersPrescriptionsService,AppointmentFilesService,AppointmentsService, OrdersLaboratoryService, OrdersDietaryService] // Include AppointmentsService here
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 })
 
 export class CronjobsModule {

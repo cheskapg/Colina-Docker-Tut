@@ -17,10 +17,7 @@ import { PrescriptionViewModalContent } from "@/components/modal-content/prescri
 import Pagination from "@/components/shared/pagination";
 import Image from "next/image";
 import ResuableTooltip from "@/components/reusable/tooltip";
-<<<<<<< HEAD
-=======
 import PdfDownloader from "@/components/pdfDownloader";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 export default function prescription() {
   const router = useRouter();
   if (typeof window === "undefined") {
@@ -144,9 +141,6 @@ export default function prescription() {
     };
 
     fetchData();
-<<<<<<< HEAD
-  }, [currentPage, sortOrder, sortBy, term, isSuccessOpen]);
-=======
   }, [
     currentPage,
     sortOrder,
@@ -155,7 +149,6 @@ export default function prescription() {
     isSuccessOpen,
     filterStatusFromCheck,
   ]);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
   const onSuccess = () => {
     setIsSuccessOpen(true);
@@ -171,11 +164,7 @@ export default function prescription() {
 
   if (isLoading) {
     return (
-<<<<<<< HEAD
-      <div className="container w-full h-full flex justify-center items-center ">
-=======
       <div className="container flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           alt="logo"
@@ -186,16 +175,6 @@ export default function prescription() {
     );
   }
   return (
-<<<<<<< HEAD
-    <div className=" w-full h-full flex flex-col justify-between">
-      <div className="w-full h-full">
-        <div className="w-full justify-between flex mb-2">
-          <div className="flex-row">
-            <p className="p-title">Prescription</p>
-
-            <div>
-              <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
-=======
     <div className="flex h-full w-full flex-col justify-between">
       <div className="h-full w-full">
         <div className="mb-2 flex w-full justify-between">
@@ -204,33 +183,12 @@ export default function prescription() {
 
             <div>
               <p className="my-1 h-[23px] text-[15px] font-normal text-[#64748B]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Total of {totalPrescription} Prescriptions
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
-<<<<<<< HEAD
-              <Image src="/imgs/add.svg" alt="" width={22} height={22} />
-              <p className="text-[18px]">Add</p>
-            </button>
-            <button className="btn-pdfs gap-2">
-              <Image
-                src="/imgs/downloadpdf.svg"
-                alt=""
-                width={22}
-                height={22}
-              />
-              <p className="text-[18px]">Download PDF</p>
-            </button>
-          </div>
-        </div>
-
-        <div className="w-full sm:rounded-lg items-center">
-          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-            <form className="mr-5 relative">
-=======
               <Image src="/imgs/add.svg" alt="" width={18} height={18} />
               <p className="">Add</p>
             </button>
@@ -252,16 +210,11 @@ export default function prescription() {
         <div className="w-full items-center sm:rounded-lg">
           <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
             <form className="relative mr-5">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               {/* search bar */}
               <label className=""></label>
               <div className="flex">
                 <input
-<<<<<<< HEAD
-                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat bg-[573px] bg-[center] bg-[calc(100%-20px)]"
-=======
                   className="relative mx-5 my-4 h-[47px] w-[460px] rounded-[3px] border-[1px] border-[#E7EAEE] bg-[#fff] bg-[center] bg-no-repeat px-5 py-3 pl-10 pt-[14px] text-[15px] outline-none placeholder:text-[#64748B]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   type="text"
                   placeholder="Search by reference no. or name..."
                   value={term}
@@ -275,22 +228,13 @@ export default function prescription() {
                   alt="Search"
                   width="20"
                   height="20"
-<<<<<<< HEAD
-                  className="absolute left-8 top-9 pointer-events-none"
-=======
                   className="pointer-events-none absolute left-8 top-8"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 />
               </div>
             </form>
 
-<<<<<<< HEAD
-            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
             <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Order by
               </p>
               <DropdownMenu
@@ -304,11 +248,7 @@ export default function prescription() {
                 width={"165px"}
                 label={"Select"}
               />
-<<<<<<< HEAD
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Sort by
               </p>
               <DropdownMenu
@@ -329,108 +269,13 @@ export default function prescription() {
           {/* START OF TABLE */}
           <div>
             {patientPrescriptions.length == 0 ? (
-<<<<<<< HEAD
-              <div className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                <p className="text-xl font-semibold text-gray-700 text-center text-[15px]">
-=======
               <div className="border-1 absolute flex items-center justify-center py-5">
                 <p className="text-center text-[15px] text-xl font-semibold text-gray-700">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   No Prescription/s <br />
                 </p>
               </div>
             ) : (
               <table className="text-left rtl:text-right">
-<<<<<<< HEAD
-                <thead>
-                  <tr className=" text-[#64748B] border-y text-[15px] h-[70px] font-semibold">
-                    <td className="px-6 py-3 ">PRESCRIPTION ID</td>
-                    <td className="px-6 py-3 ">MEDICINE NAME</td>
-                    <td className="px-6 py-3 ">FREQUENCY</td>
-                    <td className="px-6 py-3 ">INTERVAL (hr/s)</td>
-                    <td className="px-6 py-3 ">DOSAGE</td>
-                    <td className="px-6 py-3 ">STATUS</td>
-                    <td className="py-3 px-6 text-center">ACTION</td>
-                    <td className="w-[14px]"></td>
-                  </tr>
-                </thead>
-                <tbody className="h-[220px] overflow-y-scroll">
-                  {patientPrescriptions.length > 0 && (
-                    <>
-                      {patientPrescriptions.map((prescription, index) => (
-                        <tr
-                          key={index}
-                          className="group  even:bg-gray-50  border-b hover:bg-[#f4f4f4] text-[15px]"
-                        >
-                          <td className="px-6 py-3 ">
-                            <ResuableTooltip
-                              text={prescription.prescriptions_uuid}
-                            />
-                          </td>
-                          <td className=" px-6 py-3  ">
-                            <ResuableTooltip
-                              text={prescription.prescriptions_name}
-                            />
-                          </td>
-                          <td className=" px-6 py-3 ">
-                            {prescription.prescriptions_frequency}
-                          </td>
-                          <td className=" px-6 py-3 ">
-                            {prescription.prescriptions_interval === "1"
-                              ? "1 hour"
-                              : `${prescription.prescriptions_interval} hours`}
-                          </td>
-                          <td className=" px-6 py-3  ">
-                            {prescription.prescriptions_dosage}
-                          </td>
-                          <td className="px-6 py-3">
-                            <div
-                              className={`px-2 font-semibold rounded-[20px] ${
-                                prescription.prescriptions_status === "active"
-                                  ? "bg-[#dfffea] text-[#17C653] text-[15px]"
-                                  : prescription.prescriptions_status ===
-                                    "inactive"
-                                  ? "bg-[#FEE9E9] text-[#EF4C6A]  text-[15px]"
-                                  : prescription.prescriptions_status
-                              }`}
-                              style={{
-                                width: `${
-                                  prescription.prescriptions_status.length * 10
-                                }px`,
-                              }}
-                            >
-                              {prescription.prescriptions_status}
-                            </div>
-                          </td>
-
-                          <td className="py-3 px-6 flex gap-2 justify-center">
-                            <p
-                              onClick={() => {
-                                isModalOpen(true);
-                                setIsEdit(true);
-                                setPrescriptionData(prescription);
-                              }}
-                            >
-                              <Edit></Edit>
-                            </p>
-                            <p
-                              onClick={() => {
-                                isModalOpen(true);
-                                setIsView(true);
-
-                                setPrescriptionData(prescription);
-                              }}
-                            >
-                              <View></View>
-                            </p>
-                          </td>
-                        </tr>
-                      ))}
-                    </>
-                  )}
-                </tbody>
-              </table>
-=======
               <thead>
                 <tr className="h-[70px] border-b text-[15px] font-semibold uppercase text-[#64748B]">
                   <td className="w-[222px] py-3 pl-6">PRESCRIPTION UID</td>
@@ -547,7 +392,6 @@ export default function prescription() {
                 )}
               </tbody>
             </table>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             )}
           </div>
           {/* END OF TABLE */}

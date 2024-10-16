@@ -10,12 +10,6 @@ import { PatientsService } from 'src/patients/patients.service';
 import {PrescriptionsFiles} from 'src/prescriptionsFiles/entities/prescriptionsFiles.entity';
 import { PrescriptionFilesService } from 'src/prescriptionsFiles/prescriptionsFiles.service';
 import { MedicationLogs } from 'src/medicationLogs/entities/medicationLogs.entity';
-<<<<<<< HEAD
-@Module({
-  imports: [TypeOrmModule.forFeature([Prescriptions, Patients, MedicationLogs, PrescriptionsFiles,MedicationLogs])],
-
-  providers: [PrescriptionsResolver, IdService, PrescriptionsService, PatientsService,PrescriptionFilesService],
-=======
 import { EmergencyContacts } from 'src/emergencyContacts/entities/emergencyContacts.entity';
 import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContacts.service';
 import { OrdersService } from 'src/orders/orders.service';
@@ -34,7 +28,6 @@ import { OrdersDietaryService } from 'src/orders_dietary/orders_dietary.service'
   imports: [TypeOrmModule.forFeature([Prescriptions, Patients, MedicationLogs, PrescriptionsFiles,MedicationLogs, EmergencyContacts, Orders, OrdersPrescriptions,Appointments, AppointmentsFiles,OrdersLaboratory, OrdersDietary])],
 
   providers: [PrescriptionsResolver, IdService, EmergencyContactsService,PrescriptionsService, PatientsService,PrescriptionFilesService, OrdersService, OrdersPrescriptionsService, AppointmentsService, AppointmentFilesService, OrdersDietaryService, OrdersLaboratoryService],
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   controllers: [PrescriptionsController],
 })
 export class PrescriptionsModule { }

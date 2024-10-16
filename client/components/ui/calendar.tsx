@@ -2,31 +2,19 @@
 
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-<<<<<<< HEAD
-import { DayPicker } from "react-day-picker";
-=======
 import { DayPicker, DayPickerProps } from "react-day-picker";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-<<<<<<< HEAD
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
-=======
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   disabledDates?: (date: Date) => boolean; // Add custom prop for disabling dates
 };
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-<<<<<<< HEAD
-  ...props
-}: CalendarProps) {
-=======
   disabledDates,
   ...props
 }: CalendarProps) {
@@ -38,7 +26,6 @@ function Calendar({
     return false;
   };
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -88,10 +75,7 @@ function Calendar({
         IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />,
       }}
-<<<<<<< HEAD
-=======
       disabled={isDateDisabled}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       {...props}
     />
   );

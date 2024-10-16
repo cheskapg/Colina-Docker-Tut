@@ -28,14 +28,10 @@ export class PatientsService {
     private patientsRepository: Repository<Patients>,
     // @InjectRepository(Prescriptions)
     // private prescriptionRepository: Repository<Prescriptions>,
-<<<<<<< HEAD
-
-=======
     @InjectRepository(EmergencyContacts)
     private emergencyContactsRepository: Repository<EmergencyContacts>,
     
     private emergencyContactService:EmergencyContactsService,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     private idService: IdService, // Inject the IdService
   ) {}
 
@@ -46,10 +42,7 @@ export class PatientsService {
       where: {
         firstName: Like(`%${input.firstName}%`),
         lastName: Like(`%${input.lastName}%`),
-<<<<<<< HEAD
-=======
         dateOfBirth: input.dateOfBirth
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       },
     });
     // If a patient with similar information exists, throw an error
@@ -70,14 +63,6 @@ export class PatientsService {
     
     // Copy the properties from the input object to the new patient information
     Object.assign(newPatients, input);
-<<<<<<< HEAD
-    const savedPatient = await this.patientsRepository.save(newPatients);
-    const result = { ...savedPatient };
-    delete result.id;
-    delete result.deletedAt;
-    delete result.updatedAt;
-    return result;
-=======
     if (input.emergencyContacts) {
       const savedPatient = await this.patientsRepository.save(newPatients);
       if (newPatients.uuid && savedPatient) {
@@ -90,7 +75,6 @@ export class PatientsService {
       return result;
     }
     
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   }
 
   
@@ -110,12 +94,9 @@ export class PatientsService {
         'age',
         'gender',
         'codeStatus',
-<<<<<<< HEAD
-=======
         'mobility',
         'dietaryRestrictions',
         
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       ],
       where: { uuid: id },
       relations: ['allergies'],
@@ -332,11 +313,7 @@ export class PatientsService {
   }> {
     const patientList = await this.patientsRepository.find({
       select: ['uuid', 'firstName', 'lastName'],
-<<<<<<< HEAD
-      order: { lastName: 'ASC' },
-=======
       order: { firstName: 'ASC' },
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     });
     return {
       data: patientList,

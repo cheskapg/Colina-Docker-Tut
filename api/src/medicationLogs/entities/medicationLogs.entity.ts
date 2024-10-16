@@ -1,10 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Patients } from 'src/patients/entities/patients.entity';
 import { Prescriptions } from 'src/prescriptions/entities/prescriptions.entity';
-<<<<<<< HEAD
-=======
 import { Notification } from 'src/notifications/entities/notification.entity';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import {
   Column,
   CreateDateColumn,

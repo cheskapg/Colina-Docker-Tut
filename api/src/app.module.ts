@@ -28,15 +28,6 @@ import { CronjobsModule } from '../services/cronjobs/cronjobs.module';
 import { CountryModule } from './countries/countries.module';
 import { LabResultsFilesModule } from './labResultsFiles/labResultsFiles.module';
 import { MulterModule } from '@nestjs/platform-express';
-<<<<<<< HEAD
-import multer from 'multer';
-import { PrescriptionFilesModule } from './prescriptionsFiles/prescriptionsFiles.module';
-
-import { FormsModule } from './forms/forms.module';
-import { FormFilesModule } from './formFiles/formFiles.module';
-import { EmailModule } from '../services/email/email.module';
-import * as dotenv from 'dotenv';
-=======
 import { PrescriptionFilesModule } from './prescriptionsFiles/prescriptionsFiles.module';
 import { FormsModule } from './forms/forms.module';
 import { FormFilesModule } from './formFiles/formFiles.module';
@@ -54,7 +45,6 @@ import { OrdersLaboratory } from './orders_laboratory/entities/orders_laboratory
 import { OrdersLaboratoryModule } from './orders_laboratory/orders_laboratory.module';
 import { OrdersPrescriptionsModule } from './orders_prescriptions/orders_prescriptions.module';
 import { OrdersDietaryModule } from './orders_dietary/orders_dietary.module';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 dotenv.config();
 @Module({
   imports: [
@@ -66,11 +56,7 @@ dotenv.config();
     MulterModule.register({
       dest: './uploads',
     }),
-<<<<<<< HEAD
-  TypeOrmModule.forRoot({
-=======
     TypeOrmModule.forRoot({
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       type: 'postgres',
       host: process.env.PGHOST,
       port: parseInt(process.env.PGPORT, 10),
@@ -80,11 +66,7 @@ dotenv.config();
       synchronize: process.env.DB_SYNCHRONIZE === 'true',
       logging: true,
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-<<<<<<< HEAD
-      autoLoadEntities: true, // Automatically load entities without the need for the entities array
-=======
       autoLoadEntities: true,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       ssl: true,
     }),
     UsersModule,
@@ -109,8 +91,6 @@ dotenv.config();
     FormsModule,
     FormFilesModule,
     EmailModule,
-<<<<<<< HEAD
-=======
     NotificationsModule,
     UserNotificationsModule,
     AdlsModule,
@@ -120,7 +100,6 @@ dotenv.config();
     OrdersPrescriptionsModule,
     OrdersLaboratoryModule,
     OrdersDietaryModule
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ],
   controllers: [AppController],
   providers: [

@@ -1,8 +1,5 @@
 import {
-<<<<<<< HEAD
-=======
   BadRequestException,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ConflictException,
   Injectable,
   Logger,
@@ -78,25 +75,17 @@ console.log(uuid, "YOI uuid")
       throw new NotFoundException('Appointment not found.');
     }
 
-<<<<<<< HEAD
-=======
     return appointment.id; // Return the appointment ID
   }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   async getAllAppointmentsByPatient(
     patientUuid: string,
     term: string,
     page: number = 1,
     sortBy: string = 'appointmentStatus',
-<<<<<<< HEAD
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-    perPage: number = 5,
-=======
     sortOrder: 'ASC' | 'DESC' = 'DESC',
     perPage: number = 4,
     filterStatus?: string[] | undefined,
     filterType?: string[] | undefined,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ): Promise<{
     data: Appointments[];
     totalPages: number;
@@ -124,12 +113,9 @@ console.log(uuid, "YOI uuid")
         'appointments.appointmentStatus',
         'appointments.appointmentEndTime',
         'appointments.appointmentDate',
-<<<<<<< HEAD
-=======
         'appointments.appointmentType',
         'appointments.rescheduleReason',
         'appointments.appointmentDoctor',
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         'patient.uuid',
       ])
       .where('patient.uuid = :uuid', { uuid: patientUuid })
@@ -187,10 +173,6 @@ console.log(uuid, "YOI uuid")
       }
     }
     console.log('PATIENT ID:', patientUuid);
-<<<<<<< HEAD
-
-=======
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     if (term !== '') {
       console.log('term', term);
       appointmentsQueryBuilder
@@ -210,8 +192,6 @@ console.log(uuid, "YOI uuid")
               });
           }),
         );
-<<<<<<< HEAD
-=======
       if (filterStatus && filterStatus.length > 0) {
         // Use `IN` clause to filter appointments based on multiple statuses
         appointmentsQueryBuilder.andWhere(
@@ -254,7 +234,6 @@ console.log(uuid, "YOI uuid")
           );
         }
       }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
     const appointmentsList = await appointmentsQueryBuilder.getRawMany();
 
@@ -342,11 +321,8 @@ console.log(uuid, "YOI uuid")
     page: number = 1,
     sortBy: string = 'appointmentStatus',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
-<<<<<<< HEAD
-=======
     filterStatus?: string[] | undefined,
     filterType?: string[] | undefined,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     startDate: string = '2021-01-01',
     endDate: string = '2300-01-01',
     perPage: number = 5,
@@ -356,12 +332,6 @@ console.log(uuid, "YOI uuid")
     currentPage: number;
     totalCount: number;
   }> {
-<<<<<<< HEAD
-    const searchTerm = `%${term}%`; // Add wildcards to the search term
-    const todayDate = new Date();
-    todayDate.setUTCHours(0, 0, 0, 0);
-    const skip = (page - 1) * perPage;
-=======
     const todayDate = new Date();
     todayDate.setUTCHours(0, 0, 0, 0);
     const skip = (page - 1) * perPage;
@@ -374,7 +344,6 @@ console.log(uuid, "YOI uuid")
     };
     const validSortBy =
       sortByMapping[sortBy] || 'appointments.appointmentStatus';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
     const appointmentsQueryBuilder = this.appointmentsRepository
       .createQueryBuilder('appointments')
@@ -390,38 +359,13 @@ console.log(uuid, "YOI uuid")
         'patient.lastName',
         'patient.middleName',
       ])
-<<<<<<< HEAD
-=======
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       .where('appointments.appointmentDate >= :startDate', {
         startDate: startDate,
       })
       .andWhere('appointments.appointmentDate <= :endDate', {
         endDate: endDate,
       })
-<<<<<<< HEAD
-      .orderBy(`appointments.${sortBy}`, sortOrder)
-      .offset(skip)
-      .limit(perPage);
-
-    if (term !== '') {
-      console.log('term', term);
-      appointmentsQueryBuilder.where(
-        new Brackets((qb) => {
-          qb.andWhere('appointments.uuid ILIKE :searchTerm', { searchTerm })
-            .orWhere('appointments.appointmentStatus ILIKE :searchTerm', {
-              searchTerm,
-            })
-            .orWhere('patient.firstName ILIKE :searchTerm', { searchTerm })
-            .orWhere('patient.lastName ILIKE :searchTerm', { searchTerm })
-            .orWhere('appointments.details ILIKE :searchTerm', {
-              searchTerm,
-            });
-        }),
-      );
-    }
-=======
       .orderBy(validSortBy, sortOrder)
       .offset(skip)
       .limit(perPage);
@@ -567,7 +511,6 @@ console.log(uuid, "YOI uuid")
       }
     }
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     const appointmentsList = await appointmentsQueryBuilder.getRawMany();
 
     const totalPatientAppointments = await appointmentsQueryBuilder.getCount();
@@ -678,8 +621,6 @@ console.log(uuid, "YOI uuid")
     appointment.appointmentStatus = 'Successful';
     await this.appointmentsRepository.save(appointment);
   }
-<<<<<<< HEAD
-=======
 
   //APPOINTMENT FILES FROM APPOINTMENTFILES SERVICE
   async addAppointmentFile(
@@ -780,5 +721,4 @@ console.log(uuid, "YOI uuid")
       filename,
     );
   }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }

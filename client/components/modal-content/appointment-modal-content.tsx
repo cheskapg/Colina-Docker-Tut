@@ -1,11 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-<<<<<<< HEAD
-import React, { useEffect, useState } from "react";
-=======
 import React, { use, useEffect, useRef, useState } from "react";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -14,10 +10,7 @@ import {
 } from "@/app/api/appointments-api/appointments.api";
 import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
-<<<<<<< HEAD
-=======
 import { cn } from "@/lib/utils";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 interface Modalprops {
   isView: boolean;
   appointmentData: any;
@@ -43,11 +36,8 @@ export const AppointmentModalContent = ({
   }>();
   const patientId = params.id.toUpperCase();
   const { toast } = useToast();
-<<<<<<< HEAD
-=======
   const [selectedType, setSelectedType] = useState("");
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   const [selectedStatus, setSelectedStatus] = useState("");
   const [isEditable, setIsEditable] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -55,30 +45,6 @@ export const AppointmentModalContent = ({
   const [isHovered, setIsHovered] = useState(false);
   const [charactersFull, setCharactersFull] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-<<<<<<< HEAD
-  const handleEditToggle = () => {
-    setIsEditable(!isEditable);
-  };
-  const handleDetailsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    if (name === "details" && value.length > 200) {
-      const truncatedValue = value.slice(0, 200);
-      setCharactersFull(true);
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: truncatedValue,
-      }));
-    } else {
-      setCharactersFull(false);
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedStatus(e.target.value);
-=======
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isReschedule, setIsReschedule] = useState<boolean>(false);
   const selectRef = useRef<HTMLInputElement>(null);
@@ -144,7 +110,6 @@ export const AppointmentModalContent = ({
     if (e.target.value === "Resched") {
       setIsReschedule(true);
     }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     setFormData((prevData) => ({
       ...prevData,
       appointmentStatus: e.target.value,
@@ -189,20 +154,14 @@ export const AppointmentModalContent = ({
   };
   const [formData, setFormData] = useState({
     appointmentDate: appointmentData.appointments_appointmentDate,
-<<<<<<< HEAD
-=======
     appointmentType: appointmentData.appointments_appointmentType,
     appointmentDoctor: appointmentData.appointments_appointmentDoctor,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     appointmentTime: appointmentData.appointments_appointmentTime,
     appointmentEndTime: appointmentData.appointments_appointmentEndTime,
     details: appointmentData.appointments_details,
     appointmentStatus:
       appointmentData.appointments_appointmentStatus || "Scheduled",
-<<<<<<< HEAD
-=======
     rescheduleReason: appointmentData.appointments_rescheduleReason,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   });
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -212,16 +171,10 @@ export const AppointmentModalContent = ({
         await updateAppointmentOfPatient(
           appointmentData.appointments_uuid,
           formData,
-<<<<<<< HEAD
-          router
-        );
-        isModalOpen(false);
-=======
           router,
         );
         isModalOpen(false);
         onSuccess();
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         return;
       } else {
         console.log("Appointment adding");
@@ -229,30 +182,20 @@ export const AppointmentModalContent = ({
         const prescription = await createAppointmentOfPatient(
           patientId,
           formData,
-<<<<<<< HEAD
-          router
-=======
           router,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         );
         isModalOpen(false);
         onSuccess();
         // Reset the form data after successful submission
         setFormData({
           appointmentDate: "",
-<<<<<<< HEAD
-=======
           appointmentType: "",
           appointmentDoctor: "",
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           appointmentTime: "",
           appointmentEndTime: "",
           details: "",
           appointmentStatus: "",
-<<<<<<< HEAD
-=======
           rescheduleReason: "",
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         });
       }
     } catch (error: any) {
@@ -290,23 +233,6 @@ export const AppointmentModalContent = ({
   }
   console.log(formData, "formdata");
   console.log(formData.appointmentStatus, "status");
-<<<<<<< HEAD
-  return (
-    <div
-      className={`${
-        isView ? "h-[640px]" : charactersFull ? "h-[551px]" : "h-[552px]"
-      } w-[676px]  bg-[#FFFFFF] rounded-md`}
-    >
-      <form className="" onSubmit={handleSubmit}>
-        <div className="bg-[#ffffff] w-full h-[70px] flex flex-col justify-start rounded-md">
-          <div className="items-center flex justify-between">
-            <h2 className="p-title text-left text-[#071437] pl-10 mt-7">
-              {isView
-                ? isEditable
-                  ? "Update Appointment Details"
-                  : "View Appointment Details"
-                : "Make an Appointment"}
-=======
 
   return (
     <div
@@ -325,88 +251,11 @@ export const AppointmentModalContent = ({
           <div className="flex items-center justify-between">
             <h2 className="p-title ml-10 mt-7 text-left text-[#071437]">
               {isView ? "View Appointment Details" : "Make an Appointment"}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             </h2>
             <X
               onClick={() => {
                 isSubmitted ? null : isModalOpen(false);
               }}
-<<<<<<< HEAD
-              className={`
-              ${isSubmitted && " cursor-not-allowed"}
-              w-6  h-6 text-black flex items-center mt-6 mr-9 cursor-pointer`}
-            />
-          </div>
-          <div className="text-sm text-start px-9 pr-10 text-gray-600 pb-10 pt-2">
-            {isView ? (
-              <div className="flex justify-between w-full">
-                <div className="flex items-center">
-                  {formData.appointmentStatus === "Scheduled" && (
-                    <div className="flex">
-                      <div className="w-1 h-1 my-2 mx-1 mt-2 bg-green-500 rounded-full"></div>
-                      <p> Upcoming Appointment</p>
-                    </div>
-                  )}
-                  {formData.appointmentStatus === "Done" && (
-                    <div className="flex">
-                      <div className="w-1 h-1 my-2 mx-1 mt-2 bg-[#3C3C3C] rounded-full"></div>
-                      <p> {formData.appointmentStatus} Appointment</p>
-                    </div>
-                  )}
-                  {formData.appointmentStatus === "Patient-IN" && (
-                    <div className="flex">
-                      <div className="w-1 h-1 my-2 mx-1 mt-2 bg-[#E0BD03] rounded-full"></div>
-                      <p> On-going Appointment </p>
-                    </div>
-                  )}
-                  {formData.appointmentStatus === "Missed" && (
-                    <div className="flex">
-                      <div className="w-1 h-1 my-2 mx-1 mt-2 bg-[#B81C1C] rounded-full"></div>
-                      <p> {formData.appointmentStatus} Appointment </p>
-                    </div>
-                  )}
-                  {formData.appointmentStatus === "Cancelled" && (
-                    <div className="flex">
-                      <div className="w-1 h-1 my-2 mx-1 mt-2 bg-[#B81C1C] rounded-full"></div>
-                      <p> {formData.appointmentStatus} Appointment </p>
-                    </div>
-                  )}
-                </div>
-                <div className="">
-                  <Image
-                    className="absolute mt-2 ml-6 pointer-events-none z-10 "
-                    width={15}
-                    height={15}
-                    src={getImageSrc(isEditable, isHovered)}
-                    alt="edit-icon"
-                  />
-                  <button
-                    disabled={formData.appointmentStatus === "Missed"}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    onClick={() => {
-                      setIsEditable(!isEditable);
-                      console.log("edit", isEditable);
-                    }}
-                    type="button"
-                    className={`${
-                      isEditable
-                        ? "ring-[#2867C7] hover:ring-0 text-[#1B84FF] hover:text-white hover:bg-[#1B84FF]"
-                        : "hover:bg-[#D9D9D9]"
-                    } ${
-                      formData.appointmentStatus === "Missed" &&
-                      "cursor-not-allowed"
-                    } 
-                    w-24 h-8  font-medium rounded text-[#000] ring-1 ring-gray-200 `}
-                  >
-                    <p className="w-full pl-5">Edit</p>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex text-start items-start justify-start">
-                <p className="text-sm text-start pl-1 text-gray-600 pb-10 pt-2">
-=======
               className={` ${isSubmitted && "cursor-not-allowed"} mr-9 mt-6 flex h-6 w-6 cursor-pointer items-center text-black`}
             />
           </div>
@@ -420,32 +269,12 @@ export const AppointmentModalContent = ({
             ) : (
               <div className="flex items-start justify-start text-start">
                 <p className="pl-1 text-start text-[15px] text-gray-600">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   Submit your appointment schedule.
                 </p>
               </div>
             )}
           </div>
         </div>
-<<<<<<< HEAD
-        <div className=" mb-9 pt-4">
-          <div className="md:px-10 mb-9 ">
-            <div className="flex flex-col mt-6 pb-3 relative">
-              <div className="flex flex-col w-full">
-                <label
-                  htmlFor="date"
-                  className="block text-sm font-semibold leading-6 text-gray-900 required-field"
-                >
-                  DATE
-                </label>
-                <input
-                  type="date"
-                  required
-                  className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                  placeholder="input reaction"
-                  name="appointmentDate"
-                  value={formData.appointmentDate}
-=======
         <div className="mt-8 px-10">
           <div className="grid grid-cols-3 gap-x-4 gap-y-6">
             <div className="relative">
@@ -664,179 +493,18 @@ export const AppointmentModalContent = ({
                   placeholder="input reaction"
                   name="appointmentTime"
                   value={formData.appointmentTime}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   onChange={handleChange}
                   disabled={!isEditable && isView}
                 />
                 <Image
-<<<<<<< HEAD
-                  className="absolute top-5 right-0 mt-3.5 mr-3 pointer-events-none"
-                  width={20}
-                  height={20}
-                  src={"/svgs/calendark.svg"}
-=======
                   className="pointer-events-none absolute right-0 top-0 mr-3 mt-3.5"
                   width={20}
                   height={20}
                   src={!isView? "/svgs/active-clock.svg" : "/svgs/disabled-clock.svg"}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   alt={""}
                 />
               </div>
             </div>
-<<<<<<< HEAD
-            <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
-              <div className="">
-                <label
-                  htmlFor="first-name"
-                  className="block text-md font-bold leading-6 text-gray-900 required-field"
-                >
-                  Time From:
-                </label>
-                <div className="relative">
-                  <input
-                    type="time"
-                    required
-                    className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                    placeholder="input reaction"
-                    name="appointmentTime"
-                    value={formData.appointmentTime}
-                    onChange={handleChange}
-                    disabled={!isEditable && isView}
-                  />
-                  <Image
-                    className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                    width={20}
-                    height={20}
-                    src={"/svgs/clock.svg"}
-                    alt={""}
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="last-name"
-                  className="block text-md font-bold leading-6 text-gray-900 required-field"
-                >
-                  Time to:
-                </label>
-                <div className="relative">
-                  <input
-                    type="time"
-                    required
-                    className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400t sm:text-sm sm:leading-6"
-                    placeholder="input reaction"
-                    name="appointmentEndTime"
-                    onChange={handleChange}
-                    value={formData.appointmentEndTime}
-                    disabled={!isEditable && isView}
-                  />
-                  <Image
-                    className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
-                    width={20}
-                    height={20}
-                    src={"/svgs/clock.svg"}
-                    alt={""}
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="message"
-                  className="block text-md font-bold leading-6 text-gray-900 required-field"
-                >
-                  Details
-                </label>
-                <div className="mt-2.5">
-                  <textarea
-                    rows={5}
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                    placeholder="input details"
-                    style={{ resize: "none" }}
-                    name="details"
-                    onChange={handleDetailsChange}
-                    value={formData.details}
-                    disabled={!isEditable && isView}
-                  />
-                  <p
-                    className={`absolute text-red-500 ${
-                      charactersFull ? "visible" : "hidden"
-                    }`}
-                  >
-                    *Maximum of 200 characters only!
-                  </p>
-                </div>
-              </div>
-              <div className={`${isView ? "visible" : "hidden"}`}>
-                <label
-                  htmlFor="status"
-                  className="block text-md font-bold leading-6 text-gray-900 required-field"
-                >
-                  STATUS
-                </label>
-                <div className="mt-2.5 flex ">
-                  <select
-                    disabled={
-                      formData.appointmentStatus === "Missed" ||
-                      formData.appointmentStatus === "Done"
-                    }
-                    id="status"
-                    className={`${
-                      formData.appointmentStatus === "Missed" ||
-                      formData.appointmentStatus === "Done"
-                        ? "cursor-not-allowed"
-                        : "cursor-pointer"
-                    } block w-full h-12  rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6`}
-                    value={formData.appointmentStatus}
-                    onChange={handleStatusChange}
-                    defaultValue="select status"
-                  >
-                    <option value="">Select Status</option>
-                    <option value="Patient-IN">Patient-IN</option>
-                    <option value="Cancelled">Cancel Appointment</option>
-                  </select>
-                  <Image
-                    className="absolute ml-[260px] mt-[13px]  pointer-events-none"
-                    width={20}
-                    height={20}
-                    src={"/svgs/chevron-up.svg"}
-                    alt={""}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={`${charactersFull ? "mt-[30px]" : "mt-5"}`}>
-            <div className="justify-end flex mr-10">
-              <button
-                onClick={() => isModalOpen(false)}
-                disabled={isSubmitted}
-                type="button"
-                className={`
-                ${isSubmitted && " cursor-not-allowed"}
-                w-[150px] h-[45px]  bg-[#F3F3F3] hover:bg-[#D9D9D9] font-medium text-black  mr-4 rounded-sm `}
-              >
-                Cancel
-              </button>
-              <button
-                disabled={
-                  formData.appointmentStatus === "Missed" ||
-                  formData.appointmentStatus === "Done" ||
-                  isSubmitted
-                }
-                type="submit"
-                className={`${
-                  formData.appointmentStatus === "Missed" ||
-                  formData.appointmentStatus === "Done" ||
-                  isSubmitted
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer"
-                } w-[150px] h-[45px] px-3 py-2 bg-[#007C85] hover:bg-[#03595B]  text-[#ffff] font-medium  rounded-sm`}
-              >
-                {isEditable ? "Update" : "Submit"}
-              </button>
-            </div>
-=======
             <div className="">
               <label
                 htmlFor="last-name"
@@ -984,7 +652,6 @@ export const AppointmentModalContent = ({
             >
               {isEditable ? "Update" : "Submit"}
             </button>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           </div>
         </div>
       </form>

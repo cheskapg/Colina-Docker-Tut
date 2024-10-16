@@ -1,9 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { MedicationLogs } from 'src/medicationLogs/entities/medicationLogs.entity';
-<<<<<<< HEAD
-=======
 import { OrdersPrescriptions } from 'src/orders_prescriptions/entities/orders_prescription.entity';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import { Patients } from 'src/patients/entities/patients.entity';
 import { PrescriptionsFiles } from 'src/prescriptionsFiles/entities/prescriptionsFiles.entity';
 import {
@@ -87,10 +84,7 @@ export class Prescriptions {
     (medicationlogs) => medicationlogs.prescription,
   )
   medicationlogs: MedicationLogs[];
-<<<<<<< HEAD
-=======
 
   @OneToOne(() => OrdersPrescriptions, (order_prescription) => order_prescription.prescription)
   order_prescription?: OrdersPrescriptions;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }

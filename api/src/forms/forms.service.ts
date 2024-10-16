@@ -55,11 +55,7 @@ export class FormsService {
     sortBy: string = 'nameOfDocument',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
     isArchived: boolean = false,
-<<<<<<< HEAD
-    perPage: number = 5,
-=======
     perPage: number = 4,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ): Promise<{
     data: Forms[];
     totalPages: number;

@@ -12,12 +12,9 @@ import { IdService } from 'services/uuid/id.service';
 import { Repository, ILike, Brackets } from 'typeorm';
 import { Patients } from 'src/patients/entities/patients.entity';
 import { LabResultsFilesService } from '../../src/labResultsFiles/labResultsFiles.service';
-<<<<<<< HEAD
-=======
 import { OrdersLaboratory } from 'src/orders_laboratory/entities/orders_laboratory.entity';
 import { Orders } from 'src/orders/entities/order.entity';
 import { OrdersService } from 'src/orders/orders.service';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 @Injectable()
 export class LabResultsService {
@@ -31,8 +28,6 @@ export class LabResultsService {
 
     private readonly labResultsFilesService: LabResultsFilesService,
     private ordersService: OrdersService, // Inject OrdersService instead of Orders repository
-
-    private readonly labResultsFilesService: LabResultsFilesService,
 
 
 
@@ -94,13 +89,8 @@ export class LabResultsService {
     term: string,
     patientUuid: string,
     page: number = 1,
-<<<<<<< HEAD
-    sortBy: string = 'uuid',
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-=======
     sortBy: string = 'date',
     sortOrder: 'ASC' | 'DESC' = 'DESC',
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     perPage: number = 5,
   ): Promise<{ data: LabResults[], totalPages: number, currentPage: number, totalCount }> {
     const searchTerm = `%${term}%`; // Add wildcards to the search term

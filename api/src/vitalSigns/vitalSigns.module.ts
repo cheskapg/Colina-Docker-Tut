@@ -11,7 +11,6 @@ import { EmergencyContacts } from 'src/emergencyContacts/entities/emergencyConta
 import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContacts.service';
 
 
-
 @Module({
   imports: [TypeOrmModule.forFeature([VitalSigns, Patients,EmergencyContacts])],
 
@@ -20,10 +19,7 @@ import { EmergencyContactsService } from 'src/emergencyContacts/emergencyContact
     VitalSignsService,
     PatientsService,
     IdService,
-<<<<<<< HEAD
-=======
     EmergencyContactsService,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ],
   controllers: [VitalSignsController],
 })

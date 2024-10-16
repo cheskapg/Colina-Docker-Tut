@@ -1,9 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-<<<<<<< HEAD
-import { IsEmail, IsNotEmpty } from 'class-validator';
-=======
 import { IsArray, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 @InputType()
 export class CreatePatientsInput {

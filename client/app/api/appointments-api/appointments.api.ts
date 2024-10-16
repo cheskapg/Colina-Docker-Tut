@@ -10,13 +10,10 @@ export async function fetchAppointmentsByPatient(
   currentPage: number,
   sortBy: string,
   sortOrder: "ASC" | "DESC",
-<<<<<<< HEAD
-=======
   filterStatusFromCheck: string[],
   filterTypeFromCheck: string[],
 
   perPage: number,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   router: any // Pass router instance as a parameter
 ): Promise<any> {
   const requestData = {
@@ -24,15 +21,11 @@ export async function fetchAppointmentsByPatient(
     term: term,
     page: currentPage,
     sortBy: sortBy,
-<<<<<<< HEAD
-    sortOrder: sortOrder,
-=======
     sortOrder: sortOrder,    
     filterStatus: filterStatusFromCheck,
     filterType: filterTypeFromCheck,
 
     perPage:perPage 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   };
   try {
     console.log("searchPatient", requestData);
@@ -140,8 +133,6 @@ export async function updateAppointmentOfPatient(
     console.error((error as AxiosError).message);
   }
 }
-<<<<<<< HEAD
-=======
 
 
 export async function addAppointmentFile(
@@ -280,4 +271,3 @@ export async function getCurrentAppointmentFileCountFromDatabase(
     );
   }
 }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de

@@ -1,34 +1,23 @@
-FROM node
+# Use the official Node.js image as a base image
+FROM node:18-alpine
 
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /src
 
-# Set environment variables
-ENV JWT_SECRET="pogiko123"
-ENV DB_TYPE="postgres"
-# ENV DB_HOST="localhost"
-# ENV DB_PORT=5432
-# ENV DB_USERNAME="postgres"
-# ENV DB_PASSWORD="postgres"
-# ENV DB_DATABASE="ColinaHealth_db"
-ENV PGHOST=colinadb.postgres.database.azure.com
-ENV PGUSER=colina
-ENV PGPORT=5432
-ENV PGDATABASE=colina
-ENV PGPASSWORD="jajnav5@" 
-ENV DB_SYNCHRONIZE=true
-ENV DB_LOGGING=true
-ENV FE_URL1 ="https://chzcolinahealthwebsite.azurewebsites.net"
-ENV FE_URL2 ="https://colinahealth.azurewebsites.net/"
-ENV NEXT_USER="destrada@jairosolutions.com"
-ENV NEXT_PASS="sadk vadn orma vyyl"
-
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+# Install dependencies
 RUN npm install
 
+# Copy the rest of the application code to the working directory
 COPY . .
 
 # Build the Next.js application
 RUN npm run build
 
-CMD ["npm", "run", "start:dev"]
+# Expose the port Next.js is running on
+EXPOSE 3000
+
+# Set the command to run the Next.js application
+CMD ["npm", "start"]

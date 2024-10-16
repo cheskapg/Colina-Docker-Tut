@@ -69,31 +69,11 @@ export class LabResults {
   })
   patient: Patients;
 
-<<<<<<< HEAD
-  // @OneToOne(() => LabResultsFiles, (file) => file.lab)
-  // @JoinColumn({
-  //   name: 'labFileId',
-  // })
-  // labFile?: LabResultsFiles;
-
-=======
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   @OneToMany(() => LabResultsFiles, (file) => file.lab)
   @JoinColumn({ name: 'id' }) // Specify the column name for the primary key
   labFile?: LabResultsFiles;  
 
-<<<<<<< HEAD
-  // @JoinColumn({ name: 'labFileId' })
-  // @OneToOne(
-  //   () => LabResultsFiles,
-  //   {
-  //     nullable: true
-  //   }
-  // )
-  // public labFile?: LabResultsFiles;
-=======
   @OneToOne(() => OrdersLaboratory, (order_laboratory) => order_laboratory.lab, { cascade: true })
   @JoinColumn()
   order_laboratory?: OrdersLaboratory;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }

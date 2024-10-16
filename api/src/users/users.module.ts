@@ -9,19 +9,12 @@ import { UserAccessLevels } from 'src/userAccessLevels/entities/userAccessLevels
 import { OtpService } from 'services/otp/otp.service';
 import { ConfigModule } from '@nestjs/config';
 import { EmailService } from 'services/email/email.service';
-<<<<<<< HEAD
-=======
 import { UserNotification } from 'src/userNotifications/entities/user-notification.entity';
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env.local' }),
-<<<<<<< HEAD
-    TypeOrmModule.forFeature([Users, Roles, UserAccessLevels]),
-=======
     TypeOrmModule.forFeature([Users, Roles, UserAccessLevels, UserNotification]),
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ],
   providers: [
     UsersService,

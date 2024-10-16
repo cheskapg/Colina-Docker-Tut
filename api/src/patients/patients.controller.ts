@@ -39,11 +39,7 @@ export class PatientsController {
     currentPage: number;
     totalCount;
   }> {
-<<<<<<< HEAD
-    const { term = '', page, sortBy, sortOrder } = requestData;
-=======
     const { term = '', page, sortBy, sortOrder, perPage } = requestData;
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     return this.patientsService.getAllPatientsBasicInfo(
       term,
       page,
@@ -53,8 +49,6 @@ export class PatientsController {
     );
   }
 
-<<<<<<< HEAD
-=======
   @Post('recent-info/:id')
   getPatientRecentInfo(@Param('id') id: string) {
     return this.patientsService.getPatientRecentInfo(id);
@@ -63,7 +57,6 @@ export class PatientsController {
   getPatientLatestReport(@Param('id') id: string) {
     return this.patientsService.getPatientLatestReport(id);
   }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   @Get('select')
   getAllPatientsFullName() {
     return this.patientsService.getAllPatientsFullName();
@@ -140,14 +133,6 @@ export class PatientsController {
         'Please provide patient UUIDs in the request body',
       );
     }
-<<<<<<< HEAD
-
-    const profileImages =
-      await this.profileImageService.getProfileImagesByUuids(body.patientUuids);
-    return profileImages;
-  }
-
-=======
   
     const profileImages =
       await this.profileImageService.getProfileImagesByUuids(body.patientUuids);
@@ -160,7 +145,6 @@ export class PatientsController {
     return profileImages;
   }
   
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   @Get(':id/profile-image')
   async getProfileImage(@Param('id') patientUuid: string) {
     return await this.profileImageService.getProfileImageByUuid(patientUuid);

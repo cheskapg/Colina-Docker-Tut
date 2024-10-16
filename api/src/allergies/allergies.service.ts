@@ -62,17 +62,11 @@ export class AllergiesService {
     patientUuid: string,
     term: string,
     page: number = 1,
-<<<<<<< HEAD
-    sortBy: string = 'type',
-    sortOrder: 'ASC' | 'DESC' = 'DESC',
-    perPage: number = 5
-=======
     sortBy: string = 'createdAt',
     sortOrder: 'ASC' | 'DESC' = 'DESC',
     perPage: number = 4,
     filterSeverity?: string[] | undefined,
 
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ): Promise<{ data: Allergies[]; totalPages: number; currentPage: number; totalCount: number }> {
     const searchTerm = `%${term}%`; // Add wildcards to the search term
     const skip = (page - 1) * perPage;

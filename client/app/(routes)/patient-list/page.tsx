@@ -19,20 +19,13 @@ import Image from "next/image";
 import { fetchProfileImages } from "@/app/api/patients-api/patientProfileImage.api";
 import Pagination from "@/components/shared/pagination";
 import ResuableTooltip from "@/components/reusable/tooltip";
-<<<<<<< HEAD
-=======
 import PdfDownloader from "@/components/pdfDownloader";
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 export default function PatientPage() {
   const router = useRouter();
   if (typeof window === "undefined") {
     return (
-<<<<<<< HEAD
-      <div className="w-full h-full flex justify-center items-center">
-=======
       <div className="flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           width={100}
@@ -148,11 +141,7 @@ export default function PatientPage() {
       pageNumbers.push(
         <button
           key={i}
-<<<<<<< HEAD
-          className={`flex ring-1 ring-gray-300 items-center justify-center  w-[49px]  ${
-=======
           className={`flex w-[49px] items-center justify-center ring-1 ring-gray-300 ${
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             currentPage === i ? "btn-pagination" : ""
           }`}
           onClick={() => setCurrentPage(i)}
@@ -183,17 +172,12 @@ export default function PatientPage() {
         setIsLoading(false);
         // Get UUIDs of all patients
         const patientUuids = response.data.map(
-<<<<<<< HEAD
-          (patient: { uuid: any }) => patient.uuid
-        );
-=======
           (patient: { uuid: any }) => patient.uuid,
         );
         if (patientUuids.length === 0) {
           setPatientImages([]);
           return;
         }
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         // Fetch profile images for all patients
         const profileImagesResponse = await fetchProfileImages(patientUuids);
 
@@ -204,11 +188,7 @@ export default function PatientPage() {
             if (image.data) {
               const buffer = Buffer.from(image.data);
               const dataUrl = `data:image/jpeg;base64,${buffer.toString(
-<<<<<<< HEAD
-                "base64"
-=======
                 "base64",
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               )}`;
               return {
                 patientUuid: image.patientUuid,
@@ -223,10 +203,7 @@ export default function PatientPage() {
             }
           });
           setPatientImages(patientImagesData);
-<<<<<<< HEAD
-=======
           console.log(patientImagesData, "patientImagesData");
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         }
 
         if (response.data.length === 0) {
@@ -260,22 +237,12 @@ export default function PatientPage() {
   const handlePatientClick = (patientId: any) => {
     const lowercasePatientId = patientId.toLowerCase();
     setIsLoading(true);
-<<<<<<< HEAD
-    router.replace(
-      `/patient-overview/${lowercasePatientId}/medication/scheduled`
-    );
-=======
     router.replace(`/patient-overview/${lowercasePatientId}/adls`);
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   };
 
   if (isLoading) {
     return (
-<<<<<<< HEAD
-      <div className="w-full h-full flex justify-center items-center">
-=======
       <div className="flex h-full w-full items-center justify-center">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           alt="logo"
@@ -295,43 +262,6 @@ export default function PatientPage() {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="w-full  px-[150px] pt-[90px] flex flex-col justify-between h-full">
-      <div className="w-full h-full">
-        {/* <div className="flex justify-end">
-          <p
-            onClick={() => {
-              setIsLoading(true);
-              router.replace("/dashboard");
-            }}
-            className="text-[#64748B] underline cursor-pointer text-[15px]"
-          >
-            Back to Dashboard
-          </p>
-        </div> */}
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col mb-3">
-            <p className="p-title">Patients List Records</p>
-            {/* number of patiens */}
-            <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[15px]">
-              Total of {patientList.length == 0 ? "0" : totalPatient} Patients
-            </p>
-          </div>
-          <div className="flex flex-row justify-end">
-            <Add onClick={() => isModalOpen(true)}></Add>
-            <DownloadPDF></DownloadPDF>
-          </div>
-        </div>
-
-        <div className="w-full sm:rounded-lg items-center">
-          <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-            <form className="mr-5 relative">
-              {/* search bar */}
-              <label className=""></label>
-              <div className="flex">
-                <input
-                  className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px] ring-[1px] ring-[#E7EAEE] text-[15px] rounded pl-10 relative bg-[#fff] bg-no-repeat "
-=======
     <div className="flex h-full w-full flex-col justify-between px-[150px] py-[90px]">
       <div className="h-full w-full">
         <div className="flex items-center justify-between">
@@ -359,7 +289,6 @@ export default function PatientPage() {
               <div className="flex flex-col">
                 <input
                   className="sub-title relative m-5 h-[47px] w-[573px] rounded bg-[#fff] bg-no-repeat px-5 py-3 pl-10 pt-[14px] outline-none ring-[1px] ring-[#E7EAEE]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   type="text"
                   placeholder="Search by reference no. or name..."
                   value={term}
@@ -367,39 +296,25 @@ export default function PatientPage() {
                     setTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-<<<<<<< HEAD
-=======
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
                       // Add your search logic here
                     }
                   }}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 />
                 <Image
                   src="/svgs/search.svg"
                   alt="Search"
-<<<<<<< HEAD
-                  width="20"
-                  height="20"
-                  className="absolute left-8 top-9 pointer-events-none"
-=======
                   width={18.75}
                   height={18.75}
                   className="pointer-events-none absolute left-8 top-9 h-[18.75px] w-[18.75px]"
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 />
               </div>
             </form>
 
-<<<<<<< HEAD
-            <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-              <p className="text-[#191D23] opacity-[60%] font-semibold text-[15px]">
-=======
             <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Order by
               </p>
               <DropdownMenu
@@ -411,16 +326,10 @@ export default function PatientPage() {
                 }))}
                 open={isOpenOrderedBy}
                 width={"165px"}
-<<<<<<< HEAD
-                label={"Select"}
-              />
-              <p className="text-[#191D23] text-opacity-[60%] font-semibold text-[15px]">
-=======
                 checkBox={false}
                 label={"Select"}
               />
               <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 Sort by
               </p>
               <DropdownMenu
@@ -433,29 +342,14 @@ export default function PatientPage() {
                 }))}
                 open={isOpenSortedBy}
                 width={"165px"}
-<<<<<<< HEAD
-                label={"Select"}
-=======
                 checkBox={false}
                 label={"Choose  "}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               />
             </div>
           </div>
 
           {/* START OF TABLE */}
           <div>
-<<<<<<< HEAD
-            <table className="w-full justify-center items-start text-[15px]">
-              <thead className="text-left rtl:text-right">
-                <tr className="uppercase text-[#64748B] border-b border-[#E7EAEE] h-[70px]">
-                  <th className="px-6 py-3">Name</th>
-                  <th className="px-6 py-3">Patient ID</th>
-                  <th className="px-6 py-3">Age</th>
-                  <th className="px-6 py-3">Gender</th>
-
-                  <th className="px-20 py-3 items-center">Action</th>
-=======
             <table className="w-full items-start justify-center">
               <thead className="sub-title text-left !font-semibold rtl:text-right">
                 <tr className="h-[70px] border-b border-[#E7EAEE] uppercase">
@@ -467,19 +361,13 @@ export default function PatientPage() {
                   <th className="items-center px-20 py-3 !font-semibold">
                     Action
                   </th>
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 </tr>
               </thead>
               <tbody>
                 {patientList.length === 0 && (
                   <tr>
-<<<<<<< HEAD
-                    <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                      <p className="text-[15px] font-normal text-gray-700 flex text-center">
-=======
                     <td className="border-1 absolute flex w-[180vh] items-center justify-center py-5">
                       <p className="flex text-center text-[15px] font-normal text-gray-700">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         No Patient Found! <br />
                       </p>
                     </td>
@@ -489,21 +377,12 @@ export default function PatientPage() {
                 {patientList.map((patient, index) => (
                   <tr
                     key={index}
-<<<<<<< HEAD
-                    className="group bg-white hover:bg-gray-100 border-b"
-                  >
-                    <td className="flex items-center gap-2 px-6 py-5">
-                      {/* Check if any matching image found for the patient */}
-                      {patientImages.some(
-                        (image) => image.patientUuid === patient.uuid
-=======
                     className="group border-b bg-white hover:bg-[#F4F4F4]"
                   >
                     <td className="flex items-center gap-5 px-6 py-5">
                       {/* Check if any matching image found for the patient */}
                       {patientImages.some(
                         (image) => image.patientUuid === patient.uuid,
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       ) ? (
                         // Render the matched image
                         <div>
@@ -513,15 +392,6 @@ export default function PatientPage() {
                                 <div key={imgIndex}>
                                   {image.data ? (
                                     // Render the image if data is not empty
-<<<<<<< HEAD
-                                    <div className=" min-w-[45px] min-h-[45px] max-w-[45px] max-h-[45px]">
-                                      <Image
-                                        className="rounded-full object-cover w-12 h-12"
-                                        src={image.data} // Use the base64-encoded image data directly
-                                        alt=""
-                                        width={45}
-                                        height={45}
-=======
                                     <div className="max-h-[48px] min-h-[48px] min-w-[48px] max-w-[48px]">
                                       <Image
                                         className="h-12 w-12 rounded-full object-cover"
@@ -529,25 +399,16 @@ export default function PatientPage() {
                                         alt=""
                                         width={48}
                                         height={48}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                       />
                                     </div>
                                   ) : (
                                     // Render the stock image (.svg) if data is empty
                                     <Image
-<<<<<<< HEAD
-                                      className="rounded-full  min-w-[45px] min-h-[45px] max-w-[45px] max-h-[45px]"
-                                      src="/imgs/user-no-icon.svg"
-                                      alt=""
-                                      width={45}
-                                      height={45}
-=======
                                       className="max-h-[48px] min-h-[48px] min-w-[48px] max-w-[48px] rounded-full"
                                       src="/imgs/user-no-icon.svg"
                                       alt=""
                                       width={48}
                                       height={48}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                     />
                                   )}
                                 </div>
@@ -559,19 +420,11 @@ export default function PatientPage() {
                         // Render a placeholder image if no matching image found
                         <div>
                           <Image
-<<<<<<< HEAD
-                            className="rounded-full min-w-[45px] min-h-[45px] max-w-[45px] max-h-[45px]"
-                            src="/imgs/loading.gif" // Show loading gif while fetching images
-                            alt="Loading"
-                            width={45}
-                            height={45}
-=======
                             className="max-h-[48px] min-h-[48px] min-w-[48px] max-w-[48px] rounded-full"
                             src="/imgs/loading.gif" // Show loading gif while fetching images
                             alt="Loading"
                             width={48}
                             height={48}
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           />
                         </div>
                       )}
@@ -636,11 +489,7 @@ export default function PatientPage() {
           />
         )}
       </div>
-<<<<<<< HEAD
-      <div className=" bg-white ">
-=======
       <div className="bg-white">
->>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}
