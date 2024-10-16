@@ -1,5 +1,9 @@
 "use client";
 
+<<<<<<< HEAD
+=======
+import { cn } from "@/lib/utils";
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import React, { useState } from "react";
 
 interface PaginationProps {
@@ -8,6 +12,10 @@ interface PaginationProps {
   pageNumber: string;
   setPageNumber: (page: string) => void;
   setCurrentPage: (page: number) => void;
+<<<<<<< HEAD
+=======
+  className?:any;
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }
 
 const Pagination = ({
@@ -16,6 +24,10 @@ const Pagination = ({
   pageNumber,
   setPageNumber,
   setCurrentPage,
+<<<<<<< HEAD
+=======
+  className,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }: PaginationProps) => {
   const [gotoError, setGotoError] = useState(false);
   const renderPageNumbers = () => {
@@ -27,7 +39,11 @@ const Pagination = ({
       pageNumbers.push(
         <button
           key={i}
+<<<<<<< HEAD
           className={`flex border border-px items-center justify-center h-full w-[49px] ring-1 ring-gray-300  ${
+=======
+          className={`flex  border-px items-center justify-center h-full w-[49px] border-[0.9px] border-[#E7EAEE99] ${
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             currentPage === i ? "btn-pagination " : ""
           }`}
           onClick={() => setCurrentPage(i)}
@@ -83,7 +99,11 @@ const Pagination = ({
   const isNextDisabled = currentPage === totalPages;
 
   return (
+<<<<<<< HEAD
     <div className=" w-full max-w-[1618px] my-5">
+=======
+    <div className={cn(" w-full  my-5",className)}>
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       <div className="flex justify-between">
         <p className="font-medium size-[18px] text-[15px] w-[138px] items-center">
           Page {currentPage} of {totalPages}
@@ -91,12 +111,20 @@ const Pagination = ({
         <div>
           <nav>
             <div className="flex text-[15px] ">
+<<<<<<< HEAD
               <div className="flex">
+=======
+              <div className="flex h-[30px]">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 <button
                   onClick={goToPreviousPage}
                   className={`${
                     isPrevDisabled ? "cursor-not-allowed" : "cursor-pointer"
+<<<<<<< HEAD
                   } flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full`}
+=======
+                  } flex  text-[15px] border-[0.9px] border-[#E7EAEE99] items-center justify-center  w-[77px] h-full`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   disabled={isPrevDisabled}
                 >
                   Prev
@@ -107,13 +135,18 @@ const Pagination = ({
                   onClick={goToNextPage}
                   className={`${
                     isNextDisabled ? "cursor-not-allowed" : "cursor-pointer"
+<<<<<<< HEAD
                   } flex ring-1 text-[15px] ring-gray-300 items-center justify-center  w-[77px] h-full`}
+=======
+                  } flex text-[15px] border-[0.9px] border-[#E7EAEE99] items-center justify-center  w-[77px] h-full`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   disabled={isNextDisabled}
                 >
                   Next
                 </button>
               </div>
               <form onSubmit={handleGoToPage}>
+<<<<<<< HEAD
                 <div className="flex pl-4 ">
                   <input
                     className={`ipt-pagination appearance-none  text-center ring-1 ${
@@ -121,6 +154,15 @@ const Pagination = ({
                     } border-gray-100`}
                     type="text"
                     placeholder="-"
+=======
+                <div className="flex pl-4 h-[30px]">
+                  <input
+                    className={`ipt-pagination appearance-none text-center border-[0.9px]${
+                      gotoError ? " border-red-500" : " border-[#E7EAEE99]"
+                    }  border-[#E7EAEE99]`}
+                    type="text"
+                    placeholder=""
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     pattern="\d*"
                     value={pageNumber}
                     onChange={handlePageNumberChange}
@@ -138,7 +180,11 @@ const Pagination = ({
                   <div className="">
                     <button
                       type="submit"
+<<<<<<< HEAD
                       className="btn-pagination ring-1 ring-[#007C85]"
+=======
+                      className="btn-pagination border-[0.9px] border-[#007C85]"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     >
                       Go{" "}
                     </button>

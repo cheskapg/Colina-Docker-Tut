@@ -19,14 +19,13 @@ export class EmergencyContactsController {
   ) { }
 
   @Post(':id')
-  createEmergencyContacts(@Param('id') patientId: string,
-    @Body() createEmergencyContactsInput: CreateEmergencyContactsInput,
+  createEmergencyContacts(
+    @Param('id') patientId: string,
+    @Body() createEmergencyContactsInputArray: CreateEmergencyContactsInput[],
   ) {
-    return this.emergencyContactService.createEmergencyContacts(patientId,
-      createEmergencyContactsInput,
-    );
+    return this.emergencyContactService.createEmergencyContacts(patientId, createEmergencyContactsInputArray);
   }
-
+  
   @Post('get/all')
   getEmergencyContacts() {
     return this.emergencyContactService.getAllEmergencyContacts();

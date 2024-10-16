@@ -80,7 +80,11 @@ export const FormsModalContent = ({
     if (files) {
       const totalSize = Array.from(files).reduce(
         (acc, file) => acc + file.size,
+<<<<<<< HEAD
         0
+=======
+        0,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       );
       const totalSizeMB = totalSize / (1024 * 1024); // Convert bytes to MB
 
@@ -163,7 +167,11 @@ export const FormsModalContent = ({
     console.log(
       "SUBMITTING FORM DATA",
       selectedFileNames,
+<<<<<<< HEAD
       selectedFiles.length
+=======
+      selectedFiles.length,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     );
     if (selectedFiles.length === 0) {
       toggleNoFileAttached();
@@ -186,12 +194,20 @@ export const FormsModalContent = ({
             const addFormFiles = await addFormFile(
               getUuid,
               formFileFormData,
+<<<<<<< HEAD
               router
+=======
+              router,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             );
 
             console.log(
               `Form FILE ${fileNames[i]} added successfully:`,
+<<<<<<< HEAD
               addFormFiles
+=======
+              addFormFiles,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             );
           }
         } else {
@@ -218,18 +234,29 @@ export const FormsModalContent = ({
   console.log(formData, "formData");
 
   return (
+<<<<<<< HEAD
     <div className="w-[676px] h-[621px] bg-[#FFFFFF] rounded-md overflow-hidden">
       <form onSubmit={handleSubmit}>
         <div className="bg-[#ffffff] w-full h-[70px] flex flex-col justify-start rounded-md">
           <div className="flex justify-between items-center px-[40px] mt-7">
+=======
+    <div className="h-[621px] w-[676px] overflow-hidden rounded-md bg-[#FFFFFF]">
+      <form onSubmit={handleSubmit}>
+        <div className="flex h-[70px] w-full flex-col justify-start rounded-md bg-[#ffffff]">
+          <div className="mt-7 flex items-center justify-between px-[40px]">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             <p className="p-title">Add Form Details</p>
             <X
               onClick={() => {
                 isSubmitted ? null : isModalOpen(false);
               }}
+<<<<<<< HEAD
               className={`
               ${isSubmitted && " cursor-not-allowed"}
               w-7 h-7 text-black flex items-center mt-2 cursor-pointer`}
+=======
+              className={` ${isSubmitted && "cursor-not-allowed"} mt-2 flex h-7 w-7 cursor-pointer items-center text-black`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             />
           </div>
           {/* <div className="items-center flex justify-between">
@@ -246,6 +273,7 @@ export const FormsModalContent = ({
             />
           </div>
           <p className="text-[15px] pl-10 text-[#667085] pb-10 pt-2">
+<<<<<<< HEAD
             Download PDF once your done.
           </p> */}
         </div>
@@ -254,12 +282,26 @@ export const FormsModalContent = ({
             <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="font-medium text-[15px] required-field">
+=======
+            Generate PDF once your done.
+          </p> */}
+        </div>
+        <div className="mb-9 pt-4">
+          <div className="mt-5 h-[600px] max-h-[375px] md:px-10">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label className="required-field text-[15px] font-medium">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   NAME OF DOCUMENT
                 </label>
                 <div className="mt-2.5">
                   <input
                     type="text"
+<<<<<<< HEAD
                     className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+=======
+                    className="block h-12 w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     placeholder="Input name of document"
                     name="nameOfDocument"
                     value={formData.nameOfDocument}
@@ -271,6 +313,7 @@ export const FormsModalContent = ({
               <div className="sm:col-span-2">
                 <label
                   htmlFor="company"
+<<<<<<< HEAD
                   className="font-medium text-[15px] required-field"
                 >
                   DATE ISSUED
@@ -279,6 +322,16 @@ export const FormsModalContent = ({
                   <input
                     type="date"
                     className="block w-full h-12 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+=======
+                  className="required-field text-[15px] font-medium"
+                >
+                  DATE ISSUED
+                </label>
+                <div className="relative mt-2.5">
+                  <input
+                    type="date"
+                    className="block h-12 w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     placeholder="Select date"
                     name="dateIssued"
                     value={formData.dateIssued}
@@ -286,7 +339,11 @@ export const FormsModalContent = ({
                     required
                   />
                   <Image
+<<<<<<< HEAD
                     className="absolute top-0 right-0 mt-3.5 mr-3 pointer-events-none"
+=======
+                    className="pointer-events-none absolute right-0 top-0 mr-3 mt-3.5"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     width={20}
                     height={20}
                     src={"/svgs/calendark.svg"}
@@ -297,7 +354,11 @@ export const FormsModalContent = ({
               <div className="sm:col-span-2">
                 <label
                   htmlFor="message"
+<<<<<<< HEAD
                   className="font-medium text-[15px] required-field"
+=======
+                  className="required-field text-[15px] font-medium"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 >
                   NOTES
                 </label>
@@ -321,13 +382,21 @@ export const FormsModalContent = ({
                 <div className="">
                   <label
                     htmlFor="imageUpload"
+<<<<<<< HEAD
                     className="relative font-medium h-[70px] w-[600px] flex justify-center items-center rounded-md cursor-pointer text-center text-[#101828] bg-[#daf3f5] border-[#007C85] border-dashed border-2"
+=======
+                    className="relative flex h-[70px] w-[600px] cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-[#007C85] bg-[#daf3f5] text-center font-medium text-[#101828]"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   >
                     <>
                       {selectedFileNames.length > 0 ? (
                         // If files are selected, display filein.svg
                         <Image
+<<<<<<< HEAD
                           className="w-10 h-10 mr-1"
+=======
+                          className="mr-1 h-10 w-10"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           width={50}
                           height={50}
                           src={"/svgs/filein.svg"}
@@ -336,7 +405,11 @@ export const FormsModalContent = ({
                       ) : (
                         // If no files are selected, display folder-add.svg
                         <Image
+<<<<<<< HEAD
                           className="w-10 h-10 mr-1"
+=======
+                          className="mr-1 h-10 w-10"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           width={50}
                           height={50}
                           src={"/svgs/folder-add.svg"}
@@ -346,15 +419,26 @@ export const FormsModalContent = ({
                       <div className="flex pb-5">
                         <p className="mt-2 text-[20px] font-medium">
                           Upload or Attach Files or{" "}
+<<<<<<< HEAD
                           <span className="underline decoration-solid text-[20px] font-medium text-blue-500 ml-1 mt-2">
+=======
+                          <span className="ml-1 mt-2 text-[20px] font-medium text-blue-500 underline decoration-solid">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             Browse
                           </span>
                         </p>
                       </div>
+<<<<<<< HEAD
                       <span className="text-[10px] font-normal absolute bottom-2 text-[#667085] ml-10">
                         {selectedFileNames.length === 0 ? (
                           // Display "Maximum File Size: 10MB" if no files are attached
                           <span className="font-medium text-[15px]">
+=======
+                      <span className="absolute bottom-2 ml-10 text-[10px] font-normal text-[#667085]">
+                        {selectedFileNames.length === 0 ? (
+                          // Display "Maximum File Size: 10MB" if no files are attached
+                          <span className="text-[15px] font-medium">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             Maximum File Size: 15MB
                           </span>
                         ) : (
@@ -387,23 +471,35 @@ export const FormsModalContent = ({
           </div>
         </div>
         <div className="pt-10">
+<<<<<<< HEAD
           <div className="justify-end flex mr-10">
+=======
+          <div className="mr-10 flex justify-end">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             <button
               onClick={() => isModalOpen(false)}
               disabled={isSubmitted}
               type="button"
+<<<<<<< HEAD
               className={`
                 ${isSubmitted && " cursor-not-allowed"}
                 w-[200px] h-[50px] bg-[#F3F3F3] hover:bg-[#D9D9D9] font-medium text-black mr-4 rounded-sm `}
+=======
+              className={` ${isSubmitted && "cursor-not-allowed"} mr-4 h-[50px] w-[200px] rounded-sm bg-[#F3F3F3] font-medium text-black hover:bg-[#D9D9D9]`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             >
               Cancel
             </button>
             <button
               disabled={isSubmitted}
               type="submit"
+<<<<<<< HEAD
               className={`
               ${isSubmitted && " cursor-not-allowed"}
               w-[170px] h-[50px] px-3 py-2 bg-[#007C85] hover:bg-[#03595B]  text-[#ffff] font-medium  rounded-sm`}
+=======
+              className={` ${isSubmitted && "cursor-not-allowed"} h-[50px] w-[170px] rounded-sm bg-[#007C85] px-3 py-2 font-medium text-[#ffff] hover:bg-[#03595B]`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             >
               Submit
             </button>

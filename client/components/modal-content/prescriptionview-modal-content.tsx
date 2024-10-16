@@ -33,8 +33,11 @@ export const PrescriptionViewModalContent = ({
 }: ModalProps) => {
   const onSuccess = () => {
     setIsSuccessOpen(true);
+<<<<<<< HEAD
 
     // isModalOpen(false);
+=======
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   };
 
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
@@ -137,7 +140,11 @@ export const PrescriptionViewModalContent = ({
   const [selectedFileUUID, setSelectedFileUUID] = useState("");
   const [fileIndex, setFileIndex] = useState(0);
   const [currentFile, setCurrentFile] = useState<PrescriptionFile>(
+<<<<<<< HEAD
     {} as PrescriptionFile
+=======
+    {} as PrescriptionFile,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -177,6 +184,7 @@ export const PrescriptionViewModalContent = ({
         const newFileType = file.filename.split(".").pop();
         setFileType(newFileType as string);
 
+<<<<<<< HEAD
          // Create a Blob URL for PDF and images
          const binaryString = window.atob(newBase64String);
          const len = binaryString.length;
@@ -197,6 +205,30 @@ export const PrescriptionViewModalContent = ({
            const url = URL.createObjectURL(blob);
            setBlobUrl(url);
          }
+=======
+        // Create a Blob URL for PDF and images
+        const binaryString = window.atob(newBase64String);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        let mimeType;
+        if (newFileType === "pdf") {
+          mimeType = "application/pdf";
+        } else if (
+          ["png", "jpg", "jpeg", "gif"].includes(newFileType as string)
+        ) {
+          mimeType = `image/${newFileType}`;
+        }
+
+        if (mimeType) {
+          const blob = new Blob([bytes], { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          setBlobUrl(url);
+        }
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       }
     }
   }, [fileIndex, PrescriptionFiles]);
@@ -208,7 +240,11 @@ export const PrescriptionViewModalContent = ({
       try {
         const response = await fetchPrescriptionFiles(
           prescriptionData.prescriptions_uuid,
+<<<<<<< HEAD
           router
+=======
+          router,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         );
 
         if (response.data && response.data.length > 0) {
@@ -289,7 +325,11 @@ export const PrescriptionViewModalContent = ({
     if (files) {
       const totalSize = Array.from(files).reduce(
         (acc, file) => acc + file.size,
+<<<<<<< HEAD
         0
+=======
+        0,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       );
       const totalSizeMB = totalSize / (1024 * 1024); // Convert bytes to MB
 
@@ -372,17 +412,29 @@ export const PrescriptionViewModalContent = ({
           prescriptionFileFormData.append(
             "prescriptionfile",
             selectedFiles[i],
+<<<<<<< HEAD
             fileNames[i]
+=======
+            fileNames[i],
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           );
 
           // Add  file
           const addPrescriptionFiles = await addPrescriptionFile(
             getUuid,
+<<<<<<< HEAD
             prescriptionFileFormData
           );
           console.log(
             `Prescription FILE ${fileNames[i]} added successfully:`,
             addPrescriptionFiles
+=======
+            prescriptionFileFormData,
+          );
+          console.log(
+            `Prescription FILE ${fileNames[i]} added successfully:`,
+            addPrescriptionFiles,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
           );
         }
         setSelectedFileNames([]);
@@ -423,18 +475,31 @@ export const PrescriptionViewModalContent = ({
       >
         <div className="w-[220px]">
           <div
+<<<<<<< HEAD
             className={`w-full flex flex-row ${
+=======
+            className={`flex w-full flex-row ${
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               defaultPrescriptionFiles.length === 5
                 ? "cursor-not-allowed"
                 : "cursor-pointer"
             }`}
           >
+<<<<<<< HEAD
             <p className="border-2 rounded-l-md text-gray-400 px-2 py-1 text-[13px] text-nowrap w-full ">
               {selectedFiles.length > 0
                 ? `${selectedFiles.length}/${numFilesCanAdd}selected`
                 : defaultPrescriptionFiles.length < 5
                 ? "Choose files to upload"
                 : "Max Files Uploaded"}
+=======
+            <p className="w-full text-nowrap rounded-l-md border-2 px-2 py-1 text-[13px] text-gray-400">
+              {selectedFiles.length > 0
+                ? `${selectedFiles.length}/${numFilesCanAdd}selected`
+                : defaultPrescriptionFiles.length < 5
+                  ? "Choose files to upload"
+                  : "Max Files Uploaded"}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             </p>
             <label
               htmlFor="fileupload"
@@ -442,7 +507,11 @@ export const PrescriptionViewModalContent = ({
                 defaultPrescriptionFiles.length === 5
                   ? "cursor-not-allowed"
                   : "cursor-pointer"
+<<<<<<< HEAD
               }text-[13px] bg-[#007C85] px-2 py-1 text-white rounded-r-md flex justify-center border-2 border-[#007C85]`}
+=======
+              }text-[13px] flex justify-center rounded-r-md border-2 border-[#007C85] bg-[#007C85] px-2 py-1 text-white`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             >
               Browse
             </label>
@@ -459,7 +528,11 @@ export const PrescriptionViewModalContent = ({
               max={5}
             />
             {isHovering && selectedFiles.length > 0 && (
+<<<<<<< HEAD
               <div className="absolute bg-[#4E4E4E] p-2 w-[220px] text-[13px]   mt-[30px] text-white rounded-md shadow-md left-0">
+=======
+              <div className="absolute left-0 mt-[30px] w-[220px] rounded-md bg-[#4E4E4E] p-2 text-[13px] text-white shadow-md">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 <ul>
                   {selectedFiles.map((file, index) => (
                     <li key={index}>{file.name}</li>
@@ -484,6 +557,7 @@ export const PrescriptionViewModalContent = ({
           onSuccess={onSuccess}
         />
       ) : (
+<<<<<<< HEAD
         <div className="w-[676px] h-[590px]">
           {isLoading ? (
             // Loading state
@@ -501,6 +575,25 @@ export const PrescriptionViewModalContent = ({
               <div className="mb-9 pt-4">
                 <div className="h-[380px] md:px-8 mt-5">
                   <div className="w-full h-full flex justify-center items-center ">
+=======
+        <div className="h-[590px] w-[676px]">
+          {isLoading ? (
+            // Loading state
+            <>
+              <div className="flex h-[70px] w-full flex-col justify-start rounded-md bg-[#ffffff]">
+                <div className="flex items-center justify-between">
+                  <h2 className="p-title mt-7 pl-10 text-left text-[#071437]"></h2>
+                  <X
+                    onClick={() => isModalOpen(false)}
+                    className="mr-9 mt-6 flex h-6 w-6 items-center text-black"
+                  />
+                </div>
+                <p className="pb-10 pl-10 pt-2 text-sm text-gray-600"></p>
+              </div>
+              <div className="mb-9 pt-4">
+                <div className="mt-5 h-[380px] md:px-8">
+                  <div className="flex h-full w-full items-center justify-center">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     <Image
                       src="/imgs/colina-logo-animation.gif"
                       alt="logo"
@@ -513,30 +606,50 @@ export const PrescriptionViewModalContent = ({
             </>
           ) : (
             <>
+<<<<<<< HEAD
               <div className="bg-[#ffffff] w-full h-[70px] flex flex-col justify-start rounded-md">
                 <div className="items-center flex justify-between">
                   <h2 className="p-title text-left text-[#071437] pl-10 mt-7">
+=======
+              <div className="flex h-[70px] w-full flex-col justify-start rounded-md bg-[#ffffff]">
+                <div className="flex items-center justify-between">
+                  <h2 className="p-title mt-7 pl-10 text-left text-[#071437]">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     View Prescription
                   </h2>
                   <X
                     onClick={() => {
                       isSubmitted ? null : isModalOpen(false);
                     }}
+<<<<<<< HEAD
                     className={`
                     ${isSubmitted && " cursor-not-allowed"}
                     w-6 h-6 text-black flex items-center mt-6 mr-9 cursor-pointer`}
                   />
                 </div>
                 <p className="text-sm pl-10 text-gray-600 pb-10 pt-2">
+=======
+                    className={` ${isSubmitted && "cursor-not-allowed"} mr-9 mt-6 flex h-6 w-6 cursor-pointer items-center text-black`}
+                  />
+                </div>
+                <p className="pb-10 pl-10 pt-2 text-sm text-gray-600">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                   Document Files
                 </p>
               </div>
               <form className="" onSubmit={handleSubmit}>
                 <div className="mb-9 pt-4">
+<<<<<<< HEAD
                   <div className="h-[380px] md:px-8 mt-5">
                     <div className="even:bg-gray-50 cursor-pointer">
                       {currentFile && (
                         <div className="w-full max-w-xl flex justify-between gap-4">
+=======
+                  <div className="mt-5 h-[380px] md:px-8">
+                    <div className="cursor-pointer even:bg-gray-50">
+                      {currentFile && (
+                        <div className="flex w-full max-w-xl justify-between gap-4">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           <div
                             style={{
                               overflow: "scroll",
@@ -549,7 +662,11 @@ export const PrescriptionViewModalContent = ({
                                 src={blobUrl}
                                 width="600px"
                                 height="550px"
+<<<<<<< HEAD
                                 className="shadow-md rounded-lg"
+=======
+                                className="rounded-lg shadow-md"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                 title="PDF Document"
                                 onClick={toggleModal}
                                 onLoad={(e) => {}}
@@ -564,19 +681,31 @@ export const PrescriptionViewModalContent = ({
                               />
                             )}
                           </div>
+<<<<<<< HEAD
                           <div className="filehover ">
+=======
+                          <div className="filehover">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             <FileUploadWithHover />
                             {defaultPrescriptionFiles.map(
                               (file: PrescriptionFile, index) => (
                                 <div
+<<<<<<< HEAD
                                   className="flex justify-center ml-1 px-1 max-w-[220px] w-full bg-white rounded-md border-2 mt-4 hover:border-[#686868] text-overflow truncate cursor-pointer"
+=======
+                                  className="text-overflow ml-1 mt-4 flex w-full max-w-[220px] cursor-pointer justify-center truncate rounded-md border-2 bg-white px-1 hover:border-[#686868]"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                   key={index}
                                   onClick={() => {
                                     setFileIndex(index);
                                     setCurrentFile(file);
                                   }}
                                 >
+<<<<<<< HEAD
                                   <h2 className="text-[12px] px-1 truncate text-gray-400 py-1">
+=======
+                                  <h2 className="truncate px-1 py-1 text-[12px] text-gray-400">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                                     {file.filename}
                                   </h2>
                                   {/* Delete button for each file */}
@@ -587,6 +716,7 @@ export const PrescriptionViewModalContent = ({
                                       console.log(
                                         "File UUID:",
                                         file.fileId,
+<<<<<<< HEAD
                                         selectedFileUUID
                                       );
                                       toggleDeleteModal();
@@ -595,6 +725,16 @@ export const PrescriptionViewModalContent = ({
                                   />
                                 </div>
                               )
+=======
+                                        selectedFileUUID,
+                                      );
+                                      toggleDeleteModal();
+                                    }}
+                                    className="mr-2 mt-[6px] flex h-3 w-3 items-center text-gray-400"
+                                  />
+                                </div>
+                              ),
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             )}
                           </div>
                         </div>
@@ -604,10 +744,17 @@ export const PrescriptionViewModalContent = ({
                     {/* Modal */}
                     {modalOpen && (
                       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+<<<<<<< HEAD
                         <div className="w-full h-full rounded-lg flex items-center justify-center">
                           <button
                             type="button"
                             className="absolute top-0 left-0 m-4 ml-10 text-white hover:underline flex text-[20px]"
+=======
+                        <div className="flex h-full w-full items-center justify-center rounded-lg">
+                          <button
+                            type="button"
+                            className="absolute left-0 top-0 m-4 ml-10 flex text-[20px] text-white hover:underline"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           >
                             <Image
                               className="mr-2"
@@ -620,7 +767,11 @@ export const PrescriptionViewModalContent = ({
                           </button>
                           <button
                             type="button"
+<<<<<<< HEAD
                             className="absolute top-0 left-0 m-4 ml-36 text-white hover:underline flex text-[20px]"
+=======
+                            className="absolute left-0 top-0 m-4 ml-36 flex text-[20px] text-white hover:underline"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             onClick={downloadImage}
                           >
                             <Image
@@ -633,7 +784,11 @@ export const PrescriptionViewModalContent = ({
                             Download
                           </button>
                           <button
+<<<<<<< HEAD
                             className="absolute top-0 right-0 m-4 text-white hover:underline text-[20px]"
+=======
+                            className="absolute right-0 top-0 m-4 text-[20px] text-white hover:underline"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             onClick={toggleModal}
                           >
                             Close
@@ -664,11 +819,19 @@ export const PrescriptionViewModalContent = ({
                       />
                     )}
 
+<<<<<<< HEAD
                     <div className="flex space-x-4 mt-4 ml-[115px] text-[15px]">
                       {fileIndex > 0 && (
                         <button
                           type="button"
                           className="w-[80px] h-[30px] text-blue-500 bg-white-500 border-2 border-blue-500"
+=======
+                    <div className="ml-[115px] mt-4 flex space-x-4 text-[15px]">
+                      {fileIndex > 0 && (
+                        <button
+                          type="button"
+                          className="bg-white-500 h-[30px] w-[80px] border-2 border-blue-500 text-blue-500"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           onClick={prevFile}
                         >
                           Previous
@@ -678,7 +841,11 @@ export const PrescriptionViewModalContent = ({
                         <button
                           type="button"
                           onClick={nextFile}
+<<<<<<< HEAD
                           className="w-[80px] h-[30px] text-white bg-blue-500 hover:bg-blue-700"
+=======
+                          className="h-[30px] w-[80px] bg-blue-500 text-white hover:bg-blue-700"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                         >
                           Next
                         </button>
@@ -687,23 +854,35 @@ export const PrescriptionViewModalContent = ({
                   </div>
                 </div>
                 <div>
+<<<<<<< HEAD
                   <div className="justify-end flex mr-10">
+=======
+                  <div className="mr-10 flex justify-end">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     <button
                       onClick={() => isModalOpen(false)}
                       disabled={isSubmitted}
                       type="button"
+<<<<<<< HEAD
                       className={`
                       ${isSubmitted && " cursor-not-allowed"}
                       w-[150px] h-[45px]  bg-[#F3F3F3] hover:bg-[#D9D9D9] font-medium text-black  mr-4 rounded-sm `}
+=======
+                      className={` ${isSubmitted && "cursor-not-allowed"} mr-4 h-[45px] w-[150px] rounded-sm bg-[#F3F3F3] font-medium text-black hover:bg-[#D9D9D9]`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     >
                       Cancel
                     </button>
                     <button
                       disabled={isSubmitted}
                       type="submit"
+<<<<<<< HEAD
                       className={`
                        ${isSubmitted && " cursor-not-allowed"}
                        w-[150px] h-[45px] px-3 py-2 bg-[#007C85] hover:bg-[#03595B]  text-[#ffff] font-medium  rounded-sm`}
+=======
+                      className={` ${isSubmitted && "cursor-not-allowed"} h-[45px] w-[150px] rounded-sm bg-[#007C85] px-3 py-2 font-medium text-[#ffff] hover:bg-[#03595B]`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     >
                       Submit
                     </button>

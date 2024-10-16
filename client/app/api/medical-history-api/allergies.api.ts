@@ -73,6 +73,8 @@ export async function fetchAllergiesByPatient(
   currentPage: number,
   sortBy: string,
   sortOrder: "ASC" | "DESC",
+  filterSeverityFromCheck: string[],
+  perPage: number,
   router: any // Pass router instance as a parameter
 ): Promise<any> {
   const requestData = {
@@ -81,6 +83,9 @@ export async function fetchAllergiesByPatient(
     page: currentPage,
     sortBy: sortBy,
     sortOrder: sortOrder,
+    filterSeverity: filterSeverityFromCheck,
+
+    perPage: perPage,
   };
   try {
     console.log("searchPatient", requestData);

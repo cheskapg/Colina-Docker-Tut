@@ -1,4 +1,8 @@
 import {
+<<<<<<< HEAD
+=======
+  BadRequestException,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ConflictException,
   Injectable,
   Logger,
@@ -12,6 +16,7 @@ import { Brackets, Repository } from 'typeorm';
 import { Appointments } from './entities/appointments.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Patients } from 'src/patients/entities/patients.entity';
+import { AppointmentFilesService } from 'src/appointmentsFiles/appointmentsFiles.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -22,6 +27,7 @@ export class AppointmentsService {
     @InjectRepository(Patients)
     private patientsRepository: Repository<Patients>,
 
+    private readonly appointmentFilesService: AppointmentFilesService,
     private idService: IdService, // Inject the IdService
   ) {}
 
@@ -61,14 +67,36 @@ export class AppointmentsService {
 
     return result;
   }
+  async findAppointmentIdByUuid(uuid: string): Promise<number> {
+    const appointment = await this.appointmentsRepository.findOne({
+      select: ['id'],
+      where: { uuid: uuid },
+    });
+console.log(appointment.id, "YOI")
+console.log(uuid, "YOI uuid")
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found.');
+    }
 
+<<<<<<< HEAD
+=======
+    return appointment.id; // Return the appointment ID
+  }
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   async getAllAppointmentsByPatient(
     patientUuid: string,
     term: string,
     page: number = 1,
     sortBy: string = 'appointmentStatus',
+<<<<<<< HEAD
     sortOrder: 'ASC' | 'DESC' = 'ASC',
     perPage: number = 5,
+=======
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
+    perPage: number = 4,
+    filterStatus?: string[] | undefined,
+    filterType?: string[] | undefined,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ): Promise<{
     data: Appointments[];
     totalPages: number;
@@ -96,6 +124,12 @@ export class AppointmentsService {
         'appointments.appointmentStatus',
         'appointments.appointmentEndTime',
         'appointments.appointmentDate',
+<<<<<<< HEAD
+=======
+        'appointments.appointmentType',
+        'appointments.rescheduleReason',
+        'appointments.appointmentDoctor',
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         'patient.uuid',
       ])
       .where('patient.uuid = :uuid', { uuid: patientUuid })
@@ -103,8 +137,60 @@ export class AppointmentsService {
       .orderBy(`appointments.${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
+    if (filterStatus && filterStatus.length > 0) {
+      // Use `IN` clause to filter appointments based on multiple statuses
+      appointmentsQueryBuilder.andWhere(
+        'appointments.appointmentStatus IN (:...filterStatus)',
+        {
+          filterStatus: filterStatus,
+        },
+      );
+    }
+    const optionsFilterType = [
+      'Podiatrist',
+      'ER Visit',
+      "Doctor's",
+      'Dental',
+      'Eye',
+    ];
+    if (filterType && filterType.length > 0) {
+      if (filterType.includes("Others")) {
+        // Get the specific types in filterType that are NOT "Others"
+        const specificTypes = filterType.filter(type => type !== "Others");
+    
+        if (specificTypes.length > 0) {
+          // Show both values not in optionsFilterType and the specific ones
+          appointmentsQueryBuilder.andWhere(
+            '(appointments.appointmentType NOT IN (:...optionsFilterType) OR appointments.appointmentType IN (:...specificTypes))',
+            {
+              optionsFilterType: optionsFilterType,
+              specificTypes: specificTypes,
+            },
+          );
+        } else {
+          // If only "Others" is selected, show everything not in optionsFilterType
+          appointmentsQueryBuilder.andWhere(
+            'appointments.appointmentType NOT IN (:...optionsFilterType)',
+            {
+              optionsFilterType: optionsFilterType,
+            },
+          );
+        }
+      } else {
+        // If "Others" is not included, just filter based on the selected types
+        appointmentsQueryBuilder.andWhere(
+          'appointments.appointmentType IN (:...filterType)',
+          {
+            filterType: filterType,
+          },
+        );
+      }
+    }
     console.log('PATIENT ID:', patientUuid);
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     if (term !== '') {
       console.log('term', term);
       appointmentsQueryBuilder
@@ -124,6 +210,51 @@ export class AppointmentsService {
               });
           }),
         );
+<<<<<<< HEAD
+=======
+      if (filterStatus && filterStatus.length > 0) {
+        // Use `IN` clause to filter appointments based on multiple statuses
+        appointmentsQueryBuilder.andWhere(
+          'appointments.appointmentStatus IN (:...filterStatus)',
+          {
+            filterStatus: filterStatus,
+          },
+        );
+      }
+      if (filterType && filterType.length > 0) {
+        if (filterType.includes("Others")) {
+          // Get the specific types in filterType that are NOT "Others"
+          const specificTypes = filterType.filter(type => type !== "Others");
+      
+          if (specificTypes.length > 0) {
+            // Show both values not in optionsFilterType and the specific ones
+            appointmentsQueryBuilder.andWhere(
+              '(appointments.appointmentType NOT IN (:...optionsFilterType) OR appointments.appointmentType IN (:...specificTypes))',
+              {
+                optionsFilterType: optionsFilterType,
+                specificTypes: specificTypes,
+              },
+            );
+          } else {
+            // If only "Others" is selected, show everything not in optionsFilterType
+            appointmentsQueryBuilder.andWhere(
+              'appointments.appointmentType NOT IN (:...optionsFilterType)',
+              {
+                optionsFilterType: optionsFilterType,
+              },
+            );
+          }
+        } else {
+          // If "Others" is not included, just filter based on the selected types
+          appointmentsQueryBuilder.andWhere(
+            'appointments.appointmentType IN (:...filterType)',
+            {
+              filterType: filterType,
+            },
+          );
+        }
+      }
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
     const appointmentsList = await appointmentsQueryBuilder.getRawMany();
 
@@ -211,6 +342,11 @@ export class AppointmentsService {
     page: number = 1,
     sortBy: string = 'appointmentStatus',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
+<<<<<<< HEAD
+=======
+    filterStatus?: string[] | undefined,
+    filterType?: string[] | undefined,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     startDate: string = '2021-01-01',
     endDate: string = '2300-01-01',
     perPage: number = 5,
@@ -220,10 +356,25 @@ export class AppointmentsService {
     currentPage: number;
     totalCount: number;
   }> {
+<<<<<<< HEAD
     const searchTerm = `%${term}%`; // Add wildcards to the search term
     const todayDate = new Date();
     todayDate.setUTCHours(0, 0, 0, 0);
     const skip = (page - 1) * perPage;
+=======
+    const todayDate = new Date();
+    todayDate.setUTCHours(0, 0, 0, 0);
+    const skip = (page - 1) * perPage;
+    const sortByMapping: { [key: string]: string } = {
+      appointmentStatus: 'appointments.appointmentStatus',
+      appointmentDate: 'appointments.appointmentDate',
+      appointmentTime: 'appointments.appointmentTime',
+      appointmentEndTime: 'appointments.appointmentEndTime',
+      patient_firstName: 'patient.firstName',
+    };
+    const validSortBy =
+      sortByMapping[sortBy] || 'appointments.appointmentStatus';
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
     const appointmentsQueryBuilder = this.appointmentsRepository
       .createQueryBuilder('appointments')
@@ -239,12 +390,17 @@ export class AppointmentsService {
         'patient.lastName',
         'patient.middleName',
       ])
+<<<<<<< HEAD
+=======
+
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       .where('appointments.appointmentDate >= :startDate', {
         startDate: startDate,
       })
       .andWhere('appointments.appointmentDate <= :endDate', {
         endDate: endDate,
       })
+<<<<<<< HEAD
       .orderBy(`appointments.${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
@@ -265,6 +421,153 @@ export class AppointmentsService {
         }),
       );
     }
+=======
+      .orderBy(validSortBy, sortOrder)
+      .offset(skip)
+      .limit(perPage);
+    // if (filterStatus) {
+    //   appointmentsQueryBuilder.andWhere('appointments.appointmentStatus = :filterStatus', { filterStatus: filterStatus })
+    // }
+    if (filterStatus && filterStatus.length > 0) {
+      // Use `IN` clause to filter appointments based on multiple statuses
+      appointmentsQueryBuilder.andWhere(
+        'appointments.appointmentStatus IN (:...filterStatus)',
+        {
+          filterStatus: filterStatus,
+        },
+      );
+    }
+    const optionsFilterType = [
+      'Podiatrist',
+      'ER Visit',
+      "Doctor's",
+      'Dental',
+      'Eye',
+    ];
+    if (filterType && filterType.length > 0) {
+      if (filterType.includes("Others")) {
+        // Get the specific types in filterType that are NOT "Others"
+        const specificTypes = filterType.filter(type => type !== "Others");
+    
+        if (specificTypes.length > 0) {
+          // Show both values not in optionsFilterType and the specific ones
+          appointmentsQueryBuilder.andWhere(
+            '(appointments.appointmentType NOT IN (:...optionsFilterType) OR appointments.appointmentType IN (:...specificTypes))',
+            {
+              optionsFilterType: optionsFilterType,
+              specificTypes: specificTypes,
+            },
+          );
+        } else {
+          // If only "Others" is selected, show everything not in optionsFilterType
+          appointmentsQueryBuilder.andWhere(
+            'appointments.appointmentType NOT IN (:...optionsFilterType)',
+            {
+              optionsFilterType: optionsFilterType,
+            },
+          );
+        }
+      } else {
+        // If "Others" is not included, just filter based on the selected types
+        appointmentsQueryBuilder.andWhere(
+          'appointments.appointmentType IN (:...filterType)',
+          {
+            filterType: filterType,
+          },
+        );
+      }
+    }
+    if (term !== '') {
+      console.log('term', term);
+      const searchTerms = term.trim().toLowerCase().split(/\s+/);
+
+      appointmentsQueryBuilder
+        .where(
+          new Brackets((qb) => {
+            qb.andWhere('appointments.uuid ILIKE :searchTerm', {
+              searchTerm: `%${term}%`,
+            })
+              .orWhere('appointments.appointmentStatus ILIKE :searchTerm', {
+                searchTerm: `%${term}%`,
+              })
+              .orWhere('appointments.details ILIKE :searchTerm', {
+                searchTerm: `%${term}%`,
+              });
+          }),
+        )
+        .orWhere(
+          new Brackets((qb) => {
+            if (searchTerms.length > 1) {
+              const firstNameTerm = searchTerms.slice(0, -1).join(' ');
+              const lastNameTerm = searchTerms[searchTerms.length - 1];
+              const fullNameTerm = searchTerms.join(' ');
+              console.log('FIRSTZZ', firstNameTerm);
+              console.log('lastNameTerm', lastNameTerm);
+              console.log('fullNameTerm', fullNameTerm);
+              qb.andWhere(
+                new Brackets((subQb) => {
+                  subQb
+                    .where('LOWER(patient.firstName) LIKE :firstNameTerm', {
+                      firstNameTerm: `%${firstNameTerm}%`,
+                    })
+                    .andWhere('LOWER(patient.lastName) LIKE :lastNameTerm', {
+                      lastNameTerm: `%${lastNameTerm}%`,
+                    });
+                }),
+              )
+                .orWhere(
+                  new Brackets((subQb) => {
+                    subQb
+                      .where('LOWER(patient.firstName) LIKE :fullNameTerm', {
+                        fullNameTerm: `%${fullNameTerm}%`,
+                      })
+                      .orWhere('LOWER(patient.lastName) LIKE :fullNameTerm', {
+                        fullNameTerm: `%${fullNameTerm}%`,
+                      });
+                  }),
+                )
+                .orWhere(
+                  new Brackets((subQb) => {
+                    subQb
+                      .where(
+                        'LOWER(CONCAT(patient.firstName, patient.lastName)) = :fullNameTerm',
+                        { fullNameTerm: `${fullNameTerm}` },
+                      )
+                      .orWhere(
+                        "LOWER(CONCAT(patient.firstName, ' ', patient.lastName)) = :fullNameTerm",
+                        { fullNameTerm: `${fullNameTerm}` },
+                      );
+                  }),
+                );
+            } else {
+              for (const word of searchTerms) {
+                qb.andWhere(
+                  new Brackets((subQb) => {
+                    subQb
+                      .where('LOWER(patient.firstName) ILIKE :word', {
+                        word: `%${word}%`,
+                      })
+                      .orWhere('LOWER(patient.lastName) ILIKE :word', {
+                        word: `%${word}%`,
+                      });
+                  }),
+                );
+              }
+            }
+          }),
+        );
+      if (filterStatus && filterStatus.length > 0) {
+        // Use `IN` clause to filter appointments based on multiple statuses
+        appointmentsQueryBuilder.andWhere(
+          'appointments.appointmentStatus IN (:...filterStatus)',
+          {
+            filterStatus: filterStatus,
+          },
+        );
+      }
+    }
+
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     const appointmentsList = await appointmentsQueryBuilder.getRawMany();
 
     const totalPatientAppointments = await appointmentsQueryBuilder.getCount();
@@ -375,4 +678,107 @@ export class AppointmentsService {
     appointment.appointmentStatus = 'Successful';
     await this.appointmentsRepository.save(appointment);
   }
+<<<<<<< HEAD
+=======
+
+  //APPOINTMENT FILES FROM APPOINTMENTFILES SERVICE
+  async addAppointmentFile(
+    appointmentUuid: string,
+    imageBuffer: Buffer,
+    filename: string,
+  ) {
+    console.log(`Received appointmentUuid: ${appointmentUuid}`);
+
+    // Ensure appointmentUuid is provided
+    if (!appointmentUuid) {
+      console.error('No appointmentUuid provided.');
+      throw new BadRequestException(`No appointment UUID provided`);
+    }
+
+    // Find the appointment by its UUID
+    const { id: appointmentId } = await this.appointmentsRepository.findOne({
+      select: ['id'],
+      where: { uuid: appointmentUuid },
+    });
+
+    // Check if appointment exists
+    if (!appointmentId) {
+      throw new NotFoundException(
+        `Appointment with UUID ${appointmentUuid} not found`,
+      );
+    }
+
+    // Upload the file for the appointment
+    return this.appointmentFilesService.uploadAppointmentFile(
+      imageBuffer,
+      filename,
+      appointmentId,
+    );
+  }
+
+  // Service method
+  async getCurrentFileCountFromDatabase(
+    appointmentUuid: string,
+  ): Promise<number> {
+    const { id: appointmentId } = await this.appointmentsRepository.findOne({
+      select: ['id'],
+      where: { uuid: appointmentUuid },
+    });
+
+    try {
+      const files =
+        await this.appointmentFilesService.getAppointmentFilesByAppointmentId(
+          appointmentId,
+        );
+      return files.length; // Return the number of files
+    } catch (error) {
+      throw new NotFoundException('Appointment files not found');
+    }
+  }
+  async getAppointmentFilesByUuid(appointmentUuid: string) {
+    const appointment = await this.appointmentsRepository.findOne({
+      select: ['id'],
+      where: { uuid: appointmentUuid },
+    });
+
+    if (!appointment) {
+      throw new NotFoundException(
+        `Appointment with UUID ${appointmentUuid} not found`,
+      );
+    }
+
+    const { id: appointmentId } = appointment;
+
+    const appointmentFiles =
+      await this.appointmentFilesService.getAppointmentFilesByAppointmentId(
+        appointmentId,
+      );
+    if (!appointmentFiles || appointmentFiles.length === 0) {
+      throw new NotFoundException(
+        `No files found for appointment with UUID ${appointmentUuid}`,
+      );
+    }
+
+    return appointmentFiles;
+  }
+  async updateAppointmentFile(
+    appointmentUuid: string,
+    imageBuffer: Buffer,
+    filename: string,
+  ): Promise<any> {
+    const appointment = await this.appointmentsRepository.findOne({
+      where: { uuid: appointmentUuid },
+    });
+    if (!appointment) {
+      throw new NotFoundException(
+        `Appointment with UUID ${appointmentUuid} not found`,
+      );
+    }
+    return this.appointmentFilesService.updateAppointmentFile(
+      appointment.id,
+      imageBuffer,
+      filename,
+    );
+  }
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }

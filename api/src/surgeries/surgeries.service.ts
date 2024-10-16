@@ -63,7 +63,7 @@ export class SurgeriesService {
     page: number = 1,
     sortBy: string = 'typeOfSurgery',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
-    perPage: number = 5,
+    perPage: number = 4,
   ): Promise<{
     data: Surgeries[];
     totalPages: number;

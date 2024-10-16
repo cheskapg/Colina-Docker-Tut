@@ -17,10 +17,17 @@ export class NotesController {
     @Post('list/:id')
     findAllPatientNotes(
         @Param('id') patientId: string,
+<<<<<<< HEAD
         @Body() body: { term: string, type: string, page: number, sortBy: string, sortOrder: 'ASC' | 'DESC' }
     ) {
         const { term = "", type, page, sortBy, sortOrder } = body;
         return this.notesService.getAllNotesByPatient(patientId, term, type, page, sortBy, sortOrder);
+=======
+        @Body() body: { term: string, type: string, page: number, sortBy: string, sortOrder: 'ASC' | 'DESC', perPage: number}
+    ) {
+        const { term = "", type, page, sortBy, sortOrder, perPage } = body;
+        return this.notesService.getAllNotesByPatient(patientId, term, type, page, sortBy, sortOrder, perPage);
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     }
 
     @Patch('update/:id')

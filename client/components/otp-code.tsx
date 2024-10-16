@@ -39,7 +39,11 @@ const OTPCode = ({
 
   const handleOTPChange = (
     e: React.ChangeEvent<HTMLInputElement>,
+<<<<<<< HEAD
     index: number
+=======
+    index: number,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ) => {
     const { value } = e.target;
     if (value.length > 0 && /\d/.test(value)) {
@@ -55,7 +59,11 @@ const OTPCode = ({
       }
       // If all previous inputs are not empty, find the first empty input
       const nextInputIndex = inputs.current.findIndex(
+<<<<<<< HEAD
         (input) => input.value === ""
+=======
+        (input) => input.value === "",
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       );
       if (nextInputIndex !== -1) {
         setCurrentInputIndex(nextInputIndex);
@@ -74,7 +82,11 @@ const OTPCode = ({
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
+<<<<<<< HEAD
     index: number
+=======
+    index: number,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ) => {
     if (e.key === "Backspace") {
       const newOTP = [...otp];
@@ -100,7 +112,11 @@ const OTPCode = ({
 
   const handleClick = (
     e: React.MouseEvent<HTMLInputElement>,
+<<<<<<< HEAD
     index: number
+=======
+    index: number,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   ) => {
     const { value } = e.target as HTMLInputElement;
     if (value.length > 0) {
@@ -136,13 +152,21 @@ const OTPCode = ({
           otp.join(""),
           forgotPassEmail,
           variant,
+<<<<<<< HEAD
           rememberMe
+=======
+          rememberMe,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         );
         if (response.isValid) {
           if (variant === "signIn") {
             router.push("/dashboard");
+<<<<<<< HEAD
           }
           if (variant === "forgotPass") {
+=======
+          } else if (variant === "forgotPass") {
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             setIsResetPass(true);
             setIsOTP(false);
             setOTP(new Array(6).fill(""));
@@ -207,6 +231,7 @@ const OTPCode = ({
 
   return (
     <div
+<<<<<<< HEAD
       className={`flex flex-col fixed justify-center md:px-0 px-[30px] items-center lg:max-w-[560px] md:w-full max-w-[400px]  duration-500 transition h-full 
                 ${
                   isOTP
@@ -220,6 +245,20 @@ const OTPCode = ({
         Enter your verification code!
       </h1>
       <p className="mb-5 text-white md:text-black md:px-0 text-center">
+=======
+      className={`fixed flex h-full max-w-[400px] flex-col items-center justify-center px-[30px] transition duration-500 md:w-full md:px-0 lg:max-w-[560px] ${
+        isOTP
+          ? "z-50 opacity-100"
+          : isResetPass
+            ? "-translate-x-[1000px] opacity-0"
+            : "z-50 translate-x-[1000px] opacity-0"
+      }`}
+    >
+      <h1 className="mb-3 font-medium text-white md:mb-0 md:text-2xl md:text-[20px] md:text-[#020817] lg:mb-3">
+        Enter your verification code!
+      </h1>
+      <p className="mb-5 text-center text-white md:px-0 md:text-[#020817]">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         We’ve sent the verification code to {maskedEmail}.
       </p>
       <form
@@ -228,6 +267,7 @@ const OTPCode = ({
           setIsVerify(true);
           handleSubmit();
         }}
+<<<<<<< HEAD
         className="flex flex-col items-center justify-center w-full"
       >
         <div className="flex md:gap-3 gap-1  items-center justify-center text-center">
@@ -242,6 +282,18 @@ const OTPCode = ({
               } 
               ${isError ? "border-red-500 border bg-red-500" : ""}
               ${currentInputIndex === index ? "border-blue-500" : ""}`}
+=======
+        className="flex w-full flex-col items-center justify-center"
+      >
+        <div className="flex items-center justify-center gap-1 text-center md:gap-3">
+          {otp.map((digit, index) => (
+            <input
+              className={`max-h-[57px] max-w-[50px] text-center text-[50px] font-medium caret-[#007C85] focus:outline-none md:max-h-[90px] md:max-w-[83px] ${
+                otp[index] !== ""
+                  ? "bg-[#007C85] text-white"
+                  : "border border-[#007C85] bg-white md:bg-[#FAFAFA]"
+              } ${isError ? "bg-[#db3956]" : ""} `}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               key={index}
               type="text"
               id={`otpInput${index + 1}`}
@@ -256,6 +308,7 @@ const OTPCode = ({
           ))}
         </div>
 
+<<<<<<< HEAD
         <div className="flex justify-between items-center w-full">
           {isError && (
             <p className="text-red-500 w-full">Verification code not valid!</p>
@@ -266,20 +319,42 @@ const OTPCode = ({
             </p>
           ) : isNewCode ? (
             <p className="text-end w-full my-2 cursor-pointer text-white md:text-black">
+=======
+        <div className="flex w-full items-center justify-between">
+          {isError && (
+            <p className="w-full text-[#db3956]">
+              Verification code not valid!
+            </p>
+          )}
+          {isSending ? (
+            <p className="my-2 w-full cursor-pointer text-end text-white md:text-[#020817]">
+              Sending...
+            </p>
+          ) : isNewCode ? (
+            <p className="my-2 w-full cursor-pointer text-end text-white md:text-[#020817]">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               Send a new code in: {countdown} seconds.
             </p>
           ) : (
             <p
+<<<<<<< HEAD
               className="underline text-end w-full my-2 cursor-pointer text-white md:text-black"
               onClick={handleSendNewCode}
             >
               Send a new code.
+=======
+              className="my-2 w-full cursor-pointer text-end text-white underline md:text-[#020817]"
+              onClick={handleSendNewCode}
+            >
+              Send a new code
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
             </p>
           )}
         </div>
 
         <button
           disabled={isVerify}
+<<<<<<< HEAD
           className={`
                           ${isVerify ? "cursor-not-allowed" : "cursor-pointer"}
                           inline-block w-full  md:max-w-[565px] max-w-[400px] text-[15px] items-center bg-[#007C85] px-6 py-3 text-center font-normal text-white hover:bg-[#0E646A] transition duration-300 ease-in-out`}
@@ -287,6 +362,13 @@ const OTPCode = ({
         >
           {isVerify ? (
             <div className="flex justify-center items-center w-full">
+=======
+          className={` ${isVerify ? "cursor-not-allowed" : "cursor-pointer"} inline-block h-[60px] w-full max-w-[400px] items-center bg-[#007C85] px-6 py-3 text-center text-[15px] font-medium text-white transition duration-300 ease-in-out hover:bg-[#0E646A] md:max-w-[565px]`}
+          type="submit"
+        >
+          {isVerify ? (
+            <div className="flex w-full items-center justify-center">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               <Loader2 size={20} className="animate-spin" /> &nbsp; Verifying...
             </div>
           ) : (
@@ -295,7 +377,11 @@ const OTPCode = ({
         </button>
       </form>
       <p
+<<<<<<< HEAD
         className="cursor-pointer bottom-28 absolute text-white md:text-black"
+=======
+        className="absolute bottom-28 cursor-pointer text-white md:text-[#020817]"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         onClick={() => {
           setIsOTP(!isOTP);
         }}

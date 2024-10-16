@@ -26,6 +26,12 @@ import {
 } from 'typeorm';
 import { from } from 'rxjs';
 import { PatientsProfileImage } from 'src/patientsProfileImage/entities/patientsProfileImage.entity';
+<<<<<<< HEAD
+=======
+import { Adl } from 'src/adls/entities/adl.entity';
+import { Vaccination } from 'src/vaccination/entities/vaccination.entity';
+import { Orders } from 'src/orders/entities/order.entity';
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 @Entity()
 @ObjectType()
@@ -55,9 +61,6 @@ export class Patients {
 
   @Column({ type: 'date', nullable: true })
   dateOfBirth: Date;
-
-  @Column({ nullable: true })
-  medicalCondition: string;
 
   @Column()
   gender: string;
@@ -89,6 +92,30 @@ export class Patients {
 
   @Column({ nullable: true })
   codeStatus: string;
+
+  @Column({ nullable: true })
+  height: string;
+
+  @Column({ nullable: true })
+  weight: string;
+
+  @Column({ nullable: true })
+  mobility: string;
+
+  @Column({ nullable: true })
+  dietaryRestrictions: string;
+
+  @Column({ nullable: true })
+  admissionStatus: string;
+
+  @Column({ type: 'date', nullable: true })
+  dischargeDate: Date;
+
+  @Column({ type: 'date', nullable: true })
+  reAdmissionDate: Date;
+
+  @Column({ type: 'date', nullable: true })
+  incidentReportDate: Date;
 
   @UpdateDateColumn({ name: 'updatedAt', nullable: true })
   updatedAt: string;
@@ -160,4 +187,17 @@ export class Patients {
   @JoinColumn({ name: 'id' }) // Specify the column name for the primary key
   patientProfileImage?: PatientsProfileImage;
 
+<<<<<<< HEAD
+=======
+  @OneToMany(() => Adl, (adl) => adl.patient)
+  @Field(() => [Adl], { nullable: true })
+  adl: Adl[];
+
+  @OneToMany(() => Vaccination, (vaccination) => vaccination.patient)
+  @Field(() => [Vaccination], { nullable: true })
+  vaccination: Vaccination[];
+  @OneToMany(() => Orders, (order) => order.patient)
+  @Field(() => [Orders], { nullable: true })
+  order: Orders[];
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 }

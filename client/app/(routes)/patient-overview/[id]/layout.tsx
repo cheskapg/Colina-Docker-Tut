@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { onNavigate } from "@/actions/navigation";
@@ -531,6 +532,20 @@ export default function PatientOverviewLayout({
           )}
         </div>
       </EditProvider>
+=======
+import PatientOverviewPage from "@/components/patientOverviewPage";
+
+export default function PatientOverviewLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <div className="flex h-screen w-full relative">
+      <PatientOverviewPage >
+        {children}
+        </PatientOverviewPage>
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     </div>
   );
 }

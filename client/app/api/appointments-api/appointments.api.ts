@@ -10,6 +10,13 @@ export async function fetchAppointmentsByPatient(
   currentPage: number,
   sortBy: string,
   sortOrder: "ASC" | "DESC",
+<<<<<<< HEAD
+=======
+  filterStatusFromCheck: string[],
+  filterTypeFromCheck: string[],
+
+  perPage: number,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   router: any // Pass router instance as a parameter
 ): Promise<any> {
   const requestData = {
@@ -17,7 +24,15 @@ export async function fetchAppointmentsByPatient(
     term: term,
     page: currentPage,
     sortBy: sortBy,
+<<<<<<< HEAD
     sortOrder: sortOrder,
+=======
+    sortOrder: sortOrder,    
+    filterStatus: filterStatusFromCheck,
+    filterType: filterTypeFromCheck,
+
+    perPage:perPage 
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   };
   try {
     console.log("searchPatient", requestData);
@@ -125,3 +140,144 @@ export async function updateAppointmentOfPatient(
     console.error((error as AxiosError).message);
   }
 }
+<<<<<<< HEAD
+=======
+
+
+export async function addAppointmentFile(
+  appointmentUuid: string,
+  formData: FormData
+): Promise<any> {
+  try {
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      throw new Error("Unauthorized Access");
+    }
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "multipart/form-data",
+    };
+
+    const response = await axios.post(
+      `${apiUrl}/appointments/${appointmentUuid}/uploadfiles`,
+      formData,
+      { headers }
+    );
+
+    const appointmentFileInserted = response.data;
+    console.log(
+      "Appointment files uploaded successfully:",
+      appointmentFileInserted
+    );
+
+    return appointmentFileInserted;
+  } catch (error: any) {
+    console.error("Error uploading appointment files:", error);
+
+    if (error.response) {
+      console.error("Response data:", error.response.data);
+      console.error("Response status:", error.response.status);
+      console.error("Response headers:", error.response.headers);
+    }
+    throw error;
+  }
+}
+
+export async function deleteAppointmentFile(
+  appointmentUuid: string,
+  fileUUID: string
+): Promise<any> {
+  try {
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      throw new Error("Unauthorized Access");
+    }
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await axios.patch(
+      `${apiUrl}/appointments/files/delete/${fileUUID}`,
+      {},
+      { headers }
+    );
+    console.log(response, "appointmentFileDeleted");
+
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting appointment files:", error);
+    throw error;
+  }
+}
+
+
+// FILES
+export async function fetchAppointmentFiles(
+  appointmentUuid: string,
+  router: any
+): Promise<any> {
+  const requestData = {
+    appointmentUuid: appointmentUuid.toUpperCase(),
+  };
+  try {
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      throw new Error("Unauthorized Access");
+    }
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await axios.get(
+      `${apiUrl}/appointments/${appointmentUuid}/files`,
+      { headers }
+    );
+
+    return response;
+  } catch (error) {
+    if ((error as AxiosError).response?.status === 401) {
+      setAccessToken("");
+      onNavigate(router, "/login");
+      return Promise.reject(new Error("Unauthorized access"));
+    }
+    console.error(
+      "Error fetching appointment files:",
+      (error as AxiosError).message
+    );
+  }
+}
+
+export async function getCurrentAppointmentFileCountFromDatabase(
+  appointmentUuid: string
+): Promise<any> {
+  try {
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      throw new Error("Unauthorized Access");
+    }
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await axios.get(
+      `${apiUrl}/appointments/${appointmentUuid}/files/count`,
+      { headers }
+    );
+
+    return response.data;
+  } catch (error) {
+    if ((error as AxiosError).response?.status === 401) {
+      setAccessToken("");
+      return Promise.reject(new Error("Unauthorized access"));
+    }
+    console.error(
+      "Error fetching appointm files count:",
+      (error as AxiosError).message
+    );
+  }
+}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de

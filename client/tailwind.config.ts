@@ -7,7 +7,8 @@ const config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+    './lib/**/*.{ts,tsx}',
+  ],
   prefix: "",
   theme: {
     container: {
@@ -52,6 +53,12 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      dropShadow: {
+        'dropStatus': '0px 0.77px 7.65px rgba(0, 0, 0, 0.25)',
+        'dropDown': '0 1px 0.9px rgba(0, 0, 0, 0.25)',
+        'dropDownContent': '0px 0.77px 1px rgba(0, 0, 0, 0.25)',
+
       },
       borderRadius: {
         lg: "var(--radius)",

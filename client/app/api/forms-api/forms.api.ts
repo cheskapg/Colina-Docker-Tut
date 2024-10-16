@@ -11,6 +11,10 @@ export async function fetchFormsByPatient(
   sortBy: string,
   sortOrder: "ASC" | "DESC",
   isArchived: boolean,
+<<<<<<< HEAD
+=======
+  perPage: number,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   router: any // Pass router instance as a parameter
 ): Promise<any> {
   const requestData = {
@@ -19,6 +23,10 @@ export async function fetchFormsByPatient(
     page: currentPage,
     sortBy: sortBy,
     sortOrder: sortOrder,
+<<<<<<< HEAD
+=======
+    perPage: perPage,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     isArchived
   };
   try {

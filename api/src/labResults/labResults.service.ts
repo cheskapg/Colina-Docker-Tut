@@ -12,6 +12,12 @@ import { IdService } from 'services/uuid/id.service';
 import { Repository, ILike, Brackets } from 'typeorm';
 import { Patients } from 'src/patients/entities/patients.entity';
 import { LabResultsFilesService } from '../../src/labResultsFiles/labResultsFiles.service';
+<<<<<<< HEAD
+=======
+import { OrdersLaboratory } from 'src/orders_laboratory/entities/orders_laboratory.entity';
+import { Orders } from 'src/orders/entities/order.entity';
+import { OrdersService } from 'src/orders/orders.service';
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 @Injectable()
 export class LabResultsService {
@@ -20,6 +26,11 @@ export class LabResultsService {
     private patientsRepository: Repository<Patients>,
     @InjectRepository(LabResults)
     private labResultsRepository: Repository<LabResults>,
+    @InjectRepository(OrdersLaboratory) // Inject the OrdersLaboratory repository here
+    private ordersLaboratoryRepository: Repository<OrdersLaboratory>,
+
+    private readonly labResultsFilesService: LabResultsFilesService,
+    private ordersService: OrdersService, // Inject OrdersService instead of Orders repository
 
     private readonly labResultsFilesService: LabResultsFilesService,
 
@@ -27,12 +38,15 @@ export class LabResultsService {
 
     private idService: IdService, // Inject the IdService
   ) { }
-  async createLabResults(patientUuid: string, labResultData: CreateLabResultInput): Promise<LabResults> {
+  async createLabResults(
+    patientUuid: string,
+    labResultData: CreateLabResultInput,
+    orderUuid?: string
+  ): Promise<LabResults> {
     const { id: patientId } = await this.patientsRepository.findOne({
-      select: ["id"],
-      where: { uuid: patientUuid }
+      select: ['id'],
+      where: { uuid: patientUuid },
     });
-
     const newLabResults = new LabResults();
     const uuidPrefix = 'LBR-'; // Customize prefix as needed
     const uuid = this.idService.generateRandomUUID(uuidPrefix);
@@ -40,6 +54,27 @@ export class LabResultsService {
     newLabResults.patientId = patientId; // Assign patientId
     Object.assign(newLabResults, labResultData);
     const savedLabResult = await this.labResultsRepository.save(newLabResults);
+
+    if (orderUuid) {
+      // Use OrdersService to get the orderId from the orderUuid
+      const orderId = await this.ordersService.getOrderIdFromUuid(orderUuid);
+
+      // Find and update the OrdersLaboratory entry with the lab result's ID
+      const orderLaboratory = await this.ordersLaboratoryRepository.findOne({
+        where: { orderId },
+      });
+
+      if (!orderLaboratory) {
+        throw new NotFoundException(`OrderLaboratory with orderId ${orderId} not found`);
+      }
+      // Check if patientId matches
+      if (orderLaboratory.patientId !== patientId) {
+        throw new ConflictException(`Patient ID  does not match with order's patient ID`);
+      }
+      orderLaboratory.laboratoryId = savedLabResult.id;
+      orderLaboratory.status = "completed"
+      await this.ordersLaboratoryRepository.save(orderLaboratory);
+    }
     const result = { ...savedLabResult };
     delete result.patientId;
     delete result.deletedAt;
@@ -59,8 +94,13 @@ export class LabResultsService {
     term: string,
     patientUuid: string,
     page: number = 1,
+<<<<<<< HEAD
     sortBy: string = 'uuid',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
+=======
+    sortBy: string = 'date',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     perPage: number = 5,
   ): Promise<{ data: LabResults[], totalPages: number, currentPage: number, totalCount }> {
     const searchTerm = `%${term}%`; // Add wildcards to the search term
@@ -138,6 +178,23 @@ export class LabResultsService {
     Object.assign(labResults, updateData);
     return this.labResultsRepository.save(labResults);
   }
+
+  async getLabResultIdFromUuid(
+    Uuid: string,
+
+  ): Promise<number> {
+    const labResults = await this.labResultsRepository.findOne({
+      select: ['id'],
+      where: { uuid: Uuid },
+    });
+    if (!labResults) {
+      throw new NotFoundException(`Lab Result ID-${Uuid}  not found.`);
+    }
+    return labResults.id;
+  }
+
+
+
   async softDeleteLabResults(id: string): Promise<{ message: string, deletedLabResult: LabResults }> {
 
     // Find the patient record by ID

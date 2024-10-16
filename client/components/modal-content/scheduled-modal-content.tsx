@@ -78,12 +78,20 @@ export const ScheduledModalContent = ({
     if (label === "charting") {
       const now = new Date();
       const formattedDate = now.toISOString().split("T")[0];
+<<<<<<< HEAD
       const formattedTime = now.toTimeString().split(" ")[0];
+=======
+      // const formattedTime = now.toTimeString().split(" ")[0];
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
       setFormData({
         ...formData,
         medicationLogsDate: formattedDate,
+<<<<<<< HEAD
         medicationLogsTime: formattedTime,
+=======
+        // medicationLogsTime: formattedTime,
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       });
     }
   }, [label]);
@@ -113,10 +121,18 @@ export const ScheduledModalContent = ({
       }));
     }
   };
+<<<<<<< HEAD
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitted(true);
+=======
+  console.log("scheduledMedData:", scheduledMedData)
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+   
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     try {
       if (isEdit) {
         await updateScheduledMedOfPatient(

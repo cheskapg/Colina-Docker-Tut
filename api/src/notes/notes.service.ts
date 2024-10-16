@@ -47,11 +47,14 @@ export class NotesService {
     patientUuid: string,
     term: string,
     type: string,
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     page: number = 1,
-    sortBy: string = 'subject',
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-    perPage: number = 5,
+    sortBy: string = 'createdAt',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
+    perPage: number = 4,
   ): Promise<{
     data: Notes[];
     totalPages: number;

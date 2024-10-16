@@ -1,5 +1,9 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+<<<<<<< HEAD
 import { IsEmail, IsNotEmpty } from 'class-validator';
+=======
+import { IsArray, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 
 @InputType()
 export class CreatePatientsInput {
@@ -57,6 +61,13 @@ export class CreatePatientsInput {
   @Field()
   codeStatus: string;
 
+  dischargeDate?: Date;
+  admissionDate?: Date;
+  reAdmissionDate?: Date;
+  incidentReportDate?: Date;
+  admissionStatus?:string;
+
+
   @Field()
   updatedAt: string;
 
@@ -66,4 +77,40 @@ export class CreatePatientsInput {
   @Field()
   deletedAt: string;
 
+  @IsArray()
+  @IsOptional()
+  emergencyContacts?: CreateEmergencyContactsInput[];
+
+}
+
+@InputType()
+export class CreateEmergencyContactsInput {
+  @Field((type) => Int)
+  id: number;
+
+  @Field()
+  uuid: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  phoneNumber: string;
+
+  @Field()
+  patientRelationship: string;
+
+  email:string; 
+
+  @Field()
+  patientId: number;
+
+  @Field()
+  updatedAt: string;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  deletedAt: string;
 }

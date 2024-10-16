@@ -56,15 +56,17 @@ export class SurgeriesController {
       page: number;
       sortBy: string;
       sortOrder: 'ASC' | 'DESC';
+      perPage: number;
     },
   ) {
-    const { term = '', page, sortBy, sortOrder } = body;
+    const { term = '', page, sortBy, sortOrder,perPage } = body;
     return this.surgeriesService.getAllSurgeryByPatient(
       patientId,
       term,
       page,
       sortBy,
       sortOrder,
+      perPage
     );
   }
   @Patch('update/:id')

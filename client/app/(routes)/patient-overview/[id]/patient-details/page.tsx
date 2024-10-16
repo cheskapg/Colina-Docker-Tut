@@ -11,6 +11,11 @@ import { fetchCountryList } from "@/app/api/country-api/countryList.api";
 import { set } from "date-fns";
 import { useEditContext } from "../editContext"; // Assuming you've exported EditContext from your context file
 import { tree } from "next/dist/build/templates/app-page";
+<<<<<<< HEAD
+=======
+import EmergencyContacts from "@/components/patient-details/emergencyContacts";
+import PatientDetailsComponent from "@/components/patient-details/patientDetailsComponent";
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 export default function PatientDetails({}) {
   const { toggleEdit, saveClicked, cancelClicked } = useEditContext();
   if (typeof window === "undefined") {
@@ -169,7 +174,11 @@ export default function PatientDetails({}) {
 
   if (isLoading) {
     return (
+<<<<<<< HEAD
       <div className="container w-full h-full flex justify-center items-center ">
+=======
+      <div className="container flex h-full w-full items-center justify-center">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
         <Image
           src="/imgs/colina-logo-animation.gif"
           alt="logo"
@@ -183,6 +192,7 @@ export default function PatientDetails({}) {
   console.log(patientDetails, "patientDetails");
   console.log(formData, "formData");
   return (
+<<<<<<< HEAD
     <div className="flex flex-col w-full">
       <div className="text-xl font-semibold px-16 w-full h-[50px] pt-3 ring-1 ring-gray-300 pl-[110px]">
         Patient Details
@@ -775,6 +785,11 @@ export default function PatientDetails({}) {
           </div>
         </div>
       </div>
+=======
+    <div className="w-full h-full flex flex-col gap-5 mt-2 pb-16">
+      <PatientDetailsComponent patientId={patientId} />
+      <EmergencyContacts patientId={patientId} />
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     </div>
   );
 }

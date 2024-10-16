@@ -1,12 +1,18 @@
 import React, { Suspense, useEffect, useState } from "react";
 import NurseDrawer from "@/components/nurse-drawer";
 import { SuccessModal } from "@/components/shared/success";
+<<<<<<< HEAD
 import DBDueMedication from "@/components/dbDueMedications";
 import DBUpcomingAppointments from "@/components/dbUpcomingAppointments";
+=======
+import DBDueMedication from "@/components/dashboard/dbDueMedications";
+import DBUpcomingAppointments from "@/components/dashboard/dbUpcomingAppointments";
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import DBDueMedicationLoader from "@/components/loaders/DBDueMedicationLoader";
 import DBUpcomingLoader from "@/components/loaders/DBUpcomingLoader";
 import UserDetail from "@/components/userDetails";
 import DBUserDetailLoader from "@/components/loaders/DBUserDetailLoader";
+<<<<<<< HEAD
 
 const Dashboard = () => {
   return (
@@ -56,6 +62,15 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+=======
+import DBPatientSummary from "@/components/dashboard/dbPatientSummary";
+import DBBody from "@/components/dashboard/dbBody";
+
+const Dashboard = () => {
+  return (
+    <div className="relative h-screen w-full ">
+      <DBBody />
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     </div>
   );
 };

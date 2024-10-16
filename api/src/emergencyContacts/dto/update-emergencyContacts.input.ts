@@ -10,28 +10,16 @@ export class UpdateEmergencyContactsInput extends PartialType(CreateEmergencyCon
   uuid: string;
 
   @Field()
-  firstName: string;
+  name: string;
 
   @Field()
-  lastName: string;
+  email: string;
 
   @Field()
   phoneNumber: string;
 
   @Field()
   patientRelationship: string;
-
-  @Field()
-  city: string;
-
-  @Field()
-  state: string;
-
-  @Field()
-  zip: string;
-
-  @Field()
-  country: string;
 
   @Field()
   patientId: number;

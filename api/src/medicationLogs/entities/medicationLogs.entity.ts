@@ -1,6 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Patients } from 'src/patients/entities/patients.entity';
 import { Prescriptions } from 'src/prescriptions/entities/prescriptions.entity';
+<<<<<<< HEAD
+=======
+import { Notification } from 'src/notifications/entities/notification.entity';
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +12,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -26,6 +31,9 @@ export class MedicationLogs {
   @Column()
   medicationLogsName: string;
 
+  @Column({nullable: true})
+  medicationLogsDosage: string;
+
   @Column()
   medicationLogsDate: string;
 
@@ -35,6 +43,9 @@ export class MedicationLogs {
 
   @Column({ nullable: true })
   notes: string;
+
+  @Column({ nullable: true })
+  hasDuration: string;
 
   @Column({ nullable: true })
   @Field(() => Int)
@@ -78,4 +89,7 @@ export class MedicationLogs {
   // @ManyToOne(() => Prescriptions)
   // @JoinColumn({ name: 'prescriptionsId', referencedColumnName: 'id' }) // FK attribute
   // prescriptions: Prescriptions;
+
+  @OneToMany(() => Notification, (notification) => notification.medicationLog)
+  notifications: Notification[];
 }

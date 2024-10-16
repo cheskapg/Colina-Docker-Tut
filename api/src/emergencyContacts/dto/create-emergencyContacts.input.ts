@@ -9,10 +9,7 @@ export class CreateEmergencyContactsInput {
   uuid: string;
 
   @Field()
-  firstName: string;
-
-  @Field()
-  lastName: string;
+  name: string;
 
   @Field()
   phoneNumber: string;
@@ -20,17 +17,7 @@ export class CreateEmergencyContactsInput {
   @Field()
   patientRelationship: string;
 
-  @Field()
-  city: string;
-
-  @Field()
-  state: string;
-
-  @Field()
-  zip: string;
-
-  @Field()
-  country: string;
+  email:string; 
 
   @Field()
   patientId: number;

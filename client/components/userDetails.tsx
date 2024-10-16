@@ -16,7 +16,11 @@ const UserDetail = () => {
 
   return (
     <>
+<<<<<<< HEAD
       {userDetail.fName} {userDetail.lName}
+=======
+      {userDetail?.fName} {userDetail?.lName}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     </>
   );
 };

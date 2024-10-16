@@ -21,6 +21,10 @@ export class CreateMedicationLogsInput {
   @Field()
   notes: string;
 
+  @Field()
+  startDate?: string;
+
+
   @IsNotEmpty()
   @Field()
   patientId: number;

@@ -39,6 +39,7 @@ export class PrescriptionsController {
       page,
     );
   }
+<<<<<<< HEAD
 
   @Post(':id')
   createPrescriptions(
@@ -50,6 +51,22 @@ export class PrescriptionsController {
       createPrescriptionsInput,
     );
   }
+=======
+  @Post(':id')
+  createPrescriptions(
+    @Param('id') patientId: string,
+    @Body() body: { createPrescriptionsInput: CreatePrescriptionsInput; appointmentUuid: string },
+  ) {
+    const { createPrescriptionsInput, appointmentUuid } = body;
+    return this.prescriptionsService.createPrescriptions(
+      patientId,
+      createPrescriptionsInput,
+      appointmentUuid
+    );
+  }
+  
+  
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   @Post('get/all')
   async getAllPrescriptions() {
     try {
@@ -70,15 +87,30 @@ export class PrescriptionsController {
       page: number;
       sortBy: string;
       sortOrder: 'ASC' | 'DESC';
+<<<<<<< HEAD
     },
   ) {
     const { term = '', page, sortBy, sortOrder } = body;
+=======
+      perPage: number;
+      filterStatus: string[];
+
+    },
+  ) {
+    const { term = '', page, sortBy, sortOrder, perPage,filterStatus } = body;
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     return this.prescriptionsService.getAllPrescriptionsByPatient(
       patientId,
       term,
       page,
       sortBy,
       sortOrder,
+<<<<<<< HEAD
+=======
+      perPage,
+      filterStatus
+
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     );
   }
   //onClick from prescriptions- get prescriptionsId for patch

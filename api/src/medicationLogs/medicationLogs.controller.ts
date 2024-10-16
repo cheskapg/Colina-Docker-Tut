@@ -57,15 +57,29 @@ export class MedicationLogsController {
       page: number;
       sortBy: string;
       sortOrder: 'ASC' | 'DESC';
+<<<<<<< HEAD
     },
   ) {
     const { term = '', page, sortBy, sortOrder } = body;
+=======
+      perPage: number;
+      filterStatus: string[];
+    },
+  ) {
+    const { term = '', page, sortBy, sortOrder, perPage, filterStatus } = body;
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     return this.medicationLogsService.getAllASCHMedicationLogsByPatient(
       patientId,
       term,
       page,
       sortBy,
       sortOrder,
+<<<<<<< HEAD
+=======
+      perPage,
+      filterStatus,
+
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
     );
   }
 
@@ -78,6 +92,7 @@ export class MedicationLogsController {
       page: number;
       sortBy: string;
       sortOrder: 'ASC' | 'DESC';
+<<<<<<< HEAD
     },
   ) {
     const { term = '', page, sortBy, sortOrder } = body;
@@ -90,6 +105,26 @@ export class MedicationLogsController {
     );
   }
 
+=======
+      perPage: number;
+      filterStatus: string[];
+
+    },
+  ) {
+    const { term = '', page, sortBy, sortOrder, perPage, filterStatus } = body;
+    return this.medicationLogsService.getAllPRNMedicationLogsByPatient(
+      patientId,
+      term,
+      page,
+      sortBy,
+      sortOrder,
+      perPage,
+      filterStatus,
+
+    );
+  }
+
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
   //can delete both asch and prn
   //onClick from med- get medID for patch
   @Patch('update/:id')

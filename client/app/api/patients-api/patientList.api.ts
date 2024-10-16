@@ -10,13 +10,20 @@ export async function searchPatientList(
   currentPage: number,
   sortBy?: string,
   sortOrder?: "ASC" | "DESC",
+<<<<<<< HEAD
   router?: any // Pass router instance as a parameter
+=======
+  perPage?: number,
+  router?: any // Pass router instance as a parameter
+
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
 ): Promise<any> {
   const requestData = {
     term: term,
     page: currentPage,
     sortBy: sortBy,
     sortOrder: sortOrder,
+    perPage: perPage,
   };
   try {
     const accessToken = getAccessToken();
@@ -47,7 +54,11 @@ export async function searchPatientList(
         return Promise.reject(
           new Error("Connection refused or network error occurred.")
         );
+<<<<<<< HEAD
       }
+=======
+      } 
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
       if (axiosError.response?.status === 401) {
         setAccessToken("");
         onNavigate(router, "/login");

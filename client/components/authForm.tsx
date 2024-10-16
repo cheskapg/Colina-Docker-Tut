@@ -150,6 +150,7 @@ const AuthForm = () => {
   //     );
   //   }
   return (
+<<<<<<< HEAD
     <div className="h-full">
       {isLoaded && (
         <div className="w-full h-full flex ">
@@ -158,15 +159,33 @@ const AuthForm = () => {
               src="/imgs/login-bg.png"
               alt="login-image"
               className=" w-full h-full object-cover select-none pointer-events-none "
+=======
+    <div className="h-full w-full">
+      {isLoaded && (
+        <div className="flex h-full w-full">
+          <div className="-z-[100] flex h-full w-full items-center justify-center bg-[#007C85] md:z-10 lg:w-[44.4%]">
+            <Image
+              src="/imgs/login-bg.png"
+              alt="login-image"
+              className="pointer-events-none h-full w-full select-none object-cover"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               width={827}
               height={1081}
               priority={true}
             />
+<<<<<<< HEAD
             <div className=" hidden md:flex  absolute lg:px-32 px-10 flex-col gap-5 ">
               <Image
                 src="/imgs/colina-logo.png"
                 alt="logo"
                 className=" object-cover select-none pointer-events-none -ml-2 "
+=======
+            <div className="absolute hidden w-1/2 flex-col gap-5 md:flex md:px-16 lg:px-32">
+              <Image
+                src="/imgs/colina-logo.png"
+                alt="logo"
+                className="pointer-events-none -ml-2 select-none object-cover"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                 width={297}
                 height={37.05}
                 priority={true}
@@ -177,6 +196,7 @@ const AuthForm = () => {
               </p>
             </div>
           </div>
+<<<<<<< HEAD
           <div className="lg:w-[1091px] md:w-[825.24px] w-full h-full px-10 md:px-0 absolute md:relative flex flex-col justify-center items-center">
             <div className=" w-full h-full flex">
               {/* Sign In */}
@@ -193,15 +213,40 @@ const AuthForm = () => {
                     src="/imgs/colina-logo.png"
                     alt="logo"
                     className=" object-cover select-none pointer-events-none -ml-[5px] md:hidden block"
+=======
+          <div className="absolute flex h-full w-full flex-col items-center justify-center px-8 md:relative md:w-7/12 lg:px-0">
+            <div className="flex h-full w-full">
+              {/* Sign In */}
+              <div
+                className={`flex h-full w-full flex-col items-center justify-center transition duration-500 lg:w-[1091px] ${
+                  isForgotPassword || isOTP || isResetPass
+                    ? "-z-50 -translate-x-[1000px] opacity-0"
+                    : "z-11"
+                }`}
+              >
+                <div className="w-full text-left md:w-[450px] lg:w-[642.27px]">
+                  <Image
+                    src="/imgs/colina-logo.png"
+                    alt="logo"
+                    className="pointer-events-none -ml-[5px] block select-none object-cover md:hidden"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                     width={200}
                     height={37.05}
                     priority={true}
                   />
+<<<<<<< HEAD
                   <h2 className=" md:text-[20px] font-semibold  md:text-2xl lg:mb-10 text-white md:text-black md:mb-0 mb-5">
                     Sign in to your Account
                   </h2>
                   <div
                     className={`text-red-500 w-full md:mb-8 mb-4 -mt-5 text-md ${
+=======
+                  <h2 className="mb-5 font-semibold text-white md:mb-0 md:text-2xl md:text-[20px] md:text-black lg:mb-10">
+                    Sign in to your Account
+                  </h2>
+                  <div
+                    className={`text-md -mt-5 mb-4 w-full text-red-500 md:mb-8 ${
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                       isInvalid ? "block" : "hidden"
                     }`}
                   >
@@ -225,8 +270,12 @@ const AuthForm = () => {
                           type="email"
                           className={`${
                             isInvalid ? "ring-1 ring-red-400" : ""
+<<<<<<< HEAD
                           }  
                       h-[60px] w-full focus:bg-opacity-10 md:bg-[#D9D9D91A] bg-[#D9D9D94D] px-3 py-6 pl-5 pb-2 text-md md:text-[#333333] text-white`}
+=======
+                          } text-md h-[60px] w-full bg-[#D9D9D94D] px-3 py-6 pb-2 pl-5 text-white focus:bg-opacity-10 md:bg-[#FAFAFA] md:text-[#333333]`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           value={email}
                           onFocus={handleEmailFocus}
                           onBlur={handleEmailBlur}
@@ -235,7 +284,11 @@ const AuthForm = () => {
                         />
                         <label
                           htmlFor="email"
+<<<<<<< HEAD
                           className={`absolute left-5 text-white transition-all duration-300 cursor-text select-none ${
+=======
+                          className={`absolute left-5 cursor-text select-none text-white transition-all duration-300 ${
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             isEmailFocused || email
                               ? "top-2 text-[12px] md:text-[#333333]"
                               : "top-5 text-[15px]"
@@ -262,8 +315,12 @@ const AuthForm = () => {
                           type={!showPass ? "password" : "text"}
                           className={`${
                             isInvalid ? "ring-1 ring-red-400" : ""
+<<<<<<< HEAD
                           }  
                       h-[60px] w-full bg-opacity-10   md:bg-[#D9D9D91A] bg-[#D9D9D94D] px-3 py-6 pl-5 pb-2 text-md md:text-[#333333] text-white`}
+=======
+                          } text-md h-[60px] w-full bg-[#D9D9D94D] bg-opacity-10 px-3 py-6 pb-2 pl-5 text-white md:bg-[#FAFAFA] md:text-[#333333]`}
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           value={password}
                           onFocus={handlePasswordFocus}
                           onBlur={handlePasswordBlur}
@@ -272,7 +329,11 @@ const AuthForm = () => {
                         />
                         <label
                           htmlFor="password"
+<<<<<<< HEAD
                           className={`absolute left-5 text-white transition-all duration-300 cursor-text select-none ${
+=======
+                          className={`absolute left-5 cursor-text select-none text-white transition-all duration-300 ${
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             isPasswordFocused || password
                               ? "top-2 text-[12px] md:text-[#333333]"
                               : "top-5 text-[15px]"
@@ -292,7 +353,11 @@ const AuthForm = () => {
                           Enter your password
                         </p>
                         <div
+<<<<<<< HEAD
                           className={` absolute cursor-pointer right-3 flex items-center justify-center h-full ${
+=======
+                          className={`absolute right-3 flex h-full cursor-pointer items-center justify-center ${
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             isInvalid ? "-top-3" : ""
                           }`}
                           onClick={() => setShowPass(!showPass)}
@@ -311,8 +376,13 @@ const AuthForm = () => {
                         </div>
                       </div>
 
+<<<<<<< HEAD
                       <div className="flex text-white md:text-black justify-between">
                         <label className="flex items-center justify-start mb-7 l-5 font-medium md:mb-3">
+=======
+                      <div className="flex justify-between text-white md:text-black">
+                        <label className="l-5 mb-7 flex items-center justify-start font-medium md:mb-3">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                           <input
                             type="checkbox"
                             name="checkbox"
@@ -320,14 +390,24 @@ const AuthForm = () => {
                             checked={rememberMe} // Bind checked attribute to rememberMe state
                             onChange={handleCheckboxChange} // Handle checkbox change
                           />
+<<<<<<< HEAD
                           <span className="ml-2 inline-block font-medium text-[15px] cursor-pointer checkbox mt-1 select-none">
+=======
+                          <span className="checkbox ml-2 mt-1 inline-block cursor-pointer select-none text-[15px] font-medium">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             {" "}
                             Remember me
                           </span>
                         </label>
+<<<<<<< HEAD
                         <label className="flex items-center justify-start mb-7 l-5 font-medium md:mb-3">
                           <p
                             className="font-medium text-[15px] ml-auto inline-block cursor-pointer mt-1 "
+=======
+                        <label className="l-5 mb-7 flex items-center justify-start font-medium md:mb-3">
+                          <p
+                            className="ml-auto mt-1 inline-block cursor-pointer text-[15px] font-medium"
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                             onClick={() =>
                               setIsForgotPassword(!isForgotPassword)
                             }
@@ -339,6 +419,7 @@ const AuthForm = () => {
                       <div>
                         <button
                           disabled={isSubmitted}
+<<<<<<< HEAD
                           className={`
                           ${
                             isSubmitted
@@ -350,6 +431,17 @@ const AuthForm = () => {
                         >
                           {isSubmitted ? (
                             <div className="flex justify-center items-center w-full">
+=======
+                          className={` ${
+                            isSubmitted
+                              ? "cursor-not-allowed"
+                              : "cursor-pointer"
+                          } inline-block w-full items-center bg-[#007C85] px-6 py-3 text-center text-[15px] font-normal text-white transition duration-300 ease-in-out hover:bg-[#0E646A]`}
+                          type="submit"
+                        >
+                          {isSubmitted ? (
+                            <div className="flex w-full items-center justify-center">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
                               <Loader2 size={20} className="animate-spin" />{" "}
                               &nbsp; Signing in...
                             </div>
@@ -363,7 +455,11 @@ const AuthForm = () => {
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
             <div className="hidden md:block w-full">
+=======
+            <div className="hidden w-full md:block">
+>>>>>>> a2473ccc5aec94931ec42e010a6f0586ff8cc5de
               <Footer />
             </div>
             {/* Forgot Pass */}
