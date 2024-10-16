@@ -38,7 +38,7 @@ services:
     ports:
       - 3001:3001
     environment:
-      - NEXT_PUBLIC_API_URL=https://chzcolinabackend.azurewebsites.net/ # Use service name 'apis'
+      - NEXT_PUBLIC_API_URL=http://localhost:3000 # Use service name 'apis'
       - WATCHPACK_POLLING=true
     networks:
       - default
@@ -51,11 +51,15 @@ services:
     ports:
       - 3000:3000
     environment:
-      - PGHOST=colinadb.postgres.database.azure.com
+      - PGHOST="colinadb.postgres.database.azure.com"
       - PGPORT=5432
       - PGUSER=colina
-      - PGPASSWORD=jajnav5@
+      - PGPASSWORD=jajnav5@"
       - DB_SYNCHRONIZE=colina
+      - NEXT_USER=kentjohnliloc@gmail.com
+      - NEXT_PASS=sxmv fvef qmoj llzc
+      - FE_URL=http://localhost:3001
+
     networks:
       - default
 
