@@ -1,5 +1,7 @@
 "use client";
-
+import Image from "next/image";
+import { formatTableTime } from "@/lib/utils";
+import { formatTableDate } from "@/lib/utils";
 import DropdownMenu from "@/components/dropdown-menu";
 import Add from "@/components/shared/buttons/add";
 import DownloadPDF from "@/components/shared/buttons/downloadpdf";
@@ -7,15 +9,28 @@ import Edit from "@/components/shared/buttons/edit";
 import { useEffect, useState } from "react";
 import { onNavigate } from "@/actions/navigation";
 import { useParams, useRouter } from "next/navigation";
-import { VitalSignModal } from "@/components/modals/vitalsign.modal";
 import { fetchVitalSignsByPatient } from "@/app/api/vital-sign-api/vital-sign-api";
 import { SuccessModal } from "@/components/shared/success";
+import Modal from "@/components/reusable/modal";
+import { VitalModalContent } from "@/components/modal-content/vital-modal-content";
+import Pagination from "@/components/shared/pagination";
+import ResuableTooltip from "@/components/reusable/tooltip";import PdfDownloader from "@/components/pdfDownloader";
 
+import {
+  getBloodPressureCategoryClass,
+  getRowClassName,
+  getHeartRateCategoryClass,
+  getTemperatureCategoryClass,
+  getRespiratoryRateCategoryClass,
+} from "@/lib/valuesCategory/vitalSignsCategories";
 export default function vitalsigns() {
   const router = useRouter();
+  if (typeof window === "undefined") {
+  }
+
   // start of orderby & sortby function
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
-  const [sortOrder, setSortOrder] = useState("ASC");
+  const [sortOrder, setSortOrder] = useState("DESC");
   const [sortBy, setSortBy] = useState("createdAt");
   const [pageNumber, setPageNumber] = useState("");
   const [patientVitalSign, setPatientVitalSign] = useState<any[]>([]);
@@ -30,32 +45,16 @@ export default function vitalsigns() {
   const [isEdit, setIsEdit] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
-  interface Modalprops {
-    label: string;
-    isOpen: boolean;
-    isModalOpen: (isOpen: boolean) => void;
-  }
+  const [isUpdated, setIsUpdated] = useState(false);
+
   const isModalOpen = (isOpen: boolean) => {
     setIsOpen(isOpen);
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else if (!isOpen) {
-      document.body.style.overflow = "scroll";
+      document.body.style.overflow = "visible";
       setIsEdit(false);
       setVitalSignData([]);
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Function to handle going to next page
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
     }
   };
 
@@ -79,7 +78,7 @@ export default function vitalsigns() {
   const handleSortOptionClick = (option: string) => {
     setIsOpenSortedBy(false);
     if (option === "Date") {
-      setSortBy("createdAt");
+      setSortBy("date");
     } else if (option === "Status") {
       setSortBy("bloodPressure");
     } else {
@@ -96,79 +95,7 @@ export default function vitalsigns() {
     { label: "Blood Pressure", onClick: handleSortOptionClick },
     { label: "Heart Rate", onClick: handleSortOptionClick },
   ]; // end of orderby & sortby function
-
-  const handleGoToPage = (e: React.MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const pageNumberInt = parseInt(pageNumber, 10);
-
-    // Check if pageNumber is a valid number and greater than 0
-    if (
-      !isNaN(pageNumberInt) &&
-      pageNumberInt <= totalPages &&
-      pageNumberInt > 0
-    ) {
-      setCurrentPage(pageNumberInt);
-
-      console.log("Navigate to page:", pageNumberInt);
-    } else {
-      setGotoError(true);
-      setTimeout(() => {
-        setGotoError(false);
-      }, 3000);
-      console.error("Invalid page number:", pageNumber);
-    }
-  };
-  const formatTime = (timeString: string) => {
-    // Split the time string into hours and minutes
-    const [hours, minutes] = timeString.split(":").map(Number);
-
-    // Format the hours part into 12-hour format
-    let formattedHours = hours % 12 || 12; // Convert 0 to 12
-    const ampm = hours < 12 ? "am" : "pm"; // Determine if it's AM or PM
-
-    // If minutes is undefined or null, set it to 0
-    const formattedMinutes =
-      minutes !== undefined ? minutes.toString().padStart(2, "0") : "00";
-
-    // Return the formatted time string
-    return `${formattedHours}:${formattedMinutes}${ampm}`;
-  };
-  const formatDate = (dateOfSurgery: string | number | Date) => {
-    // Create a new Date object from the provided createdAt date string
-    const date = new Date(dateOfSurgery);
-
-    // Get the month, day, and year
-    const month = date.toLocaleString("default", { month: "short" });
-    const day = date.getDate();
-    const year = date.getFullYear();
-
-    const formattedDate = `${month} ${day}, ${year}`;
-
-    return formattedDate;
-  };
-  const handlePageNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPageNumber(e.target.value);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
-            currentPage === i ? "btn-pagination" : ""
-          }`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
-  };
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -178,7 +105,8 @@ export default function vitalsigns() {
           currentPage,
           sortBy,
           sortOrder as "ASC" | "DESC",
-          router
+          4,
+          router,
         );
         setPatientVitalSign(response.data);
         setTotalPages(response.totalPages);
@@ -201,277 +129,245 @@ export default function vitalsigns() {
     isModalOpen(false);
   };
 
+  if (isLoading) {
+    return (
+      <div className="container flex h-full w-full items-center justify-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="  w-full">
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <h1 className="p-title">Vital Signs</h1>
-          {/* number of patiens */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px] mb-4 ">
-            Total of {totalVitalSigns} Vital Sign/s
-          </p>
-        </div>
-        <div className="flex flex-row justify-end">
-          <div className="flex flex-row justify-end">
-            <Add onClick={() => isModalOpen(true)} />
-            <DownloadPDF></DownloadPDF>
+    <div className="flex h-full w-full flex-col justify-between">
+      <div className="h-full w-full">
+        <div className="mb-2 flex w-full justify-between">
+          <div className="flex-row">
+            <p className="p-table-title">Vital Signs</p>
+            <div>
+              <p className="my-1 h-[23px] text-[15px] font-normal text-[#64748B]">
+                Total of {totalVitalSigns} Vital Signs
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+              <Image src="/imgs/add.svg" alt="" width={18} height={18} />
+              <p className="">Add</p>
+            </button>
+            <button className="btn-pdf gap-2">
+              <Image
+                src="/imgs/downloadpdf.svg"
+                alt=""
+                width={18}
+                height={18}
+              />
+              <p className="">Generate PDF</p>
+            </button>
           </div>
         </div>
-      </div>
 
-      <div className="w-full sm:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px] px-5">
-          <form className="">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className=" py-3 px-5  w-[573px] h-[47px] pt-[14px]  ring-[1px] ring-[#E7EAEE]"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                onChange={(event) => {
-                  setTerm(event.target.value);
-                  setCurrentPage(1);
-                }}
+        <div className="w-full items-center sm:rounded-lg">
+          <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
+            <form className="relative mr-5">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex">
+                <input
+                  className="relative mx-5 my-4 h-[47px] w-[460px] rounded-[3px] border-[1px] border-[#E7EAEE] bg-[#fff] bg-[center] bg-no-repeat px-5 py-3 pl-10 pt-[14px] text-[15px] outline-none placeholder:text-[#64748B]"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width={20}
+                  height={20}
+                  className="pointer-events-none absolute left-8 top-8"
+                />
+              </div>
+            </form>
+
+            <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                label={"Select"}
+              />
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                label={"Select"}
               />
             </div>
-          </form>
-          <div className="flex w-full justify-end items-center gap-[12px]">
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Order by
-            </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Ascending"}
-            />
-
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
-            />
           </div>
         </div>
-
         {/* START OF TABLE */}
         <div>
-          {patientVitalSign.length == 0 ? (
-            <div>
-              <div className="border-1 min-w-[180vh] py-5  flex-col justify-center items-center">
-                <table className="w-full block text-left rtl:text-right">
-                  <thead className="">
-                    <tr className=" text-[#64748B] border-y  ">
-                      <th scope="col" className="px-6 py-3 w-[400px] h-[70px]">
-                        VITAL SIGN ID
-                      </th>
-                      <th scope="col" className="px-6 py-3 w-[400px] h-[70px]">
-                        DATE
-                      </th>
-                      <th scope="col" className="px-6 py-3 w-[300px] h-[70px]">
-                        TIME
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 truncate max-w-[300px]"
-                      >
-                        BLOOD PRESSURE (mmHg)
-                      </th>
-                      <th scope="col" className="px-6 py-3 w-[400px]">
-                        HEART RATE (bpm)
-                      </th>
-                      <th scope="col" className="px-6 py-3 w-[400px]">
-                        TEMPERATURE (°C)
-                      </th>
-                      <th scope="col" className="px-1 py-3 w-[400px]">
-                        RESPIRATORY (brths/min)
-                      </th>
+          <table className="text-left rtl:text-right">
+            <thead>
+              <tr className="h-[70px] border-b text-[15px] font-semibold text-[#64748B]">
+                <td className="px-6 py-3">VITAL SIGN UID</td>
+                <td className="px-6 py-3">DATE</td>
+                <td className="px-6 py-3">TIME</td>
+                <td className="px-6 py-3">BP (mmHg)</td>
+                <td className="px-6 py-3">HR (bpm)</td>
+                <td className="px-6 py-3">TEMP (°F)</td>
+                <td className="px-6 py-3">RESP (brtds/min)</td>
+                <td className="relative px-6 py-3">
+                  <p className="absolute right-[80px] top-[24px]">ACTION</p>
+                </td>
+              </tr>
+            </thead>
 
-                      <th scope="col" className="px-[80px] py-3 w-[10px] ">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
-                <div className="py-5 flex justify-center items-center">
-                  <p className="text-xl font-semibold text-gray-700">
-                    No Vital Sign/s
+            <tbody className="h-[254px]">
+              {patientVitalSign.length == 0 && (
+                <div className="border-1 absolute flex items-center justify-center py-5">
+                  <p className="text-center text-[15px] font-normal text-gray-700">
+                    No Vital Sign/s <br />
                   </p>
                 </div>
-              </div>
-            </div>
-          ) : (
-            <table className="w-full text-left rtl:text-right">
-              <thead className="">
-                <tr className=" text-[#64748B] border-y  ">
-                  <th scope="col" className="px-6 py-3 w-[400px] h-[70px]">
-                    VITAL SIGN ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[400px] h-[70px]">
-                    DATE
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[300px] h-[70px]">
-                    TIME
-                  </th>
-                  <th scope="col" className="px-6 py-3 truncate max-w-[300px]">
-                    BLOOD PRESSURE (mmHg)
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[400px]">
-                    HEART RATE (bpm)
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[400px]">
-                    TEMPERATURE (°C)
-                  </th>
-                  <th scope="col" className="px-1 py-3 w-[400px]">
-                    RESPIRATORY (brths/min)
-                  </th>
-
-                  <th scope="col" className="px-[80px] py-3 w-[10px] ">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {patientVitalSign.map((vitalSign, index) => (
-                  <tr
-                    key={index}
-                    className="odd:bg-white border-b hover:bg-[#f4f4f4] group"
+              )}
+              {patientVitalSign.map((vitalSign, index) => (
+                <tr
+                  key={index}
+                  className={`group h-[63px]  text-[15px] ${
+                    getRowClassName(
+                      vitalSign.vitalsign_bloodPressure,
+                      vitalSign.vitalsign_heartRate,
+                      vitalSign.vitalsign_respiratoryRate,
+                      vitalSign.vitalsign_temperature,
+                    ) 
+                  } ${
+                    getRowClassName(
+                      vitalSign.vitalsign_bloodPressure,
+                      vitalSign.vitalsign_heartRate,
+                      vitalSign.vitalsign_respiratoryRate,
+                      vitalSign.vitalsign_temperature,
+                    ) === ""
+                      ? "border-b hover:bg-[#f4f4f4]"
+                      : " hover:bg-opacity-60"
+                  }`}
+                >
+                  <td className="px-6 py-3">
+                    <ResuableTooltip text={vitalSign.vitalsign_uuid} />
+                  </td>
+                  <td className="px-6 py-3">
+                    {formatTableDate(vitalSign.vitalsign_date)}
+                  </td>
+                  <td className="px-6 py-3">
+                    {formatTableTime(vitalSign.vitalsign_time)}
+                  </td>
+                  <td
+                    className={`px-6 py-3 ${getBloodPressureCategoryClass(vitalSign.vitalsign_bloodPressure)}`}
                   >
-                    <th
-                      scope="row"
-                      className="truncate max-w-[286px] px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      {vitalSign.vitalsign_uuid}
-                    </th>
-                    <td className="px-6 py-4">
-                      {formatDate(vitalSign.vitalsign_date)}
-                    </td>
-                    <td className="px-6 py-4">
-                      {formatTime(vitalSign.vitalsign_time)}
-                    </td>
-                    <td className="px-6 py-4">
-                      {vitalSign.vitalsign_bloodPressure}mmHg
-                    </td>
-                    <td className="px-6 py-4">
-                      {vitalSign.vitalsign_heartRate}bpm
-                    </td>
-                    <td className="px-6 py-4">
-                      {vitalSign.vitalsign_temperature}°C
-                    </td>
-                    <td className="px-6 py-4">
-                      {vitalSign.vitalsign_respiratoryRate}breaths/min
-                    </td>
+                    <ResuableTooltip
+                      text={`${vitalSign.vitalsign_bloodPressure}mmHg`}
+                    />
+                  </td>
+                  <td
+                    className={`px-6 py-3 ${getHeartRateCategoryClass(vitalSign.vitalsign_heartRate)}`}
+                  >
+                    {" "}
+                    {vitalSign.vitalsign_heartRate}bpm
+                  </td>
+                  <td
+                    className={`px-6 py-3 ${getTemperatureCategoryClass(vitalSign.vitalsign_temperature)}`}
+                  >
+                    {vitalSign.vitalsign_temperature}°F
+                  </td>
+                  <td
+                    className={`px-6 py-3 ${getRespiratoryRateCategoryClass(vitalSign.vitalsign_respiratoryRate)}`}
+                  >
+                    <ResuableTooltip
+                      text={`${vitalSign.vitalsign_respiratoryRate}breaths/min`}
+                    />
+                  </td>
 
-                    <td className="px-[70px] py-4">
-                      <p
-                        onClick={() => {
-                          isModalOpen(true);
-                          setIsEdit(true);
-                          setVitalSignData(vitalSign);
-                        }}
-                      >
-                        <Edit></Edit>
-                      </p>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                  <td className="relative py-3 pl-6">
+                    <p
+                      onClick={() => {
+                        isModalOpen(true);
+                        setIsEdit(true);
+                        setVitalSignData(vitalSign);
+                      }}
+                      className="absolute right-[40px] top-[11px]"
+                    >
+                      <Edit
+                        className={getRowClassName(
+                          vitalSign.vitalsign_bloodPressure,
+                          vitalSign.vitalsign_heartRate,
+                          vitalSign.vitalsign_respiratoryRate,
+                          vitalSign.vitalsign_temperature,
+                        )}
+                      ></Edit>
+                      {/* <div className="bg-[#fdf6d7] text-[FFEFF2]"> {getRowClassName(
+                          vitalSign.vitalsign_bloodPressure,
+                          vitalSign.vitalsign_heartRate,
+                          vitalSign.vitalsign_respiratoryRate,
+                          vitalSign.vitalsign_temperature,
+                        )}GFDFD</div>
+                      <div className="bg-[#FEBB00] text-[DB3956]"></div> */}
+                    </p>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         {/* END OF TABLE */}
       </div>
-      {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5 pb-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex -space-x-px text-sm">
-                  <div>
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-                  </div>
-                  {renderPageNumbers()}
 
-                  <div className="ml-5">
-                    <button
-                      onClick={goToNextPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex px-5 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center border ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="px-5">
-                        <button type="submit" className="btn-pagination ">
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* pagination */}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        setCurrentPage={setCurrentPage}
+      />
       {isOpen && (
-        <VitalSignModal
-          isEdit={isEdit}
+        <Modal
+          content={
+            <VitalModalContent
+              isModalOpen={isModalOpen}
+              isEdit={isEdit}
+              isOpen={isOpen}
+              label="sample label"
+              vitalSignData={vitalSignData}
+              onSuccess={onSuccess}
+              setIsUpdated={setIsUpdated}
+            />
+          }
           isModalOpen={isModalOpen}
-          isOpen={isOpen}
-          label="sample label"
-          vitalSignData={vitalSignData}
-          onSuccess={onSuccess}
         />
       )}
 
@@ -480,7 +376,8 @@ export default function vitalsigns() {
           label="Success"
           isAlertOpen={isSuccessOpen}
           toggleModal={setIsSuccessOpen}
-          isEdit={isEdit}
+          isUpdated={isUpdated}
+          setIsUpdated={setIsUpdated}
         />
       )}
     </div>

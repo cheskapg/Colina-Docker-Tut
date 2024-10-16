@@ -1,5 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Patients } from 'src/patients/entities/patients.entity';
+import { Prescriptions } from 'src/prescriptions/entities/prescriptions.entity';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,6 +9,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -25,6 +28,9 @@ export class MedicationLogs {
   @Column()
   medicationLogsName: string;
 
+  @Column({nullable: true})
+  medicationLogsDosage: string;
+
   @Column()
   medicationLogsDate: string;
 
@@ -36,8 +42,15 @@ export class MedicationLogs {
   notes: string;
 
   @Column({ nullable: true })
+  hasDuration: string;
+
+  @Column({ nullable: true })
   @Field(() => Int)
   patientId: number;
+
+  @Column({ nullable: true })
+  @Field(() => Int)
+  prescriptionId: number;
 
   @Column({ nullable: true })
   medicationType: string;
@@ -63,8 +76,17 @@ export class MedicationLogs {
     name: 'patientId',
   })
   patient: Patients;
+
+  @ManyToOne(() => Prescriptions, (prescription) => prescription.medicationlogs)
+  @JoinColumn({
+    name: 'prescriptionId',
+  })
+  prescription: Prescriptions;
   // // Foreign key reference to the Prescriptions entity
   // @ManyToOne(() => Prescriptions)
   // @JoinColumn({ name: 'prescriptionsId', referencedColumnName: 'id' }) // FK attribute
   // prescriptions: Prescriptions;
+
+  @OneToMany(() => Notification, (notification) => notification.medicationLog)
+  notifications: Notification[];
 }

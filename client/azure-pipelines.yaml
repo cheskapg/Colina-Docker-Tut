@@ -1,0 +1,114 @@
+trigger:
+  branches:
+    include:
+      - '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  GITHUB_USERNAME: 'cheskapg'
+  GITHUB_TOKEN: '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'  # Store this securely in Azure DevOps Library
+  GITHUB_REPO: 'cheskapg/pushmeh'
+
+steps:
+- checkout: self
+  persistCredentials: true
+
+# - script: |
+#     echo "Cleaning up untracked files..."
+#     git clean -fdx
+#   displayName: 'Git clean'
+
+# - script: |
+#     git config --global user.name "chz"
+#     git config --global user.email "cheskapg@gmail.com"
+
+#     # Add GitHub remote
+#     git remote add github https://$(GITHUB_USERNAME):$(GITHUB_TOKEN)@github.com/$(GITHUB_REPO).git
+
+#     # Fetch all branches and tags from Azure Repos
+#     git fetch --all
+
+#     # Push all branches and tags to GitHub
+#     git push github --all
+#     git push github --tags
+#   displayName: 'Mirror Push to GitHub'
+
+# add push all branch to git and reflect changes:
+
+# - script: |
+#     # Configure Git user details
+#     git config --global user.name "chz"
+#     git config --global user.email "cheskapg@gmail.com"
+
+#     # Add GitHub remote
+#     git remote add github https://$(GITHUB_USERNAME):$(GITHUB_TOKEN)@github.com/$(GITHUB_REPO).git
+
+#     # Fetch all branches and tags from Azure Repos
+#     git fetch --all
+
+#     # Ensure main branch is updated
+#     git checkout main
+#     git pull origin main
+#     git push github main
+
+#     # Explicitly push chz-twerk-dev branch
+#     git checkout chz-twerk-dev
+#     git pull origin chz-twerk-dev
+#     git push github chz-twerk-dev
+
+#     # Push all branches to GitHub
+#     for branch in $(git branch -r | grep -v '\->' | grep -v 'github/'); do
+#         branch_name=$(echo $branch | sed 's/origin\///')
+#         git checkout $branch_name
+#         git push github $branch_name
+#     done
+
+#     # Push all tags to GitHub
+#     git push github --tags
+#   displayName: 'Mirror Push to GitHub'
+
+# branch refs error failed to push - fix below 
+- script: |
+    # Configure Git user details
+    git config --global user.name "chz"
+    git config --global user.email "cheskapg@gmail.com"
+    git config pull.rebase true  # Use rebase by default
+    # git config --global pull.ff only      # For fast-forward only
+      # git config checkout.defaultRemote=origin
+    # Add GitHub remote
+    git remote add github https://$(GITHUB_USERNAME):$(GITHUB_TOKEN)@github.com/$(GITHUB_REPO).git
+
+    # Fetch all branches and tags from Azure Repos
+    git branch -a  # Lists all branches, both local and remote
+    git fetch origin --all
+    # git rebase main
+    # git rebase chz-twerk-pull-dev
+    # git push --all
+    
+    # Check and push specific branches
+    for branch in chz-twerk-pull-dev main; do
+        if git show-ref --verify --quiet refs/remotes/origin/$branch; then
+            echo "Processing branch: $branch"
+            git checkout -B $branch origin/$branch  # Checkout branch or create it if it does not exist locally
+            git pull origin $branch  # Rebase or merge as configured
+            git push github $branch  # Push to GitHub
+        else
+            echo "$branch does not exist in the source repository."
+        fi
+    done
+
+
+    # Push all other branches
+    for branch in $(git branch -r | grep -v '\->' | grep -v 'github/'); do
+        branch_name=$(echo $branch | sed 's/origin\///')
+        echo "Processing branch: $branch_name"
+        git checkout -B $branch_name origin/$branch_name
+        git pull origin $branch_name
+        git push github $branch_name
+    done
+
+    # Push all tags to GitHub
+    git push github --tags
+  displayName: 'Mirror Push to GitHub'

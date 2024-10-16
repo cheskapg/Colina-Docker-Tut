@@ -1,41 +1,64 @@
 import { useState } from "react";
-
+import Image from "next/image";
 interface AlertProps {
   label: string;
   isAlertOpen: boolean;
   toggleModal: (isOpen: boolean) => void;
-  isEdit: boolean;
+  isUpdated: any;
+  setIsUpdated: any;
 }
 
-export const SuccessModal = ({ label, isAlertOpen, toggleModal, isEdit }: AlertProps) => {
-  console.log(label, "label")
+export const SuccessModal = ({
+  label,
+  isAlertOpen,
+  toggleModal,
+  isUpdated,
+  setIsUpdated,
+}: AlertProps) => {
+  console.log(label, "label");
+  console.log(isUpdated, "success is edit");
   return (
     <div>
       {isAlertOpen && (
-        <div className="fixed inset-[-100vh] z-50 flex overflow-hidden items-center justify-center ">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          <div className="fixed z-50 bg-white rounded-[10px] shadow-xl w-[650px] mx-auto p-[55px] mb-[320px]">
-            <div className="flex justify-end">
-              <button
-                type="button"
-                className="text-gray-400 hover:text-gray-800 focus:outline-none"
-                onClick={() => toggleModal(false)} // Close modal
-              >             
-              </button>
-            </div>
-            <div className="text-center">
-              <div className="mx-auto mb-5 text-gray-400 w-[110px] h-[110px]">
-                <img src="/icons/success.svg" alt="" />
+          <div className="fixed z-50 mx-auto h-[326px] w-[600px] rounded-[10px] bg-white shadow-xl">
+            <div className="pt-[30px] text-center">
+              <div className="mx-auto mb-5 h-[110px] w-[110px] text-gray-400">
+                <Image
+                  src="/svgs/successful.svg"
+                  alt=""
+                  width={110}
+                  height={110}
+                />
               </div>
-              <h1 className="text-[34px] font-bold text-lg text-gray-500 mb-4">
-                {isEdit? "Updated" : "Submitted"} Successfully!
+              <h1 className="text-md mb-2 text-[20px] font-bold text-[#101828]">
+                {isUpdated
+                  ? "Updated"
+                  : label === "Updated"
+                    ? "Updated"
+                    : label === "deleted"
+                      ? "Deleted"
+                      : "Submitted"}{" "}
+                Successfully!
               </h1>
-              <p className="text-[24px] text-sm text-gray-400 mb-10">
-                Your data has been successfully {isEdit? "updated" : "added"}.
+              <p className="mb-[40px] text-[15px] text-sm text-[#667085]">
+                Your data has been successfully{" "}
+                {isUpdated
+                  ? "updated"
+                  : label === "deleted"
+                    ? "Deleted"
+                    : "added"}
+                .
               </p>
               <button
-                onClick={() => toggleModal(false)} // Close modal
-                className="text-white bg-[#1B84FF] hover:bg-blue-800 font-medium rounded-lg text-[26px] w-[330px] px-[31px] py-[18px] me-2 mx-2 dark:bg-blue-600 dark:hover:bg-blue-700"
+                onClick={() => {
+                  toggleModal(false);
+                  if (setIsUpdated !== "") {
+                    setIsUpdated(false);
+                  }
+                }}
+                className="h-[45px]px-3 w-[150px] rounded-sm bg-[#007C85] py-2 font-medium text-[#ffff] hover:bg-[#03595B]"
               >
                 Okay, Thanks!
               </button>

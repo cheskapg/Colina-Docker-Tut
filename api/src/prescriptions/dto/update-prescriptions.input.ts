@@ -9,6 +9,9 @@ export class UpdatePrescriptionsInput extends PartialType(CreatePrescriptionsInp
 
   @Field()
   uuid: string;
+  
+  @Field()
+  prescriptionType: string;
 
   @IsNotEmpty()
   @Field()
@@ -24,11 +27,15 @@ export class UpdatePrescriptionsInput extends PartialType(CreatePrescriptionsInp
   @Field()
   frequency: string;
 
+  @Field({ nullable: true })
+  startDate?: string;
+
+  @Field({ nullable: true })
+  endDate?: string;  
+
   @Field()
   interval: string;
 
-  @Field()
-  maintenance: boolean;
 
   @Field()
   patientId: number;

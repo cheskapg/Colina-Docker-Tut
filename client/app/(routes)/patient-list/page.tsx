@@ -4,18 +4,39 @@ import { onNavigate } from "@/actions/navigation";
 import { searchPatientList } from "@/app/api/patients-api/patientList.api";
 import DropdownMenu from "@/components/dropdown-menu";
 import Edit from "@/components/shared/buttons/view";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DemographicModal } from "@/components/modals/demographic.modal";
 import { ErrorModal } from "@/components/shared/error";
 import { SuccessModal } from "@/components/shared/success";
 import { getAccessToken } from "@/app/api/login-api/accessToken";
+import Add from "@/components/shared/buttons/add";
+import DownloadPDF from "@/components/shared/buttons/downloadpdf";
+import Modal from "@/components/reusable/modal";
+import { DemographicModalContent } from "@/components/modal-content/demographic-modal-content";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
+import { fetchProfileImages } from "@/app/api/patients-api/patientProfileImage.api";
+import Pagination from "@/components/shared/pagination";
+import ResuableTooltip from "@/components/reusable/tooltip";
+import PdfDownloader from "@/components/pdfDownloader";
 
-export default function PatientPage({ patient }: { patient: any }) {
+export default function PatientPage() {
   const router = useRouter();
-  if(!getAccessToken()){
-    onNavigate(router, "/dashboard");
+  if (typeof window === "undefined") {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          width={100}
+          height={100}
+          alt="logo"
+        />
+      </div>
+    );
   }
+
+  const { toast } = useToast();
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
   const [isOpenSortedBy, setIsOpenSortedBy] = useState(false);
   const [sortBy, setSortBy] = useState("firstName");
@@ -34,6 +55,8 @@ export default function PatientPage({ patient }: { patient: any }) {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const isEdit = false;
+  const [patientImages, setPatientImages] = useState<any[]>([]);
+
   const handleOrderOptionClick = (option: string) => {
     if (option === "Ascending") {
       setSortOrder("ASC");
@@ -65,6 +88,11 @@ export default function PatientPage({ patient }: { patient: any }) {
 
   const isModalOpen = (isOpen: boolean) => {
     setIsOpen(isOpen);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else if (!isOpen) {
+      document.body.style.overflow = "visible";
+    }
   };
 
   const goToPreviousPage = () => {
@@ -113,13 +141,13 @@ export default function PatientPage({ patient }: { patient: any }) {
       pageNumbers.push(
         <button
           key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
+          className={`flex w-[49px] items-center justify-center ring-1 ring-gray-300 ${
             currentPage === i ? "btn-pagination" : ""
           }`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
-        </button>
+        </button>,
       );
     }
     return pageNumbers;
@@ -133,22 +161,73 @@ export default function PatientPage({ patient }: { patient: any }) {
           currentPage,
           sortBy,
           sortOrder as "ASC" | "DESC",
-          router
+          5,
+          router,
         );
-        if (response.data.length === 0) {
-          setPatientList([]);
 
-          setIsLoading(false);
-          return;
-        }
-
+        // Update patient list
         setPatientList(response.data);
         setTotalPages(response.totalPages);
         setTotalPatient(response.totalCount);
         setIsLoading(false);
+        // Get UUIDs of all patients
+        const patientUuids = response.data.map(
+          (patient: { uuid: any }) => patient.uuid,
+        );
+        if (patientUuids.length === 0) {
+          setPatientImages([]);
+          return;
+        }
+        // Fetch profile images for all patients
+        const profileImagesResponse = await fetchProfileImages(patientUuids);
+
+        // Buffer the images and store them in an array
+        if (profileImagesResponse) {
+          const patientImagesData = profileImagesResponse.map((image: any) => {
+            // Convert the image data buffer to a data URL if available
+            if (image.data) {
+              const buffer = Buffer.from(image.data);
+              const dataUrl = `data:image/jpeg;base64,${buffer.toString(
+                "base64",
+              )}`;
+              return {
+                patientUuid: image.patientUuid,
+                data: dataUrl,
+              };
+            } else {
+              // If no data URL is available, return an empty object
+              return {
+                patientUuid: image.patientUuid,
+                data: "",
+              };
+            }
+          });
+          setPatientImages(patientImagesData);
+          console.log(patientImagesData, "patientImagesData");
+        }
+
+        if (response.data.length === 0) {
+          setPatientList([]);
+          setIsLoading(false);
+        }
       } catch (error: any) {
         setError(error.message);
-        setIsLoading(false);
+        console.log("error", error.message);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.message,
+          action: (
+            <ToastAction
+              altText="Try again"
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Try again
+            </ToastAction>
+          ),
+        });
       }
     };
 
@@ -158,16 +237,18 @@ export default function PatientPage({ patient }: { patient: any }) {
   const handlePatientClick = (patientId: any) => {
     const lowercasePatientId = patientId.toLowerCase();
     setIsLoading(true);
-    onNavigate(
-      router,
-      `/patient-overview/${lowercasePatientId}/medical-history/allergies`
-    );
+    router.replace(`/patient-overview/${lowercasePatientId}/adls`);
   };
 
   if (isLoading) {
     return (
-      <div className="w-full h-full flex justify-center items-center">
-        <img src="/imgs/colina-logo-animation.gif" alt="logo" width={100} />
+      <div className="flex h-full w-full items-center justify-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
       </div>
     );
   }
@@ -181,145 +262,186 @@ export default function PatientPage({ patient }: { patient: any }) {
   };
 
   return (
-    <div className="relative w-full mx-24 mt-24 z-1">
-      <div className="flex justify-end">
-        <p
-          onClick={() => onNavigate(router, "/dashboard")}
-          className="text-[#64748B] underline cursor-pointer"
-        >
-          Back to Dashboard
-        </p>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col mb-5 px-5 ">
-          <p className="p-title ">Patients List Records</p>
-          {/* number of patiens */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[21px] mt-2 ">
-            Total of {totalPatient} Patients
-          </p>
-        </div>
-        <div className="flex flex-row justify-end">
-          <button
-            className=" mr-2 btn-add h-12 cursor-pointer"
-            onClick={() => isModalOpen(true)}
-          >
-            <img
-              src="/imgs/add.svg"
-              alt="Custom Icon"
-              className="w-5 h-5 mr-2"
-            />
-            Add
-          </button>
-          <button className="btn-pdfs relative h-12">
-            <img
-              src="/imgs/downloadpdf.svg"
-              alt="Custom Icon"
-              className="w-5 h-5 mr-2 "
-            />
-            Download PDF
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full sm:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px]">
-          <form className=" mr-5">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className="py-3 px-5 m-5 w-[573px] outline-none h-[47px] pt-[14px]  ring-[1px] ring-[#E7EAEE]"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                value={term}
-                onChange={(e) => {
-                  setTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-            </div>
-          </form>
-          <div className="flex w-full justify-end items-center gap-[12px] mr-3">
-            <p className="text-[#191D23] opacity-[60% font-semibold]">
-              Order by
+    <div className="flex h-full w-full flex-col justify-between px-[150px] py-[90px]">
+      <div className="h-full w-full">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <p className="p-title">Patients Lists Records</p>
+            {/* number of patiens */}
+            <p className="sub-title h-[22px] w-[1157px]">
+              Total of {patientList.length == 0 ? "0" : totalPatient} Patients
             </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Select"}
-            />
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
+          </div>
+          <div className="flex flex-row justify-end gap-2">
+            <Add onClick={() => isModalOpen(true)}></Add>
+            <PdfDownloader
+              props={["Uuid", "Name", "Age", "Gender"]}
+              variant={"Patient List Table"}
             />
           </div>
         </div>
 
-        {/* START OF TABLE */}
-        <div className="w-full h-full">
-          {patientList.length === 0 ? (
-            <div>
-              <div className="w-full flex justify-center text-xl py-5">
-                No Patient Found!
+        <div className="mt-4 w-full items-center sm:rounded-lg">
+          <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
+            <form className="relative mr-5">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex flex-col">
+                <input
+                  className="sub-title relative m-5 h-[47px] w-[573px] rounded bg-[#fff] bg-no-repeat px-5 py-3 pl-10 pt-[14px] outline-none ring-[1px] ring-[#E7EAEE]"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      // Add your search logic here
+                    }
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width={18.75}
+                  height={18.75}
+                  className="pointer-events-none absolute left-8 top-9 h-[18.75px] w-[18.75px]"
+                />
               </div>
-            </div>
-          ) : (
-            <table className="w-full h-full justify-center items-start ">
-              <thead className=" text-left rtl:text-right">
-                <tr className="uppercase text-[#64748B] border border-[#E7EAEE]">
-                  <th scope="col" className="px-6 py-3 w-[286px] h-[70px]">
-                    Patient ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[552px]">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[277px]">
-                    Age
-                  </th>
-                  <th scope="col" className="px-6 py-3 w-[277px]">
-                    Gender
-                  </th>
+            </form>
 
-                  <th scope="col" className="px-[70px] py-3 w-[210px] ">
+            <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                checkBox={false}
+                label={"Select"}
+              />
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                checkBox={false}
+                label={"Choose  "}
+              />
+            </div>
+          </div>
+
+          {/* START OF TABLE */}
+          <div>
+            <table className="w-full items-start justify-center">
+              <thead className="sub-title text-left !font-semibold rtl:text-right">
+                <tr className="h-[70px] border-b border-[#E7EAEE] uppercase">
+                  <th className="px-6 py-3 !font-semibold">Name</th>
+                  <th className="px-6 py-3 !font-semibold">Patient UID</th>
+                  <th className="px-6 py-3 !font-semibold">Age</th>
+                  <th className="px-6 py-3 !font-semibold">Gender</th>
+
+                  <th className="items-center px-20 py-3 !font-semibold">
                     Action
                   </th>
                 </tr>
               </thead>
               <tbody>
+                {patientList.length === 0 && (
+                  <tr>
+                    <td className="border-1 absolute flex w-[180vh] items-center justify-center py-5">
+                      <p className="flex text-center text-[15px] font-normal text-gray-700">
+                        No Patient Found! <br />
+                      </p>
+                    </td>
+                  </tr>
+                )}
+
                 {patientList.map((patient, index) => (
                   <tr
                     key={index}
-                    className=" group  odd:bg-white hover:bg-gray-100 even:bg-gray-50 border-b"
+                    className="group border-b bg-white hover:bg-[#F4F4F4]"
                   >
-                    <th
-                      scope="row"
-                      className="truncate max-w-[286px] text-left px-6 py-5  font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      {patient.uuid}
-                    </th>
-                    <td className="px-6">
-                      {patient.firstName} {patient.lastName}
+                    <td className="flex items-center gap-5 px-6 py-5">
+                      {/* Check if any matching image found for the patient */}
+                      {patientImages.some(
+                        (image) => image.patientUuid === patient.uuid,
+                      ) ? (
+                        // Render the matched image
+                        <div>
+                          {patientImages.map((image, imgIndex) => {
+                            if (image.patientUuid === patient.uuid) {
+                              return (
+                                <div key={imgIndex}>
+                                  {image.data ? (
+                                    // Render the image if data is not empty
+                                    <div className="max-h-[48px] min-h-[48px] min-w-[48px] max-w-[48px]">
+                                      <Image
+                                        className="h-12 w-12 rounded-full object-cover"
+                                        src={image.data} // Use the base64-encoded image data directly
+                                        alt=""
+                                        width={48}
+                                        height={48}
+                                      />
+                                    </div>
+                                  ) : (
+                                    // Render the stock image (.svg) if data is empty
+                                    <Image
+                                      className="max-h-[48px] min-h-[48px] min-w-[48px] max-w-[48px] rounded-full"
+                                      src="/imgs/user-no-icon.svg"
+                                      alt=""
+                                      width={48}
+                                      height={48}
+                                    />
+                                  )}
+                                </div>
+                              );
+                            }
+                          })}
+                        </div>
+                      ) : (
+                        // Render a placeholder image if no matching image found
+                        <div>
+                          <Image
+                            className="max-h-[48px] min-h-[48px] min-w-[48px] max-w-[48px] rounded-full"
+                            src="/imgs/loading.gif" // Show loading gif while fetching images
+                            alt="Loading"
+                            width={48}
+                            height={48}
+                          />
+                        </div>
+                      )}
+
+                      <p className="overflow-hidden">
+                        <ResuableTooltip
+                          text={`${patient.firstName} ${patient.lastName}`}
+                        />
+                      </p>
                     </td>
-                    <td className="px-6">{patient.age}</td>
-                    <td className="px-6">{patient.gender}</td>
-                    <td className="px-[50px]">
+
+                    <td className="px-6 py-5">
+                      <ResuableTooltip text={patient.uuid} />
+                    </td>
+                    <td className="px-6 py-5">{patient.age}</td>
+                    <td className="px-6 py-5">{patient.gender}</td>
+                    <td className="px-[70px]">
                       <p onClick={() => handlePatientClick(patient.uuid)}>
                         <Edit></Edit>
                       </p>
@@ -328,102 +450,54 @@ export default function PatientPage({ patient }: { patient: any }) {
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
-        {/* END OF TABLE */}
-      </div>
-      {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex -space-x-px text-sm">
-                  <div>
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-                  </div>
-                  {renderPageNumbers()}
-
-                  <div className="ml-5">
-                    <button
-                      onClick={goToNextPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex px-5 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center border ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="px-5">
-                        <button type="submit" className="btn-pagination ">
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
           </div>
+          {/* END OF TABLE */}
         </div>
-      )}
-      {isOpen && (
-        <DemographicModal
-          isModalOpen={isModalOpen}
-          isOpen={isOpen}
-          label="sample label"
-          onSuccess={onSuccess}
-          onFailed={onFailed}
-          setErrorMessage={setError}
+        {/* pagination */}
+
+        {isOpen && (
+          <Modal
+            content={
+              <DemographicModalContent
+                isModalOpen={isModalOpen}
+                isOpen={isOpen}
+                label="sample label"
+                onSuccess={onSuccess}
+                onFailed={onFailed}
+                setErrorMessage={setError}
+              />
+            }
+            isModalOpen={isModalOpen}
+          />
+        )}
+        {isSuccessOpen && (
+          <SuccessModal
+            label="Success"
+            isAlertOpen={isSuccessOpen}
+            toggleModal={setIsSuccessOpen}
+            setIsUpdated=""
+            isUpdated=""
+          />
+        )}
+        {isErrorOpen && (
+          <ErrorModal
+            label="Patient already exist"
+            isAlertOpen={isErrorOpen}
+            toggleModal={setIsErrorOpen}
+            isEdit={isEdit}
+            errorMessage={error}
+          />
+        )}
+      </div>
+      <div className="bg-white">
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+          setCurrentPage={setCurrentPage}
         />
-      )}
-      {isSuccessOpen && (
-        <SuccessModal
-          label="Success"
-          isAlertOpen={isSuccessOpen}
-          toggleModal={setIsSuccessOpen}
-          isEdit={isEdit}
-        />
-      )}
-      {isErrorOpen && (
-        <ErrorModal
-          label="Patient already exist"
-          isAlertOpen={isErrorOpen}
-          toggleModal={setIsErrorOpen}
-          isEdit={isEdit}
-          errorMessage={error}
-        />
-      )}
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { NotesService } from './notes.service';
 import { CreateNotesInput } from './dto/create-notes.input';
 import { UpdateNotesInput } from './dto/update-notes.input';
 
+
 @Controller('notes')
 export class NotesController {
     constructor(private readonly notesService: NotesService) { }
@@ -10,16 +11,16 @@ export class NotesController {
     @Post(':id')
     createVitalSign(@Param('id') patientId: string,
         @Body() createNotesInput: CreateNotesInput) {
-        return this.notesService.createNote(patientId,createNotesInput);
+        return this.notesService.createNote(patientId, createNotesInput);
     }
 
     @Post('list/:id')
     findAllPatientNotes(
         @Param('id') patientId: string,
-        @Body() body: { term: string, page: number, sortBy: string, sortOrder: 'ASC' | 'DESC' }
+        @Body() body: { term: string, type: string, page: number, sortBy: string, sortOrder: 'ASC' | 'DESC', perPage: number}
     ) {
-        const { term = "", page, sortBy, sortOrder } = body;
-        return this.notesService.getAllNotesByPatient(patientId, term, page, sortBy, sortOrder);
+        const { term = "", type, page, sortBy, sortOrder, perPage } = body;
+        return this.notesService.getAllNotesByPatient(patientId, term, type, page, sortBy, sortOrder, perPage);
     }
 
     @Patch('update/:id')
@@ -31,4 +32,4 @@ export class NotesController {
     softDeleteNote(@Param('id') id: string) {
         return this.notesService.softDeleteNotes(id);
     }
- }
+}

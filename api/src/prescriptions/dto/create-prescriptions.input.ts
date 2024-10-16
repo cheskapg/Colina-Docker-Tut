@@ -7,11 +7,14 @@ export class CreatePrescriptionsInput {
   @Field()
   uuid: string;
 
+  @Field()
+  prescriptionType: string;
+
   @IsNotEmpty()
   @Field()
   name: string;
 
-  @Field({ nullable: true })
+  @Field()
   status: string;
 
   @IsNotEmpty()
@@ -21,13 +24,19 @@ export class CreatePrescriptionsInput {
   @Field()
   frequency: string;
 
+  @Field({ nullable: true })
+  startDate?: string;
+
+  @Field({ nullable: true })
+  endDate?: string;  
+
   @Field()
   interval: string;
 
   @Field()
   patientId: number;
 
-  @Field()
+  @Field({ nullable: true })
   updatedAt: string;
 
   @Field({ nullable: true })

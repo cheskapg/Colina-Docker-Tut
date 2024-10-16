@@ -1,5 +1,6 @@
 import { error } from "console";
 import { useState } from "react";
+import Image from "next/image";
 
 interface ErrorProps {
   label: string;
@@ -21,19 +22,17 @@ export const ErrorModal = ({
       {isAlertOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          <div className="fixed z-50 bg-white rounded-[10px] shadow-xl w-[650px] mx-auto p-[55px] mb-[320px]">
-            <div className="flex justify-end">
-              <button
-                type="button"
-                className="text-gray-400 hover:text-gray-800 focus:outline-none"
-                onClick={() => toggleModal(false)} // Close modal
-              ></button>
-            </div>
-            <div className="text-center">
+          <div className="fixed z-50 bg-white rounded-[10px] shadow-xl w-[600px] h-[326px] mx-auto">
+            <div className="text-center pt-[30px]">
               <div className="mx-auto mb-5 text-gray-400 w-[110px] h-[110px]">
-                <img src="/icons/error-icon.svg" alt="" />
+                <Image
+                  src="/svgs/error-icon.svg"
+                  alt=""
+                  width={110}
+                  height={110}
+                />
               </div>
-              <h1 className="text-[34px] font-bold text-lg text-gray-500 mb-4">
+              <h1 className="text-[20px] font-bold text-gray-500 mb-4">
                 {label === "Allergy already exist"
                   ? "Allergy already exists!"
                   : label === "Surgery already exist"
@@ -47,7 +46,6 @@ export const ErrorModal = ({
                   : label === "prescriptionFailed"
                   ? "Prescription already exists!"
                   : "There was a problem with your request."}
-                  
               </h1>
               <p className="text-[24px] text-sm text-gray-400 mb-10">
                 {label === "Allergy already exist"
@@ -66,7 +64,7 @@ export const ErrorModal = ({
               </p>
               <button
                 onClick={() => toggleModal(false)} // Close modal
-                className="text-white bg-[#1B84FF] hover:bg-blue-800 font-medium rounded-lg text-[26px] w-[330px] px-[31px] py-[18px] me-2 mx-2 dark:bg-blue-600 dark:hover:bg-blue-700"
+                className="w-[150px] h-[45px]  bg-[#F3F3F3] hover:bg-[#D9D9D9] font-medium text-black rounded-sm"
               >
                 Try again
               </button>

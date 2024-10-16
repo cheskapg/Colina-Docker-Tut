@@ -24,13 +24,13 @@ export class EmergencyContacts {
   @Field()
   uuid: string;
 
-  @Column()
+  @Column({nullable : true})
   @Field()
-  firstName: string;
+  name: string;
 
-  @Column()
+  @Column({nullable : true})
   @Field()
-  lastName: string;
+  email: string;
 
   @Column()
   @Field()
@@ -39,22 +39,6 @@ export class EmergencyContacts {
   @Column()
   @Field()
   patientRelationship: string;
-
-  @Column()
-  @Field()
-  city: string;
-
-  @Column()
-  @Field()
-  state: string;
-
-  @Column()
-  @Field()
-  zip: string;
-
-  @Column()
-  @Field()
-  country: string;
 
   @Column()
   @Field((type) => Int)

@@ -52,7 +52,16 @@ services:
       - DB_PORT=5432
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
-      - DB_DATABASE=ColinaHealth_db
+      - DB_DATABASE=colina
+      - JWT_SECRET=pogiko123
+      - DB_TYPE=postgres
+      - NEXT_PASS=sxmv fvef qmoj llzc
+      - FE_URL="http://localhost:3001"
+      - NEXT_USER="kentjohnliloc@gmail.com"
+
+
+
+
     networks:
       - default
 
@@ -75,9 +84,11 @@ services:
       - db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-      PGUSER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ColinaHealth_db
+      PGUSER: colina
+      POSTGRES_PASSWORD: jajnav5@
+      POSTGRES_DB: colina
+      PGPORT: 5432
+
 
     expose:
       - 5432

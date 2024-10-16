@@ -1,46 +1,136 @@
 "use client";
 
-import { onNavigate } from "@/actions/navigation";
 import {
   getAccessToken,
+  getRememberToken,
   setAccessToken,
+  setRememberToken,
 } from "@/app/api/login-api/accessToken";
-import { validateUser } from "@/app/api/login-api/loginHandler";
-import { useRouter } from "next/navigation";
+import {
+  checkTokenValidity,
+  validateUser,
+} from "@/app/api/login-api/loginHandler";
+import { redirect, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Footer from "./footer";
+import React from "react";
+import ForgotPass from "./forgot-pass";
+import OTPCode from "./otp-code";
+import ResetPass from "./reset-pass";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import { generateOTPCode } from "@/app/api/forgot-pass-api/otp-code";
 
 export const Login = () => {
   const router = useRouter();
-  if (getAccessToken()) {
-    onNavigate(router, "/dashboard");
-  }
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isInvalid, setIsInvalid] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isAccessed, setIsAccessed] = useState(true);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [isForgotPassword, setIsForgotPassword] = useState<boolean>(false);
+  const [forgotPassEmail, setForgotPassEmail] = useState<string>("");
+  const [isOTP, setIsOTP] = useState<boolean>(false);
+  const [twoFa, setTwoFa] = useState<boolean>(false);
+  const [isResetPass, setIsResetPass] = useState<boolean>(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (!getAccessToken()) {
+      setIsAccessed(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  const rememberMeToken = getRememberToken();
+
+  const handleEmailFocus = () => {
+    setIsEmailFocused(true);
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+  };
+
+  const handlePasswordFocus = () => {
+    setIsPasswordFocused(true);
+  };
+
+  const handlePasswordBlur = () => {
+    setIsPasswordFocused(false);
+  };
+
+  function handleKeyDown(event: any) {
+    if (event.key === "Enter" && password && email) {
+      setIsSubmitted(true);
+      handleLogin(event);
+    }
+  }
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const result = await checkTokenValidity();
+      console.log(result, "check");
+      if (!result) {
+        setRememberToken("");
+      }
+    };
+
+    fetchToken();
+  }, []);
+
+  if (getAccessToken()) {
+    router.push("/dashboard");
+  }
+
+  console.log(rememberMeToken, "rememberme");
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    setIsSubmitted(true);
+    setTwoFa(true);
     e.preventDefault();
     try {
-      const accessToken = await validateUser(email, password, rememberMe);
-      if (accessToken) {
-        // Redirect to patient-list if login successful
-        setAccessToken(accessToken);
-        onNavigate(router, "/dashboard");
+      const signIn = await validateUser(email, password, rememberMe);
+
+      if (signIn != false) {
+        if (rememberMeToken === "") {
+          const response = await generateOTPCode(email, "signIn");
+          if (response) {
+            setIsOTP(true);
+          }
+        } else if (rememberMeToken !== "") {
+          router.push("/dashboard");
+        }
       } else {
         // Handle invalid login
-        setEmail("");
         setPassword("");
         setIsInvalid(true);
-        setTimeout(() => {
-          setIsInvalid(false);
-        }, 2000);
+        // setTimeout(() => {
+        //   setIsInvalid(false);
+        // }, 5000);
       }
+
+      // const signIn = await validateUser(email, password, rememberMe);
+
+      // if (signIn != false && rememberMeToken===null) {
+      //   const response = await generateOTPCode(email, "signIn");
+      //   if (response) {
+      //     setIsOTP(true);
+      //   }
+      // } else if (rememberMeToken){
+      //   router.push('/dashboard')
     } catch (error) {
       console.error("Error during login:", error);
       // Handle error
     }
+    setIsSubmitted(false);
   };
 
   const handleCheckboxChange = () => {
@@ -48,120 +138,265 @@ export const Login = () => {
   };
 
   console.log("email", email);
-
+  console.log(isAccessed, "isAccessed");
+  console.log(isForgotPassword, "isForgotPassword");
+  //   if (isAccessed) {
+  //     return (
+  //       <div className="container w-full h-full flex justify-center items-center">
+  //         <Image
+  //           src="/imgs/colina-logo-animation.gif"
+  //           alt="logo"
+  //           width={100}
+  //           height={100}
+  //         />
+  //       </div>
+  //     );
+  //   }
   return (
-    <div>
-      <section>
-        <div className="grid gap-0 md:h-screen md:grid-cols-2">
-          <div className="flex items-center max-h-screen justify-center overflow-hidden">
-            <img
-              src="/imgs/Bimage.png"
-              alt="Your Image"
-              className="w-full h-full object-cover"
+    <div className="h-full w-full">
+      {isLoaded && (
+        <div className="flex h-full w-full">
+          <div className="-z-[100] flex h-full w-full items-center justify-center bg-[#007C85] md:z-10 lg:w-[44.4%]">
+            <Image
+              src="/imgs/login-bg.png"
+              alt="login-image"
+              className="pointer-events-none h-full w-full select-none object-cover"
+              width={827}
+              height={1081}
+              priority={true}
             />
-          </div>
-
-          <div className="flex mt-40 justify-center md:px-5 md:py-10 lg:py-32 ">
-            <div className="w-[542.27px] text-left">
-              <h2 className="mb-4 text-1xl font-medium md:mb-10 md:text-2xl lg:mb-10">
-                Sign in to your Account
-              </h2>
-
-              <div className="mx-auto mb-4 max-w-[800px] pb-4">
-                <form
-                  onSubmit={handleLogin}
-                  name="wf-form-password"
-                  method="get"
-                >
-                  <div className="relative mb-4 flex">
-                    <input
-                      id="email"
-                      type="email"
-                      className={`${
-                        isInvalid ? "ring-1 ring-red-400" : ""
-                      }  h-9 w-full bg-opacity-60 bg-[#D9D9D9] px-3 py-6 pl-5 text-sm text-[#333333]`}
-                      placeholder={`${
-                        isInvalid ? "Invalid Email!" : "Email Address"
-                      }`}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                    <div
-                      className={`${
-                        isInvalid ? "block" : "hidden"
-                      } absolute right-3 flex items-center justify-center h-full `}
-                    >
-                      <img
-                        className=""
-                        src="/icons/invalidIcon.svg"
-                        alt="invalid"
-                        width={25}
-                      />
-                    </div>
-                  </div>
-                  <div className="relative mb-4 flex">
-                    <input
-                      id="password"
-                      type="password"
-                      className={`${
-                        isInvalid ? "ring-1 ring-red-400" : ""
-                      }  h-9 w-full bg-opacity-60 bg-[#D9D9D9] px-3 py-6 pl-5 text-sm text-[#333333]`}
-                      placeholder={`${
-                        isInvalid ? "Invalid Password!" : "Password"
-                      }`}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <div
-                      className={`${
-                        isInvalid ? "block" : "hidden"
-                      } absolute right-3 flex items-center justify-center h-full `}
-                    >
-                      <img
-                        className=""
-                        src="/icons/invalidIcon.svg"
-                        alt="invalid"
-                        width={25}
-                      />
-                    </div>
-                  </div>
-
-                  {/* COMMENT MUNA KAY DILI PA WORKING */}
-
-                  <label className="mb-3 flex items-center justify-start pb-4 pl-5 font-medium md:mb-3">
-                    <input
-                      type="checkbox"
-                      name="checkbox"
-                      className="float-left -ml-[20px] mt-1"
-                      checked={rememberMe} // Bind checked attribute to rememberMe state
-                      onChange={handleCheckboxChange} // Handle checkbox change
-                    />
-                    <span className="ml-2 inline-block cursor-pointer text-sm checkbox mt-1">
-                      {" "}
-                      <a href="#" className="font-normal text-[#0b0b1f]">
-                        Remember me
-                      </a>
-                    </span>
-                    {/* <span className="ml-auto inline-block cursor-pointer text-sm checkbox mt-1 ">
-                      Forgot Password?
-                    </span> */}
-                  </label>
-                  <div>
-                    <button
-                      className="inline-block w-full cursor-pointer items-center bg-[#007C85] px-6 py-3 text-center font-normal text-white hover:bg-[#0E646A] transition duration-300 ease-in-out"
-                      type="submit"
-                    >
-                      Sign In
-                    </button>
-                  </div>
-                </form>
-              </div>
+            <div className="absolute hidden w-1/2 flex-col gap-5 md:flex md:px-16 lg:px-32">
+              <Image
+                src="/imgs/colina-logo.png"
+                alt="logo"
+                className="pointer-events-none -ml-2 select-none object-cover"
+                width={297}
+                height={37.05}
+                priority={true}
+              />
+              <p className="text-white lg:text-[30px]">
+                The art of medicine lies in listening to what the patient’s body
+                and spirit are trying to say.
+              </p>
             </div>
           </div>
+          <div className="absolute flex h-full w-full flex-col items-center justify-center px-8 md:relative md:w-7/12 lg:px-0">
+            <div className="flex h-full w-full">
+              {/* Sign In */}
+              <div
+                className={`flex h-full w-full flex-col items-center justify-center transition duration-500 lg:w-[1091px] ${
+                  isForgotPassword || isOTP || isResetPass
+                    ? "-z-50 -translate-x-[1000px] opacity-0"
+                    : "z-11"
+                }`}
+              >
+                <div className="w-full text-left md:w-[450px] lg:w-[642.27px]">
+                  <Image
+                    src="/imgs/colina-logo.png"
+                    alt="logo"
+                    className="pointer-events-none -ml-[5px] block select-none object-cover md:hidden"
+                    width={200}
+                    height={37.05}
+                    priority={true}
+                  />
+                  <h2 className="mb-5 font-medium text-white md:mb-0 md:text-2xl md:text-[20px] md:text-[#020817] lg:mb-10">
+                    Sign in to your Account
+                  </h2>
+                  <div
+                    className={`text-md -mt-5 mb-4 w-full text-[#db3956] md:mb-8 ${
+                      isInvalid ? "block" : "hidden"
+                    }`}
+                  >
+                    <p className="">
+                      Your email or password was not recognized.
+                    </p>
+                    <p> Please try again.</p>
+                  </div>
+
+                  <div className="mx-auto mb-4 max-w-[800px] pb-4">
+                    <form
+                      onSubmit={handleLogin}
+                      onKeyDown={handleKeyDown}
+                      name="wf-form-password"
+                      method="get"
+                    >
+                      <div className="relative mb-4 flex flex-col">
+                        <input
+                          autoFocus
+                          id="email"
+                          type="email"
+                          className={`${
+                            isInvalid ? "ring-1 ring-[#db3956]" : ""
+                          } h-[60px] w-full bg-[#D9D9D94D] px-3 py-6 pb-2 pl-5 text-white focus:bg-opacity-10 md:bg-[#FAFAFA] md:text-[#020817]`}
+                          value={email}
+                          onFocus={handleEmailFocus}
+                          onBlur={handleEmailBlur}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                        <label
+                          htmlFor="email"
+                          className={`absolute left-5 cursor-text select-none text-white transition-all duration-300 ${
+                            isEmailFocused || email
+                              ? "top-2 text-[12px] md:text-[#64748b]"
+                              : "top-5 text-[15px]"
+                          } ${
+                            isInvalid
+                              ? "md:text-[#64748b]"
+                              : "md:text-[#64748b]"
+                          }`}
+                        >
+                          {isInvalid ? "Email" : "Email"}
+                        </label>
+                        <p
+                          className={`${
+                            isInvalid ? "block" : "hidden"
+                          } mt-2 text-[#db3956]`}
+                        >
+                          Enter a valid email
+                        </p>
+                      </div>
+
+                      <div className="relative mb-4 flex flex-col">
+                        <input
+                          id="password"
+                          type={!showPass ? "password" : "text"}
+                          className={`${
+                            isInvalid ? "ring-1 ring-[#db3956]" : ""
+                          } text-md h-[60px] w-full bg-[#D9D9D94D] bg-opacity-10 px-3 py-6 pb-2 pl-5 text-white md:bg-[#FAFAFA] md:text-[#020817]`}
+                          value={password}
+                          onFocus={handlePasswordFocus}
+                          onBlur={handlePasswordBlur}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                        />
+                        <label
+                          htmlFor="password"
+                          className={`absolute left-5 cursor-text select-none text-white transition-all duration-300 ${
+                            isPasswordFocused || password
+                              ? "top-2 text-[12px] md:text-[#64748b]"
+                              : "top-5 text-[15px]"
+                          } ${
+                            isInvalid
+                              ? "md:text-[#64748b]"
+                              : "md:text-[#64748b]"
+                          }`}
+                        >
+                          {isInvalid ? "Password" : "Password"}
+                        </label>
+                        <p
+                          className={`${
+                            isInvalid ? "block" : "hidden"
+                          } mt-2 text-[#db3956]`}
+                        >
+                          Enter your password
+                        </p>
+                        <div
+                          className={`absolute right-3 flex h-full cursor-pointer items-center justify-center ${
+                            isInvalid ? "-top-3" : ""
+                          }`}
+                          onClick={() => setShowPass(!showPass)}
+                        >
+                          <Image
+                            className={`${password ? "block" : "hidden"}`}
+                            src={`${
+                              showPass
+                                ? "/icons/show-pass.svg"
+                                : "/icons/hide-pass.svg"
+                            }`}
+                            alt="show-pass"
+                            width={18}
+                            height={18}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between text-white md:text-[#020817]">
+                        <label className="l-5 mb-7 flex items-center justify-start md:mb-3">
+                          <input
+                            type="checkbox"
+                            name="checkbox"
+                            className="float-left mt-1 accent-[#0E646A]"
+                            checked={rememberMe} // Bind checked attribute to rememberMe state
+                            onChange={handleCheckboxChange} // Handle checkbox change
+                          />
+                          <span className="checkbox ml-2 mt-1 inline-block cursor-pointer select-none text-[15px]">
+                            {" "}
+                            Remember me
+                          </span>
+                        </label>
+                        <label className="l-5 mb-7 flex items-center justify-start md:mb-3">
+                          <p
+                            className="ml-auto mt-1 inline-block cursor-pointer text-[15px]"
+                            onClick={() =>
+                              setIsForgotPassword(!isForgotPassword)
+                            }
+                          >
+                            Forgot Password?
+                          </p>
+                        </label>
+                      </div>
+                      <div className="mt-2">
+                        <button
+                          disabled={isSubmitted}
+                          className={` ${
+                            isSubmitted
+                              ? "cursor-not-allowed"
+                              : "cursor-pointer"
+                          } inline-block h-[60px] w-full items-center bg-[#007C85] px-6 py-3 text-center text-[15px] font-normal text-white transition duration-300 ease-in-out hover:bg-[#0E646A]`}
+                          type="submit"
+                        >
+                          {isSubmitted ? (
+                            <div className="flex w-full items-center justify-center">
+                              <Loader2 size={20} className="animate-spin" />{" "}
+                              &nbsp; Signing in...
+                            </div>
+                          ) : (
+                            "Sign In"
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="hidden w-full md:block">
+              <Footer />
+            </div>
+            {/* Forgot Pass */}
+            <ForgotPass
+              isForgotPassword={isForgotPassword}
+              setIsForgotPassword={setIsForgotPassword}
+              isInvalid={isInvalid}
+              forgotPassEmail={forgotPassEmail}
+              setForgotPassEmail={setForgotPassEmail}
+              isEmailFocused={isEmailFocused}
+              handleEmailBlur={handleEmailBlur}
+              handleEmailFocus={handleEmailFocus}
+              isOTP={isOTP}
+              setIsOTP={setIsOTP}
+            />
+            {/* OTP */}
+            <OTPCode
+              isOTP={isOTP}
+              setIsOTP={setIsOTP}
+              forgotPassEmail={twoFa ? email : forgotPassEmail}
+              setIsResetPass={setIsResetPass}
+              isResetPass={isResetPass}
+              variant={twoFa ? "signIn" : "forgotPass"}
+              rememberMe={rememberMe}
+            />
+            {/* Reset Pass */}
+            <ResetPass
+              isResetPass={isResetPass}
+              setIsResetPass={setIsResetPass}
+              forgotPassEmail={forgotPassEmail}
+              setForgotPassEmail={setForgotPassEmail}
+            />
+          </div>
         </div>
-      </section>
+      )}
     </div>
   );
 };

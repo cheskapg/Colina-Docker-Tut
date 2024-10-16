@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Companies } from 'src/companies/entities/companies.entity';
 import { UserAccessLevels } from 'src/userAccessLevels/entities/userAccessLevels.entity';
+import { UserNotification } from 'src/userNotifications/entities/user-notification.entity';
 import {
   Column,
   CreateDateColumn,
@@ -35,11 +36,11 @@ export class Users {
 
   @Column()
   @Field()
-  fname: string;
+  fName: string;
 
   @Column()
   @Field()
-  lname: string;
+  lName: string;
 
   @Column()
   @Field()
@@ -52,6 +53,11 @@ export class Users {
   @Column({ nullable: true })
   @Field({ nullable: true })
   resetTokenExpires: Date;
+
+  @Column({ nullable: true }) 
+  @Field({ nullable: true })
+  otp : string
+
 
   @UpdateDateColumn({ name: 'updatedAt', nullable: true })
   @Field()
@@ -74,4 +80,7 @@ export class Users {
 
   @OneToMany(() => UserAccessLevels, (ual) => ual.users) // Use @OneToMany here
   ual: UserAccessLevels[];
+
+  @OneToMany(() => UserNotification, (userNotification) => userNotification.user)
+  userNotifications: UserNotification[];
 }

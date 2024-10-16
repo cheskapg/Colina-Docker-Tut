@@ -21,13 +21,19 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { ApiKeyGuard } from 'src/auth/api-key/api-key.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { OtpService } from 'services/otp/otp.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('users')
 @UseGuards(AuthGuard)
 export class UsersController {
   private readonly logger = new Logger(UsersService.name);
 
-  constructor(private readonly usersService: UsersService) { }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly otpService: OtpService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get('search')
   async searchUsers(
@@ -71,7 +77,7 @@ export class UsersController {
 
   @Get('searchByLastName')
   async searchUsersByLastName(
-    @Query('lname') lname: string,
+    @Query('lName') lName: string,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ): Promise<any> {
@@ -81,7 +87,7 @@ export class UsersController {
 
       // Perform the search with pagination
       const users = await this.usersService.searchUsersByLastName(
-        lname,
+        lName,
         offset,
         limit,
       );
@@ -103,7 +109,7 @@ export class UsersController {
 
   @Get('searchByFirstName')
   async searchUsersByFirstName(
-    @Query('fname') fname: string,
+    @Query('fName') fName: string,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ): Promise<any> {
@@ -113,7 +119,7 @@ export class UsersController {
 
       // Perform the search with pagination
       const users = await this.usersService.searchUsersByFirstName(
-        fname,
+        fName,
         offset,
         limit,
       );
@@ -212,15 +218,84 @@ export class UsersController {
   //   }
   // }
 
-  @Patch('update/:Id')
-  async updateUser(
-    @Param('Id') Id: number,
+  @Public()
+  @Post('/generate-otp')
+  async generateOTP(@Body('email') email: string, @Body('variant') variant:string) {
+    const users = await this.usersService.searchUsersByEmail(email, 0, 1);
+    if (users.length === 0) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    console.log(users, 'users');
+
+    try {
+      const user = users[0];
+      const otpWithTimestamp = this.otpService.generateOTP();
+      const { otp, timestamp } = otpWithTimestamp;
+
+      await this.usersService.updateOTP(user.id, otp);
+      await this.usersService.sendPasswordResetEmail(email, otp, variant);
+
+      return true;
+    } catch (error) {
+      return error.message;
+    }
+  }
+  @Public()
+  @Post('/verify-otp')
+  async verifyOTP(
+    @Body('userOTP') userOTP: string,
+    @Body('email') email: string,
+    @Body('variant') variant:string,
+    @Body('expiresIn') expiresIn:string
+  ): Promise<{ isValid: boolean }> {
+    const generatedOTP = await this.usersService.getOTP(email);
+
+    if (!generatedOTP) {
+      throw new NotFoundException('Generated OTP not found for the user');
+    }
+    console.log(userOTP, 'userotps');
+    console.log(email, 'emails');
+    const isValid = this.otpService.verifyOTP(userOTP, generatedOTP);
+    const expiryPayload = {
+      email: email,
+    };
+    if (isValid) {
+      // If OTP is valid, generate JWT token
+      const expiryToken = this.jwtService.sign(expiryPayload, {
+        expiresIn: variant==="signIn"?expiresIn:"5m",
+      });
+      const users = await this.usersService.searchUsersByEmail(email, 0, 1);
+      const user = users[0];
+      if (users.length === 0) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      await this.usersService.updateOTP(user.id, null);
+      return { isValid: true, expiryToken } as {
+        isValid: boolean;
+        expiryToken: string;
+      };
+    } else {
+      return { isValid: false };
+    }
+  }
+
+  @Patch('reset-pass/:email')
+  async updateUserPassword(
+    @Param('email') email: string,
     @Body() updateUserInput: UpdateUserInput,
   ): Promise<Users> {
-    const updatedUser = await this.usersService.updateUser(Id, updateUserInput);
+    const updatedUser = await this.usersService.updateUser(
+      email,
+      updateUserInput,
+    );
     if (!updatedUser) {
-      throw new NotFoundException(`User with ID ${Id} not found`);
+      throw new NotFoundException(`User with ID ${email} not found`);
     }
+    delete updatedUser.password;
+    delete updatedUser.otp;
+    delete updatedUser.id;
+    delete updatedUser.resetToken;
+    delete updatedUser.resetTokenExpires;
     return updatedUser;
   }
 

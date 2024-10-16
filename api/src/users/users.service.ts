@@ -22,20 +22,20 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { UserAccessLevels } from 'src/userAccessLevels/entities/userAccessLevels.entity';
 import { Roles } from 'src/roles/entities/roles.entity';
 import { Users } from './entities/users.entity';
-// import { randomBytes } from 'crypto';
-// import { EmailService } from './email.service';
+import { EmailService } from 'services/email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
-    @InjectRepository(Roles) private readonly rolesRepository: Repository<Roles>,
+    @InjectRepository(Roles)
+    private readonly rolesRepository: Repository<Roles>,
     @InjectRepository(UserAccessLevels)
     private readonly ualRepository: Repository<Roles>,
-    // private readonly emailService: EmailService,
+    private readonly emailService: EmailService,
     private readonly idService: IdService,
-  ) { }
+  ) {}
 
   async getUserById(id: number): Promise<Users | undefined> {
     return this.usersRepository.findOne({ where: { id: id } });
@@ -62,8 +62,8 @@ export class UsersService {
       where: [
         { email: ILike(`%${keyword}%`) },
         { uuid: ILike(`%${keyword}%`) },
-        { fname: ILike(`%${keyword}%`) },
-        { lname: ILike(`%${keyword}%`) },
+        { fName: ILike(`%${keyword}%`) },
+        { lName: ILike(`%${keyword}%`) },
       ],
       take: limit,
       skip: (page - 1) * limit,
@@ -99,14 +99,14 @@ export class UsersService {
   }
 
   async searchUsersByLastName(
-    lname: string,
+    lName: string,
     offset: number,
     limit: number,
   ): Promise<any> {
-    const lowercaseLname = lname.toLowerCase();
+    const lowercaseLname = lName.toLowerCase();
     return this.usersRepository.find({
       where: {
-        lname: ILike(`%${lowercaseLname}%`),
+        lName: ILike(`%${lowercaseLname}%`),
       },
       skip: offset,
       take: limit,
@@ -115,14 +115,14 @@ export class UsersService {
   }
 
   async searchUsersByFirstName(
-    fname: string,
+    fName: string,
     offset: number,
     limit: number,
   ): Promise<any> {
-    const lowercaseLname = fname.toLowerCase();
+    const lowercaseLname = fName.toLowerCase();
     return this.usersRepository.find({
       where: {
-        fname: ILike(`%${lowercaseLname}%`),
+        fName: ILike(`%${lowercaseLname}%`),
       },
       skip: offset,
       take: limit,
@@ -144,23 +144,19 @@ export class UsersService {
     if (existingUser) {
       throw new HttpException('Email already exists', HttpStatus.CONFLICT);
     }
-    const uuidPrefix = 'UID-'; // Customize prefix as needed
-    const uuid = this.idService.generateRandomUUID(uuidPrefix);
+
     const newUser = new Users();
-    newUser.uuid = uuid;
+    newUser.uuid = this.idService.generateRandomUUID('UID-');
     newUser.email = createUserInput.email;
-    newUser.fname = createUserInput.fname;
-    newUser.lname = createUserInput.lname;
+    newUser.fName = createUserInput.fName;
+    newUser.lName = createUserInput.lName;
     newUser.status = createUserInput.status;
 
     if (!createUserInput.password) {
       throw new HttpException('Password is required', HttpStatus.BAD_REQUEST);
     }
-    var passwordValue = await this.hashPassword(createUserInput.password);
 
-    newUser.password = passwordValue
-
-
+    newUser.password = await this.hashPassword(createUserInput.password);
 
     // Initially declare savedUser as null or undefined
     let savedUser: Users | null = null;
@@ -176,12 +172,9 @@ export class UsersService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      console.log(uuid, 'uuid')
 
       // Save the new user to the database
       savedUser = await this.usersRepository.save(newUser);
-      console.log(uuid, 'uuid')
-
       const newUserAccessLevels = new UserAccessLevels();
       newUserAccessLevels.users = savedUser; // Assign the user to the user property
       newUserAccessLevels.roles = defaultRoles; // Assign the fetched roles to the roles property
@@ -202,8 +195,7 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    console.log(uuid, 'uuid')
-
+    delete savedUser.id;
     return savedUser;
   }
 
@@ -220,8 +212,8 @@ export class UsersService {
   //   const newUser = new Users();
   //   newUser.uuid = this.idService.generateRandomUUid('Uid-');
   //   newUser.email = createUserInput.email;
-  //   newUser.fname = createUserInput.fname;
-  //   newUser.lname = createUserInput.lname;
+  //   newUser.fName = createUserInput.fName;
+  //   newUser.lName = createUserInput.lName;
   //   newUser.status = createUserInput.status;
 
   //   if (!createUserInput.password) {
@@ -235,13 +227,45 @@ export class UsersService {
 
   // UPDATE
 
-  async updateUser(
-    id: number,
-    updateUserInput: UpdateUserInput,
-  ): Promise<Users> {
+  async updateOTP(id: number, otp: string): Promise<Users> {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
       throw new Error(`User with id ${id} not found`);
+    }
+
+    user.otp = otp;
+
+    return this.usersRepository.save(user);
+  }
+
+  async getOTP(email: string): Promise<string | undefined> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
+    }
+
+    return user.otp;
+  }
+
+  async sendPasswordResetEmail(emailAddress: string, otp: string, variant:string) {
+    const subject = `${variant==="signIn"?"Login 2FA OTP":"Password Reset Request (OTP)"}`;
+    const message = `${otp}`
+    await this.emailService.sendEmail(
+      emailAddress,
+      subject,
+      emailAddress,
+      message,
+      variant
+    );
+  }
+
+  async updateUser(
+    email: string,
+    updateUserInput: UpdateUserInput,
+  ): Promise<Users> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
     }
 
     // Update user properties if provided in updateUserInput
@@ -249,13 +273,14 @@ export class UsersService {
       user.email = updateUserInput.email;
     }
     if (updateUserInput.password !== undefined) {
-      user.password = updateUserInput.password;
+      const newPassword = await this.hashPassword(updateUserInput.password);
+      user.password = newPassword;
     }
-    if (updateUserInput.fname !== undefined) {
-      user.fname = updateUserInput.fname;
+    if (updateUserInput.fName !== undefined) {
+      user.fName = updateUserInput.fName;
     }
-    if (updateUserInput.lname !== undefined) {
-      user.lname = updateUserInput.lname;
+    if (updateUserInput.lName !== undefined) {
+      user.lName = updateUserInput.lName;
     }
     if (updateUserInput.status !== undefined) {
       user.status = updateUserInput.status;

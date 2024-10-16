@@ -21,6 +21,8 @@ export class UpdateAppointmentsInput extends PartialType(CreateAppointmentsInput
   @Field()
   appointmentEndTime: string;
 
+  appointmentType: string;
+
   @Field()
   details: string;
 

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import React, { useEffect } from "react";
 import DropdownMenu from "@/components/dropdown-menu";
@@ -7,16 +8,35 @@ import DownloadPDF from "@/components/shared/buttons/downloadpdf";
 import View from "@/components/shared/buttons/view";
 import { useState } from "react";
 import { onNavigate } from "@/actions/navigation";
-import { useParams, useRouter } from "next/navigation";
-import { AppointmentsModal } from "@/components/modals/appointments.modal";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { fetchAppointmentsByPatient as fetchAppointmentsByPatient } from "@/app/api/appointments-api/appointments.api";
+import { AppointmenViewModalContent } from "@/components/modal-content/appointmentview-modal-content";
+import Modal from "@/components/reusable/modal";
+import { AppointmentModalContent } from "@/components/modal-content/appointment-modal-content";
+import { ClipboardList } from "lucide-react";
+import { AppointmentemailModalContent } from "@/components/modal-content/appointmentemail-modal-content";
+import { SuccessModal } from "@/components/shared/success";
+import { ErrorModal } from "@/components/shared/error";
+import Pagination from "@/components/shared/pagination";
+import ResuableTooltip from "@/components/reusable/tooltip";
+import PdfDownloader from "@/components/pdfDownloader";
+import Edit from "@/components/shared/buttons/edit";
+import { useEditContext } from "@/app/(routes)/patient-overview/[id]/editContext";
 
 const Appointment = () => {
   const router = useRouter();
-  // start of orderby & sortby function
+  if (typeof window === "undefined") {
+  }
+  const { isOpenHovered } = useEditContext();
+
+  const searchParams = useSearchParams();
+  const [appointmentId, setAppointmentId] = useState(searchParams.get("id"));
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isEdit, setIsView] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
+console.log(isEdit, "isEdit");
+  const [isUpdated, setIsUpdated] = useState(false);
   const formatDate = (createdAt: string | number | Date) => {
     // Create a new Date object from the provided createdAt date string
     const date = new Date(createdAt);
@@ -73,12 +93,14 @@ const Appointment = () => {
   const [patientAppointments, setPatientAppointments] = useState<any[]>([]);
   const [term, setTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [sortBy, setSortBy] = useState("appointmentTime");
+  const [sortBy, setSortBy] = useState("appointmentDate");
   const [pageNumber, setPageNumber] = useState("");
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalAppointments, setTotalAppointments] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isOpenSortedBy, setIsOpenSortedBy] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
   const handleOrderOptionClick = (option: string) => {
     if (option === "Ascending") {
       setSortOrder("ASC");
@@ -87,21 +109,6 @@ const Appointment = () => {
     }
   };
 
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Function to handle going to next page
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-  const handlePageNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPageNumber(e.target.value);
-  };
   const params = useParams<{
     id: any;
     tag: string;
@@ -131,45 +138,86 @@ const Appointment = () => {
     { label: "Status", onClick: handleSortOptionClick },
   ]; // end of orderby & sortby function
   const [gotoError, setGotoError] = useState(false);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
-            currentPage === i ? "btn-pagination" : ""
-          }`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
+  const [filterStatusFromCheck, setFilterStatusFromCheck] = useState<string[]>(
+    [],
+  );
+  const [filterTypeFromCheck, setFilterTypeFromCheck] = useState<string[]>(
+    [],
+  );
+  const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+  const handleStatusUpdate = (checkedFilters: string[]) => {
+    setFilterStatusFromCheck(checkedFilters);
   };
+  const handleTypeUpdate = (checkedFilters: string[]) => {
+    setFilterTypeFromCheck(checkedFilters);
+  };
+  const optionsFilterStatus = [
+    { label: "Scheduled", onClick: setFilterStatusFromCheck },
+    { label: "Patient-IN", onClick: setFilterStatusFromCheck },
+    { label: "On-going", onClick: setFilterStatusFromCheck },
+    { label: "Cancelled", onClick: setFilterStatusFromCheck },
+    { label: "Missed", onClick: setFilterStatusFromCheck },
+    { label: "Done", onClick: setFilterStatusFromCheck },
+  ];
+  const optionsFilterType = [
+    { label: "Podiatrist", onClick: setFilterTypeFromCheck },
+    { label: "ER Visit", onClick: setFilterTypeFromCheck },
+    { label: "Doctor's", onClick: setFilterTypeFromCheck },
+    { label: "Dental", onClick: setFilterTypeFromCheck },
+    { label: "Eye", onClick: setFilterTypeFromCheck },
+    { label: "Others", onClick: setFilterTypeFromCheck },
+  ];
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenReminder, setIsOpenReminder] = useState(false);
+
   const isModalOpen = (isOpen: boolean) => {
     setIsOpen(isOpen);
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else if (!isOpen) {
-      document.body.style.overflow = "scroll";
+      document.body.style.overflow = "visible";
+      setIsEdit(false);
       setIsView(false);
       setAppointmentData([]);
     }
   };
+
+  const isModalReminderOpen = (isOpen: boolean) => {
+    setIsOpenReminder(isOpen);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else if (!isOpen) {
+      document.body.style.overflow = "visible";
+      setIsEdit(false);
+      setAppointmentData([]);
+    }
+  };
+
+  const onSuccess = () => {
+    setIsEdit(false);
+    setIsView(false);
+    isModalOpen(false);
+    setIsSuccessOpen(true);
+  };
+  const onFailed = () => {
+    setIsErrorOpen(true);
+    setIsEdit(false);
+    setIsView(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchAppointmentsByPatient(
           patientId,
-          term,
+          appointmentId != null && term == "" ? appointmentId : term,
           currentPage,
           sortBy,
           sortOrder as "ASC" | "DESC",
-          router
+          filterStatusFromCheck,
+          filterTypeFromCheck,
+          4,
+          router,
         );
 
         //convert date to ISO string
@@ -186,125 +234,185 @@ const Appointment = () => {
     };
 
     fetchData();
-  }, [currentPage, sortOrder, sortBy, term, isOpen]);
+  }, [currentPage, sortOrder, sortBy, term, isOpen, filterStatusFromCheck, filterTypeFromCheck]);
+
+  useEffect(() => {
+    if (term != "") {
+      setAppointmentId("");
+    }
+  }, [term]);
+  useEffect(() => {
+    console.log(isOpenHovered, "OPENHOVERED IN PAGE");
+  }, [isOpenHovered]);
+
+  if (isLoading) {
+    return (
+      <div className="container flex h-full w-full items-center justify-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="  w-full">
-      <div className="flex justify-between ">
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center">
-            <h1 className="p-title">Appointment</h1>
-          </div>
-          {/* number of patiens */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px] mb-4 ">
-            Total of {totalAppointments} Appointments
-          </p>
-        </div>
-        <div className="flex flex-row justify-end mt-[15px]">
-          <button
-            onClick={() => isModalOpen(true)}
-            className=" mr-2 btn-add text-[#000000] w-[109px] h-[42px] radiu"
-          >
-            <img
-              src="/imgs/add.svg"
-              alt="Custom Icon"
-              className="w-5 h-5 mr-2"
-            />
-            Add
-          </button>
-          <button className="btn-pdfs hover:bg-[#007C85] h-[42px] hover:border-[#007C85] hover:text-white flex items-center justify-center rounded-lg font-manrope text-black text-lg px-8 py-4 border-2 border-gray-300 text-center w-64 relative ">
-            <img
-              src="/imgs/downloadpdf.svg"
-              alt="Custom Icon"
-              className="w-5 h-5 mr-2"
-            />
-            Download PDF
-          </button>
-        </div>
-      </div>
+    <div className="flex h-full w-full flex-col justify-between">
+      <div className="h-full w-full">
+        <div className="mb-2 flex w-full justify-between">
+          <div className="flex-row">
+            <p className="p-table-title">Appointment</p>
 
-      <div className="w-full m:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px] px-5">
-          <form className="">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className=" py-3 px-5  w-[573px] h-[47px] pt-[14px]  ring-[1px] ring-[#E7EAEE]"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                onChange={(event) => {
-                  setTerm(event.target.value);
-                  setCurrentPage(1);
-                }}
+            <div>
+              <p className="my-1 h-[23px] text-[15px] font-normal text-[#64748B]">
+                Total of {totalAppointments} Appointments
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+              <Image src="/imgs/add.svg" alt="" width={18} height={18} />
+              <p className="">Add</p>
+            </button>
+            <PdfDownloader
+              props={["Uuid", "Date", "Time", "End_time", "Details", "Status"]}
+              variant={"Appointment Table"}
+              patientId={patientId}
+            />
+          </div>
+        </div>
+
+        <div className="m:rounded-lg w-full items-center">
+          <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
+            <form className="relative mr-5">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex">
+                <input
+                  className="relative mx-5 my-4 h-[47px] w-[460px] rounded-[3px] border-[1px] border-[#E7EAEE] bg-[#fff] bg-[center] bg-no-repeat px-5 py-3 pl-10 pt-[14px] text-[15px] outline-none placeholder:text-[#64748B]"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width={20}
+                  height={20}
+                  className="pointer-events-none absolute left-8 top-8"
+                />
+              </div>
+            </form>
+
+            <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                label={"Select"}
+              />
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                label={"Select"}
               />
             </div>
-          </form>
-          <div className="flex w-full justify-end items-center gap-[12px]">
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Order by
-            </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Ascending"}
-            />
-
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
-            />
           </div>
         </div>
-
         {/* START OF TABLE */}
         <div>
-          <table className="w-full text-left rtl:text-right">
+          <table className="text-left rtl:text-right">
             <thead>
-              <tr className="uppercase text-[#64748B] border-y  ">
-                <th scope="col" className="px-7 py-3 w-[400px] h-[60px]">
-                  STATUS
-                </th>
-                <th scope="col" className="px-6 py-3 w-[400px]">
-                  DATE
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px]">
-                  TIME
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px]">
-                  END TIME
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px]">
-                  DETAILS
-                </th>
-                <th scope="col" className=" px-[90px] py-3 w-10">
-                  ACTION
-                </th>
+              <tr className="h-[70px] border-b text-[15px] font-semibold uppercase text-[#64748B]">
+                <td className="w-[190px] py-3 pl-6">APPOINTMENT UID</td>
+                <td className="w-[130px] py-3">DATE</td>
+                <td className="w-[190px] py-3">DOCTOR'S NAME</td>
+                <td className="w-[130px] py-3">TIME</td>
+                <td className="w-[130px] py-3">END TIME</td>
+                {/* <td className="w-[160px] py-3">TYPE</td> */}
+                <td className="relative w-[170px]">
+                  <div
+                    className={`absolute ${filterStatusFromCheck?.length > 0 ? "top-[24px]" : "top-[24px]"}`}
+                  >
+                    <DropdownMenu
+                      options={optionsFilterType.map(
+                        ({ label, onClick }) => ({
+                          label,
+                          onClick: () => {
+                            // onClick(label);
+                            // console.log("label", label);
+                          },
+                        }),
+                      )}
+                      open={isOpenFilterStatus}
+                      width={"165px"}
+                      statusUpdate={handleTypeUpdate} // Pass the handler function
+                      checkBox={true}
+                      title={"Type"}
+                      label={"Type"}
+                    />
+                  </div>
+                </td>
+                <td className="w-[150px] py-3">DETAILS</td>
+
+                <td className="relative">
+                  <div
+                    className={`absolute ${filterStatusFromCheck?.length > 0 ? "left-[26px] top-[24px]" : "left-[26px] top-[24px]"}`}
+                  >
+                    <DropdownMenu
+                      options={optionsFilterStatus.map(
+                        ({ label, onClick }) => ({
+                          label,
+                          onClick: () => {
+                            // onClick(label);
+                            // console.log("label", label);
+                          },
+                        }),
+                      )}
+                      open={isOpenFilterStatus}
+                      width={"165px"}
+                      statusUpdate={handleStatusUpdate} // Pass the handler function
+                      checkBox={true}
+                      title={"Status"}
+                      label={"Status"}
+                    />
+                  </div>
+                </td>
+                <td className="relative px-6 py-3">
+                  <p className="absolute right-[114px] top-[24px]">ACTION</p>
+                </td>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="h-[254px]">
               {patientAppointments.length === 0 && (
                 <tr>
-                  <td className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-                    <p className="text-xl font-semibold text-gray-700">
-                      No Appointments
+                  <td className="border-1 absolute flex w-[180vh] items-center justify-center py-5">
+                    <p className="text-center text-[15px] font-normal text-gray-700">
+                      No Appointment/s <br />
                     </p>
                   </td>
                 </tr>
@@ -314,51 +422,82 @@ const Appointment = () => {
                   {patientAppointments.map((appointments, index) => (
                     <tr
                       key={index}
-                      className="odd:bg-white  even:bg-gray-50  border-b hover:bg-[#f4f4f4] group"
+                      className="group h-[63px] border-b text-[15px] hover:bg-[#f4f4f4]"
                     >
-                      <th
-                        className={`font-large text-16px me-1 px-6 py-5 rounded-full flex justify-start ${
-                          appointments.appointments_appointmentStatus ===
-                          "Scheduled"
-                            ? "text-[#2A7D15]" // Green color for Scheduled
-                            : appointments.appointments_appointmentStatus ===
-                              "Done"
-                            ? "text-[#3C3C3C]" // Dark color for Done
-                            : appointments.appointments_appointmentStatus ===
-                                "Patient-IN" ||
-                              appointments.appointments_appointmentStatus ===
-                                "On-going"
-                            ? "text-[#E0BD03]" // Yellow for On Going
-                            : appointments.appointments_appointmentStatus ===
-                              "Missed"
-                            ? "text-[#B81C1C]" // Red color for Missed
-                            : ""
-                        }`}
-                      >
-                        <span className="pr-1">●</span>
-                        {appointments.appointments_appointmentStatus}
-                      </th>
-                      <td className="px-6 py-3">
+                      <td className="w-[190px] py-3 pl-6">
+                        {appointments.appointments_uuid}
+                      </td>
+
+                      <td className="w-[130px] py-3">
                         {formatDate(appointments.appointments_appointmentDate)}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="w-[190px] py-3">
+                        <ResuableTooltip
+                          text={appointments.appointments_appointmentDoctor}
+                        />
+                      </td>
+                      <td className="w-[130px] py-3">
                         {formatTime(appointments.appointments_appointmentTime)}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="w-[130px] py-3">
                         {formatTime(
-                          appointments.appointments_appointmentEndTime
+                          appointments.appointments_appointmentEndTime,
                         )}
                       </td>
-                      <td className="px-6 py-3">
-                        {appointments.appointments_details}
+                      <td className="w-[170px] py-3"><ResuableTooltip
+                          text={appointments.appointments_appointmentType}
+                        /></td>
+                      <td className="w-[150px] py-3">
+                        <ResuableTooltip
+                          text={appointments.appointments_details}
+                        />
                       </td>
-                      <td className="px-[90px] py-3">
+                      <td className="px-5 py-3">
+                        <div
+                          className={`relative flex h-[25px] w-[95px] items-center justify-center rounded-[30px] font-semibold capitalize placeholder:text-[15px] ${
+                            appointments.appointments_appointmentStatus ===
+                            "Scheduled"
+                              ? "bg-[#E7EAEE] text-[#71717A]" // Green color for Scheduled
+                              : appointments.appointments_appointmentStatus ===
+                                  "Done"
+                                ? "bg-[#CCFFDD] text-[#17C653]" // Dark color for Done
+                                : appointments.appointments_appointmentStatus ===
+                                      "Patient-IN" ||
+                                    appointments.appointments_appointmentStatus ===
+                                      "On-going"
+                                  ? "bg-[#FFF8DD] text-[#F6C000]" // Yellow for On Going
+                                  : appointments.appointments_appointmentStatus ===
+                                      "Missed"
+                                    ? "bg-[#FFE8EC] text-[#EF4C6A]" // Red color for Missed
+                                    : appointments.appointments_appointmentStatus ===
+                                          "Cancelled" ||
+                                        appointments.appointments_appointmentStatus ===
+                                          "Resched"
+                                      ? "bg-[#FFE8EC] text-[#EF4C6A]" // Red color for Cancelled
+                                      : ""
+                          }`}
+                        >
+                          {appointments.appointments_appointmentStatus}
+                        </div>
+                      </td>
+                      <td className="relative py-3 pl-6">
+                        <p
+                          onClick={() => {
+                            isModalOpen(true);
+                            setIsEdit(true);
+                            setAppointmentData(appointments);
+                          }}
+                          className="absolute right-[146px] top-[11px]"
+                        >
+                          <Edit></Edit>
+                        </p>
                         <p
                           onClick={() => {
                             isModalOpen(true);
                             setIsView(true);
                             setAppointmentData(appointments);
                           }}
+                          className="absolute right-[40px] top-[11px]"
                         >
                           <View></View>
                         </p>
@@ -373,77 +512,72 @@ const Appointment = () => {
         {/* END OF TABLE */}
       </div>
       {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5 pb-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex -space-x-px text-sm">
-                  <div>
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-                  </div>
-                  {renderPageNumbers()}
-
-                  <div className="ml-5">
-                    <button
-                      onClick={goToNextPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex px-5 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center border ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="px-5">
-                        <button type="submit" className="btn-pagination ">
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
-          </div>
-        </div>
-      )}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        setCurrentPage={setCurrentPage}
+      />
       {isOpen && (
-        <AppointmentsModal
+        <Modal
+          content={
+            <AppointmentModalContent
+              isModalOpen={isModalOpen}
+              onSuccess={onSuccess}
+              isOpen={isOpen}
+              isView={isEdit}
+              appointmentData={appointmentData}
+              label="sample label"
+            />
+          }
           isModalOpen={isModalOpen}
-          isOpen={isOpen}
-          isView={isEdit}
-          appointmentData={appointmentData}
-          label="sample label"
+        />
+      )}
+      {isView && (
+        <Modal
+          content={
+            <AppointmenViewModalContent
+              isModalOpen={isModalOpen}
+              isView={isView}
+              appointmentData={appointmentData}
+              // isView={isView}
+              // prescriptionData={prescriptionData}
+            />
+          }
+          isModalOpen={isModalOpen}
+        />
+      )}
+
+      {isOpenReminder && (
+        <Modal
+          content={
+            <AppointmentemailModalContent
+              onSuccess={onSuccess}
+              onFailed={onFailed}
+              isModalOpen={isModalReminderOpen}
+            />
+          }
+          isModalOpen={isModalOpen}
+        />
+      )}
+
+      {isSuccessOpen && (
+        <SuccessModal
+          label={isEdit? "Updated" : "Submitted"}
+          isAlertOpen={isSuccessOpen}
+          toggleModal={setIsSuccessOpen}
+          isUpdated={isEdit}
+          setIsUpdated={setIsUpdated}
+        />
+      )}
+      {isErrorOpen && (
+        <ErrorModal
+          label="Sending Email Failed"
+          isAlertOpen={isErrorOpen}
+          toggleModal={setIsErrorOpen}
+          isEdit={isEdit}
+          errorMessage={error}
         />
       )}
     </div>

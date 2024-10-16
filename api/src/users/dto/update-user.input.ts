@@ -9,10 +9,13 @@ export class UpdateUserInput {
   password?: string;
 
   @IsOptional()
-  fname?: string;
+  confirmPassword?: string;
 
   @IsOptional()
-  lname?: string;
+  fName?: string;
+
+  @IsOptional()
+  lName?: string;
 
   @IsOptional()
   status?: string;

@@ -62,9 +62,11 @@ export class AllergiesService {
     patientUuid: string,
     term: string,
     page: number = 1,
-    sortBy: string = 'type',
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-    perPage: number = 5
+    sortBy: string = 'createdAt',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
+    perPage: number = 4,
+    filterSeverity?: string[] | undefined,
+
   ): Promise<{ data: Allergies[]; totalPages: number; currentPage: number; totalCount: number }> {
     const searchTerm = `%${term}%`; // Add wildcards to the search term
     const skip = (page - 1) * perPage;
@@ -84,11 +86,23 @@ export class AllergiesService {
         'allergies.notes',
         'allergies.createdAt',
         'patient.uuid',
+        'patient.firstName',
+        'patient.middleName',
+        'patient.lastName',
       ])
       .where('patient.uuid = :uuid', { uuid: patientUuid })
       .orderBy(`allergies.${sortBy}`, sortOrder)
       .offset(skip)
       .limit(perPage);
+      if (filterSeverity && filterSeverity.length > 0) {
+        // Use `IN` clause to filter appointments based on multiple statuses
+        allergiesQueryBuilder.andWhere(
+          'allergies.severity IN (:...filterSeverity)',
+          {
+            filterSeverity: filterSeverity,
+          },
+        );
+      }
     if (term !== "") {
       console.log("term", term);
       allergiesQueryBuilder
@@ -106,6 +120,15 @@ export class AllergiesService {
             .orWhere("allergies.allergen ILIKE :searchTerm", { searchTerm });
         }))
         ;
+        if (filterSeverity && filterSeverity.length > 0) {
+          // Use `IN` clause to filter appointments based on multiple statuses
+          allergiesQueryBuilder.andWhere(
+            'allergies.severity IN (:...filterSeverity)',
+            {
+              filterSeverity: filterSeverity,
+            },
+          );
+        }
     }
     const allergiesList = await allergiesQueryBuilder.getRawMany();
     const totalPatientAllergies = await allergiesQueryBuilder.getCount();

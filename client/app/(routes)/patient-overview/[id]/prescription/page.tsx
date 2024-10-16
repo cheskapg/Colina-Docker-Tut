@@ -8,13 +8,20 @@ import { useEffect, useState } from "react";
 import { onNavigate } from "@/actions/navigation";
 import { useRouter, useParams } from "next/navigation";
 import { fetchPrescriptionByPatient as fetchPrescriptionsByPatient } from "@/app/api/prescription-api/prescription.api";
-import { PrescriptionModal } from "@/components/modals/prescription.modal";
 import { SuccessModal } from "@/components/shared/success";
 import { ErrorModal } from "@/components/shared/error";
-// import { Modal } from "@/components/shared/modalss";
-
+import Modal from "@/components/reusable/modal";
+import { PrescriptionModalContent } from "@/components/modal-content/prescription-modal-content";
+import View from "@/components/shared/buttons/view";
+import { PrescriptionViewModalContent } from "@/components/modal-content/prescriptionview-modal-content";
+import Pagination from "@/components/shared/pagination";
+import Image from "next/image";
+import ResuableTooltip from "@/components/reusable/tooltip";
+import PdfDownloader from "@/components/pdfDownloader";
 export default function prescription() {
   const router = useRouter();
+  if (typeof window === "undefined") {
+  }
   // start of orderby & sortby function
   const [isOpenOrderedBy, setIsOpenOrderedBy] = useState(false);
   const [sortOrder, setSortOrder] = useState("ASC");
@@ -30,9 +37,11 @@ export default function prescription() {
   const [gotoError, setGotoError] = useState(false);
   const [term, setTerm] = useState("");
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
   interface Modalprops {
     label: string;
     isOpen: boolean;
@@ -43,25 +52,12 @@ export default function prescription() {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else if (!isOpen) {
-      document.body.style.overflow = "scroll";
+      document.body.style.overflow = "visible";
       setPrescriptionData([]);
       setIsEdit(false);
+      setIsView(false);
     }
   };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Function to handle going to next page
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   const params = useParams<{
     id: any;
     tag: string;
@@ -87,7 +83,7 @@ export default function prescription() {
       setSortBy("frequency");
     } else if (option === "Interval") {
       setSortBy("interval");
-    }else {
+    } else {
       setSortBy("dosage");
     }
     console.log("option", option);
@@ -102,52 +98,21 @@ export default function prescription() {
     { label: "Interval", onClick: handleSortOptionClick },
     { label: "Dosage", onClick: handleSortOptionClick },
   ]; // end of orderby & sortby function
-
-  const handleGoToPage = (e: React.MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const pageNumberInt = parseInt(pageNumber, 10);
-
-    // Check if pageNumber is a valid number and greater than 0
-    if (
-      !isNaN(pageNumberInt) &&
-      pageNumberInt <= totalPages &&
-      pageNumberInt > 0
-    ) {
-      setCurrentPage(pageNumberInt);
-
-      console.log("Navigate to page:", pageNumberInt);
-    } else {
-      setGotoError(true);
-      setTimeout(() => {
-        setGotoError(false);
-      }, 3000);
-      console.error("Invalid page number:", pageNumber);
-    }
+  const [filterStatusFromCheck, setFilterStatusFromCheck] = useState<string[]>(
+    [],
+  );
+  const optionsFilterStatus = [
+    { label: "active", onClick: setFilterStatusFromCheck },
+    { label: "inactive", onClick: setFilterStatusFromCheck },
+  ];
+  const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+  const handleStatusUpdate = (checkedFilters: string[]) => {
+    setFilterStatusFromCheck(checkedFilters);
+    // if (checkedFilters) {
+    //   console.log("Checked zz in Parent:", filterStatusFromCheck);
+    // }
+    // Here you can further process the checked filters or update other state as needed
   };
-
-  const handlePageNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPageNumber(e.target.value);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`flex border border-px items-center justify-center  w-[49px]  ${
-            currentPage === i ? "btn-pagination" : ""
-          }`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -157,7 +122,9 @@ export default function prescription() {
           currentPage,
           sortBy,
           sortOrder as "ASC" | "DESC",
-          router
+          4,
+          filterStatusFromCheck,
+          router,
         );
 
         //convert date to ISO string
@@ -174,263 +141,311 @@ export default function prescription() {
     };
 
     fetchData();
-  }, [currentPage, sortOrder, sortBy, term, isSuccessOpen]);
-
-
+  }, [
+    currentPage,
+    sortOrder,
+    sortBy,
+    term,
+    isSuccessOpen,
+    filterStatusFromCheck,
+  ]);
 
   const onSuccess = () => {
     setIsSuccessOpen(true);
     setIsEdit(false);
+    setIsView(false);
     isModalOpen(false);
-
   };
   const onFailed = () => {
     setIsErrorOpen(true);
     setIsEdit(false);
+    setIsView(false);
   };
-  return (
-    <div className=" w-full">
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <h1 className="p-title">Prescription </h1>
-          {/* number of patients */}
-          <p className="text-[#64748B] font-normal w-[1157px] h-[22px] text-[14px] mb-4 ">
-            Total of {totalPrescription} Prescriptions
-          </p>
-        </div>
-        <div className="flex flex-row justify-end">
-          <Add
-            onClick={() => {
-              isModalOpen(true);
-            }}
-          ></Add>{" "}
-          <DownloadPDF></DownloadPDF>
-        </div>
+
+  if (isLoading) {
+    return (
+      <div className="container flex h-full w-full items-center justify-center">
+        <Image
+          src="/imgs/colina-logo-animation.gif"
+          alt="logo"
+          width={100}
+          height={100}
+        />
       </div>
+    );
+  }
+  return (
+    <div className="flex h-full w-full flex-col justify-between">
+      <div className="h-full w-full">
+        <div className="mb-2 flex w-full justify-between">
+          <div className="flex-row">
+            <p className="p-table-title">Prescription</p>
 
-      <div className="w-full sm:rounded-lg items-center">
-        <div className="w-full justify-between flex items-center bg-[#F4F4F4] h-[75px] px-5">
-          <form className="">
-            {/* search bar */}
-            <label className=""></label>
-            <div className="flex">
-              <input
-                className=" py-3 px-5  w-[573px] h-[47px] pt-[14px]  ring-[1px] ring-[#E7EAEE]"
-                type="text"
-                placeholder="Search by reference no. or name..."
-                onChange={(event) => {
-                  setTerm(event.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-            </div>
-          </form>
-          <div className="flex w-full justify-end items-center gap-[12px]">
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Order by
-            </p>
-            <DropdownMenu
-              options={optionsOrderedBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenOrderedBy}
-              width={"165px"}
-              label={"Ascending"}
-            />
-
-            <p className="text-[#191D23] opacity-[60%] font-semibold">
-              Sort by
-            </p>
-            <DropdownMenu
-              options={optionsSortBy.map(({ label, onClick }) => ({
-                label,
-                onClick: () => {
-                  onClick(label);
-                  console.log("label", label);
-                },
-              }))}
-              open={isOpenSortedBy}
-              width={"165px"}
-              label={"Select"}
-            />
-          </div>
-        </div>
-
-        {/* START OF TABLE */}
-        <div>
-        {patientPrescriptions.length == 0 ? (
-            <div className="border-1 w-[180vh] py-5 absolute flex justify-center items-center">
-              <p className="text-xl font-semibold text-gray-700">
-                No Prescription/s
+            <div>
+              <p className="my-1 h-[23px] text-[15px] font-normal text-[#64748B]">
+                Total of {totalPrescription} Prescriptions
               </p>
             </div>
-          ) : (
-          <table className="w-full text-left rtl:text-right">
-            <thead className="">
-              <tr className="uppercase text-[#64748B] border-y  ">
-                <th scope="col" className="px-0 py-3 w-[300px]">
-                  PRESCRIPTION ID
-                </th>
-                <th scope="col" className="px-6 py-3 w-[300px] h-[70px]">
-                  MEDICINE NAME
-                </th>
-                <th scope="col" className="px-0 py-3 w-[300px]">
-                  FREQUENCY
-                </th>
-                <th scope="col" className="px-3 py-3 w-[300px]">
-                  INTERVAL
-                </th>
-                <th scope="col" className="px-20  py-3 w-[300px]">
-                  DOSAGE
-                </th>
-                <th scope="col" className="pl-10 pr-6 py-3 w-[200px] ">
-                  STATUS
-                </th>
-                <th scope="col" className="px-[80px] py-3 w-[10px] ">
-                  ACTION
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-             
-              {patientPrescriptions.length > 0 && (
-                <>
-                  {patientPrescriptions.map((prescription, index) => (
-                    <tr key={index} className="group  even:bg-gray-50  border-b hover:bg-[#f4f4f4]">
-                      <td className="truncate max-w-[286px] px-0 py-4">
-                        {prescription.prescriptions_uuid}
-                      </td>
-                      <th
-                        scope="row"
-                        className="truncate max-w-[286px] px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
-                      >
-                        {prescription.prescriptions_name}
-                      </th>
-                      <td className="truncate max-w-[286px] px-0 py-4">
-                        {prescription.prescriptions_frequency}
-                      </td>
-                      <td className="truncate max-w-[286px] px-3 py-4 tb-med">
-                        {prescription.prescriptions_interval}
-                      </td>
-                      <td className="truncate max-w-[286px] px-20 py-4">
-                        {prescription.prescriptions_dosage}
-                      </td>
-                      <td className="px-12 py-4">
-                        {" "}
-                        {prescription.prescriptions_status}
-                      </td>
-                      <td className="px-[70px] py-4">
-                        <p
-                          onClick={() => {
-                            isModalOpen(true);
-                            setIsEdit(true);
-                            setPrescriptionData(prescription);
-                          }}
-                        >
-                          <Edit></Edit>
-                        </p>
-                      </td>
-                    </tr>
-                  ))}
-                </>
-              )}
-            </tbody>
-          </table>
-          )}
-        </div>
-        {/* END OF TABLE */}
-      </div>
-      {/* pagination */}
-      {totalPages <= 1 ? (
-        <div></div>
-      ) : (
-        <div className="mt-5 pb-5">
-          <div className="flex justify-between">
-            <p className="font-medium size-[18px] w-[138px] items-center">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div>
-              <nav>
-                <div className="flex -space-x-px text-sm">
-                  <div>
-                    <button
-                      onClick={goToPreviousPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Prev
-                    </button>
-                  </div>
-                  {renderPageNumbers()}
-
-                  <div className="ml-5">
-                    <button
-                      onClick={goToNextPage}
-                      className="flex border border-px items-center justify-center  w-[77px] h-full"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <form onSubmit={handleGoToPage}>
-                    <div className="flex px-5 ">
-                      <input
-                        className={`ipt-pagination appearance-none  text-center border ring-1 ${
-                          gotoError ? "ring-red-500" : "ring-gray-300"
-                        } border-gray-100`}
-                        type="text"
-                        placeholder="-"
-                        pattern="\d*"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                        onKeyPress={(e) => {
-                          // Allow only numeric characters (0-9), backspace, and arrow keys
-                          if (
-                            !/[0-9\b]/.test(e.key) &&
-                            e.key !== "ArrowLeft" &&
-                            e.key !== "ArrowRight"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      <div className="px-5">
-                        <button type="submit" className="btn-pagination ">
-                          Go{" "}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </nav>
-            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => isModalOpen(true)} className="btn-add gap-2">
+              <Image src="/imgs/add.svg" alt="" width={18} height={18} />
+              <p className="">Add</p>
+            </button>
+            <PdfDownloader
+              props={[
+                "Uuid",
+                "Medicine_name",
+                "Frequency",
+                "Interval",
+                "Dosage",
+                "Status",
+              ]}
+              variant={"Prescription Table"}
+              patientId={patientId}
+            />
           </div>
         </div>
-      )}
+
+        <div className="w-full items-center sm:rounded-lg">
+          <div className="flex h-[75px] w-full items-center justify-between bg-[#F4F4F4]">
+            <form className="relative mr-5">
+              {/* search bar */}
+              <label className=""></label>
+              <div className="flex">
+                <input
+                  className="relative mx-5 my-4 h-[47px] w-[460px] rounded-[3px] border-[1px] border-[#E7EAEE] bg-[#fff] bg-[center] bg-no-repeat px-5 py-3 pl-10 pt-[14px] text-[15px] outline-none placeholder:text-[#64748B]"
+                  type="text"
+                  placeholder="Search by reference no. or name..."
+                  value={term}
+                  onChange={(e) => {
+                    setTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+                <Image
+                  src="/svgs/search.svg"
+                  alt="Search"
+                  width="20"
+                  height="20"
+                  className="pointer-events-none absolute left-8 top-8"
+                />
+              </div>
+            </form>
+
+            <div className="mr-3 flex w-full items-center justify-end gap-[12px]">
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Order by
+              </p>
+              <DropdownMenu
+                options={optionsOrderedBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                  },
+                }))}
+                open={isOpenOrderedBy}
+                width={"165px"}
+                label={"Select"}
+              />
+              <p className="text-[15px] font-semibold text-[#191D23] opacity-[60%]">
+                Sort by
+              </p>
+              <DropdownMenu
+                options={optionsSortBy.map(({ label, onClick }) => ({
+                  label,
+                  onClick: () => {
+                    onClick(label);
+                    console.log("label", label);
+                  },
+                }))}
+                open={isOpenSortedBy}
+                width={"165px"}
+                label={"Select"}
+              />
+            </div>
+          </div>
+
+          {/* START OF TABLE */}
+          <div>
+            {patientPrescriptions.length == 0 ? (
+              <div className="border-1 absolute flex items-center justify-center py-5">
+                <p className="text-center text-[15px] text-xl font-semibold text-gray-700">
+                  No Prescription/s <br />
+                </p>
+              </div>
+            ) : (
+              <table className="text-left rtl:text-right">
+              <thead>
+                <tr className="h-[70px] border-b text-[15px] font-semibold uppercase text-[#64748B]">
+                  <td className="w-[222px] py-3 pl-6">PRESCRIPTION UID</td>
+                  <td className="w-[160px] py-3">TYPE</td>
+                  <td className="w-[160px] py-3">MEDICINE NAME</td>
+                  <td className="w-[160px] py-3">FREQUENCY</td>
+                  <td className="w-[160px] py-3">INTERVAL (hr/s)</td>
+                  <td className="w-[160px] py-3">DOSAGE</td>
+                  <td className="relative">
+                    <div
+                      className={`absolute ${filterStatusFromCheck?.length > 0 ? "left-[26px] top-[24px]" : "left-[26px] top-[24px]"}`}
+                    >
+                      <DropdownMenu
+                        options={optionsFilterStatus.map(
+                          ({ label, onClick }) => ({
+                            label,
+                            onClick: () => {
+                              // onClick(label);
+                              // console.log("label", label);
+                            },
+                          }),
+                        )}
+                        open={isOpenFilterStatus}
+                        width={"165px"}
+                        statusUpdate={handleStatusUpdate} // Pass the handler function
+                        checkBox={true}
+                        title={"Status"}
+                        label={"Status"}
+                      />
+                    </div>
+                  </td>{" "}
+                  <td className="relative px-6 py-3">
+                    <p className="absolute right-[114px] top-[24px]">
+                      ACTION
+                    </p>
+                  </td>{" "}
+                </tr>
+              </thead>
+              <tbody className="h-[254px]">
+                {patientPrescriptions.length > 0 && (
+                  <>
+                    {patientPrescriptions.map((prescription, index) => (
+                      <tr
+                        key={index}
+                        className="group h-[63px] border-b text-[15px] hover:bg-[#f4f4f4]"
+                      >
+                        <td className="w-[222px] py-3 pl-6">
+                          <ResuableTooltip
+                            text={prescription.prescriptions_uuid}
+                          />
+                        </td>
+                        <td className="w-[160px] py-3">
+                          <ResuableTooltip
+                            text={prescription.prescriptions_prescriptionType}
+                          />
+                        </td>
+                        <td className="w-[160px] py-3">
+                          <ResuableTooltip
+                            text={prescription.prescriptions_name}
+                          />
+                        </td>
+                        <td className="w-[160px] py-3">
+                          {prescription.prescriptions_frequency}
+                        </td>
+                        <td className="w-[160px] py-3">
+                          {prescription.prescriptions_interval === "1"
+                            ? "1 hour"
+                            : `${prescription.prescriptions_interval} hours`}
+                        </td>
+                        <td className="w-[160px] py-3">
+                          {prescription.prescriptions_dosage}
+                        </td>
+                        <td className="px-5 py-3">
+                          <div
+                            className={`relative flex h-[25px] w-[95px] items-center justify-center rounded-[30px] font-semibold capitalize placeholder:text-[15px] ${
+                              prescription.prescriptions_status === "active"
+                                ? "bg-[#dfffea] text-[#17C653]"
+                                : prescription.prescriptions_status ===
+                                    "inactive"
+                                  ? "bg-[#FEE9E9] text-[#EF4C6A]"
+                                  : prescription.prescriptions_status
+                            }`}
+                          >
+                            {prescription.prescriptions_status}
+                          </div>
+                        </td>
+
+                        <td className="relative w-[220px] py-3">
+                          <p
+                            onClick={() => {
+                              isModalOpen(true);
+                              setIsEdit(true);
+                              setPrescriptionData(prescription);
+                            }}
+                            className="absolute right-[146px] top-[11px]"
+                          >
+                            <Edit></Edit>
+                          </p>
+                          <p
+                            onClick={() => {
+                              isModalOpen(true);
+                              setIsView(true);
+
+                              setPrescriptionData(prescription);
+                            }}
+                            className="absolute right-[40px] top-[11px]"
+                          >
+                            <View></View>
+                          </p>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                )}
+              </tbody>
+            </table>
+            )}
+          </div>
+          {/* END OF TABLE */}
+        </div>
+      </div>
+      {/* pagination */}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        setCurrentPage={setCurrentPage}
+      />
       {isOpen && (
-        <PrescriptionModal
+        <Modal
+          content={
+            <PrescriptionModalContent
+              isModalOpen={isModalOpen}
+              isOpen={isOpen}
+              label="sample label"
+              isEdit={isEdit}
+              prescriptionData={prescriptionData}
+              onSuccess={onSuccess}
+              onFailed={onFailed}
+              setErrorMessage={setError}
+              setIsUpdated={setIsUpdated}
+            />
+          }
           isModalOpen={isModalOpen}
-          isOpen={isOpen}
-          label="sample label"
-          isEdit={isEdit}
-          prescriptionData={prescriptionData}
-          onSuccess={onSuccess}
-          onFailed={onFailed}
-          setErrorMessage={setError}
-          />
-        )}
-  
-        {isSuccessOpen && (
-          <SuccessModal
-            label="Success"
-            isAlertOpen={isSuccessOpen}
-            toggleModal={setIsSuccessOpen}
-            isEdit={isEdit}
-          />
-        )}
-        {isErrorOpen && (
+        />
+      )}
+      {isView && (
+        <Modal
+          content={
+            <PrescriptionViewModalContent
+              isModalOpen={isModalOpen}
+              isView={isView}
+              prescriptionData={prescriptionData}
+            />
+          }
+          isModalOpen={isModalOpen}
+        />
+      )}
+
+      {isSuccessOpen && (
+        <SuccessModal
+          label="Success"
+          isAlertOpen={isSuccessOpen}
+          toggleModal={setIsSuccessOpen}
+          isUpdated={isUpdated}
+          setIsUpdated={setIsUpdated}
+        />
+      )}
+      {isErrorOpen && (
         <ErrorModal
           label="prescriptionFailed"
           isAlertOpen={isErrorOpen}
