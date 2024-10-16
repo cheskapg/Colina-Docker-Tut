@@ -14,7 +14,7 @@ services:
     ports:
       - 3001:3001
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000 # Use service name 'apis'
+      - NEXT_PUBLIC_API_URL=http://apis:3000 # Use service name 'apis'
       - WATCHPACK_POLLING=true
     networks:
       - default
@@ -34,7 +34,7 @@ services:
       - DB_SYNCHRONIZE=colina
       - NEXT_USER=kentjohnliloc@gmail.com
       - NEXT_PASS=sxmv fvef qmoj llzc
-      - FE_URL=http://localhost:3001
+      - FE_URL=http://web:3001
 
     networks:
       - default
@@ -45,8 +45,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-      - PGUSER= colina
+      - POSTGRES_USER= colina
       - POSTGRES_PASSWORD=jajnav5@
       - PGHOST=colinadb.postgres.database.azure.com
       - PGDATABASE=colina
